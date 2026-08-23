@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>CameVision Ego</title>
+<style>
+ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Consolas,"Liberation Mono",monospace}
+ .row{display:flex;width:100vw;height:100vh}
+ .pane{position:relative;width:50%;height:100%;background:#000}
+ .pane img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+ .hud{
+  position:absolute;left:12px;top:12px;z-index:2;
+  color:#e8f4ff;background:rgba(0,0,0,.55);
+  padding:10px 12px;border-radius:6px;line-height:1.35;
+  font-size:15px;letter-spacing:.02em;white-space:pre;
+  text-shadow:0 1px 2px #000;pointer-events:none;
+  border:1px solid rgba(180,220,255,.25);
+ }
+</style></head><body>
+<div class="row">
+ <div class="pane"><img src="http://127.0.0.1:8081/" alt=""><div class="hud" id="h0">CAM0 IMU0</div></div>
+ <div class="pane"><img src="http://127.0.0.1:8082/" alt=""><div class="hud" id="h1">CAM1 IMU1</div></div>
+</div>
+<script>
+function n(v,d){return (v===undefined||v===null||Number.isNaN(v))?"—":Number(v).toFixed(d)}
+function block(label, imu, d){
+  if(!imu) return label+"\nno data";
+  return label+"  "+imu.bus+
+    "\n"+(imu.t_iso||d.t_iso)+
+    "\nmono "+n((imu.t_mono_ns||d.t_mono_ns)/1e9,6)+" s   "+n(imu.read_hz||d.read_hz,0)+" Hz  odr "+n(d.odr_hz,0)+
+    "\na "+n(imu.ax,3)+"  "+n(imu.ay,3)+"  "+n(imu.az,3)+"   |a| "+n(imu.a_g,3)+" g"+
+    "\nω "+n(imu.gx,2)+"  "+n(imu.gy,2)+"  "+n(imu.gz,2)+"  °/s"+
+    "\nbaseline "+n(d.baseline_mm,3)+" mm";
+}
+async function tick(){
+  try{
+    const r = await fetch("http://127.0.0.1:8083/",{cache:"no-store"});
+    const d = await r.json();
+    document.getElementById("h0").textContent = block("CAM0  IMU0", d.imu0, d);
+    document.getElementById("h1").textContent = block("CAM1  IMU1", d.imu1, d);
+  }catch(e){
+    document.getElementById("h0").textContent = "CAM0  IMU0\nwaiting…";
+    document.getElementById("h1").textContent = "CAM1  IMU1\nwaiting…";
+  }
+  requestAnimationFrame(()=>setTimeout(tick, 50));
+}
+tick();
+</script>
+</body></html>

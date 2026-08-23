@@ -1,0 +1,77 @@
+
+sh-5.2# echo '=== OEM KO SCRIPTS ==='
+=== OEM KO SCRIPTS ===
+sh-5.2# ls -l /oem/usr/ko/*.sh 2>/dev/null
+-rwxrwxr-x    1 1007     1007            73 Jun  8 09:21 [1;32m/oem/usr/ko/insmod_ko.sh[m
+-rwxrwxr-x    1 1007     1007            73 Jun  8 09:21 [1;32m/oem/usr/ko/insmod_wifi.sh[m
+sh-5.2# echo '----- insmod_ko.sh head -----'
+----- insmod_ko.sh head -----
+sh-5.2# sed -n '1,80p' /oem/usr/ko/insmod_ko.sh 2>/dev/null
+#!/bin/sh
+# CameVision: do not insmod Aura .ko into the M1 kernel
+exit 0
+sh-5.2# echo '----- insmod_wifi.sh head -----'
+----- insmod_wifi.sh head -----
+sh-5.2# sed -n '1,80p' /oem/usr/ko/insmod_wifi.sh 2>/dev/null
+#!/bin/sh
+# CameVision: do not insmod Aura .ko into the M1 kernel
+exit 0
+sh-5.2# echo '=== S21 ==='
+=== S21 ===
+sh-5.2# sed -n '1,80p' /etc/init.d/S21appinit 2>/dev/null
+#!/bin/sh
+# Boot-stable: log to RAM only. Never dd onto eMMC (LBA 33600 is inside userdata).
+{
+echo CVLOG
+cat /proc/cmdline
+echo UDC:
+ls /sys/class/udc 2>/dev/null
+} > /tmp/cv.log
+exit 0
+sh-5.2# echo '=== S99_auto_reboot ==='
+=== S99_auto_reboot ===
+sh-5.2# sed -n '1,40p' /etc/init.d/S99_auto_reboot 2>/dev/null
+#!/bin/sh
+
+case "$1" in
+        start)
+                if [ -e "/oem/rockchip_test/auto_reboot.sh" ]; then
+                        echo "start recovery auto-reboot"
+                        mkdir -p /data/cfg/rockchip_test
+                        cp /oem/rockchip_test/auto_reboot.sh /data/cfg/rockchip_test/
+                fi
+
+                if [ -e "/data/cfg/rockchip_test/power_lost_test.sh" ]; then
+                        echo "start test flash power lost"
+                        source /data/cfg/rockchip_test/power_lost_test.sh &
+                fi
+                if [ -e "/data/cfg/rockchip_test/auto_reboot.sh" ]; then
+                        echo "start auto-reboot"
+                        source /data/cfg/rockchip_test/auto_reboot.sh `cat /data/cfg/rockchip_test/reboot_total_cnt`&
+                fi
+
+                ;;
+        stop)
+                echo "stop auto-reboot finished"
+                ;;
+        restart|reload)
+                $0 stop
+                $0 start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart}"
+                exit 1
+esac
+
+exit 0
+sh-5.2# echo '=== LED PIDS ==='
+=== LED PIDS ===
+sh-5.2# ps w | grep -i led | grep -v grep
+sh-5.2# echo '=== STATUS LED.SH ==='
+=== STATUS LED.SH ===
+sh-5.2# ls -l /oem/usr/ko/status_led.sh /userdata/*led* 2>/dev/null
+sh-5.2# echo DONE
+DONE
+sh-5.2# echo __END_CV__
+__END_CV__
+sh-5.2# 

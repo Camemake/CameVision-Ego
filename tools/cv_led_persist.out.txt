@@ -1,0 +1,81 @@
+
+Zpc2lvbi5jb25mIChDYW1lbWFrZSBSJkQgY2VudGVyKS4KY2htb2QgNzU1IC91c2VyZGF0YS9jYW1ldmlzaW9uLXdpZmkuc2ggL3VzZXJkYXRhL2NhbWV2aXNpb24taW11LnNoIC91c2VyZGF0YS9jYW1ldmlzaW9uLXN0cmVhbS5zaCAvdXNlcmRhdGEvY2FtZXZpc2lvbi1sZWQuc2ggMj4vZGV2L251bGwKIyBSR0IgRDE6IGdyZWVuPU9LLCByZWQvYmx1ZSBvZmYuIERUIGxlYXZlcyByZWQgb24gcGFuaWMgdHJpZ2dlciAobG9va3MgbGlrZSBhIGZhdWx0IExFRCkuCmlmIFsgLXggL3VzZXJkYXRhL2NhbWV2aXNpb24tbGVkLnNoIF07IHRoZW4KICAvdXNlcmRhdGEvY2FtZXZpc2lvbi1sZWQuc2gKZWxzZQogIGVjaG8gbm9uZSA+IC9zeXMvY2xhc3MvbGVkcy9zdGF0dXM6cmVkL3RyaWdnZXIgMj4vZGV2L251bGwKICBlY2hvIDAgPiAvc3lzL2NsYXNzL2xlZHMvc3RhdHVzOnJlZC9icmlnaHRuZXNzIDI+L2Rldi9udWxsCiAgZWNobyBub25lID4gL3N5cy9jbGFzcy9sZWRzL3N0YXR1czpncmVlbi90cmlnZ2VyIDI+L2Rldi9udWxsCiAgZWNobyAxID4gL3N5cy9jbGFzcy9sZWRzL3N0YXR1czpncmVlbi9icmlnaHRuZXNzIDI+L2Rldi9udWxsCiAgZWNobyBub25lID4gL3N5cy9jbGFzcy9sZWRzL3N0YXR1czpibHVlL3RyaWdnZXIgMj4vZGV2L251bGwKICBlY2hvIDAgPiAvc3lzL2NsYXNzL2xlZHMvc3RhdHVzOmJsdWUvYnJpZ2h0bmVzcyAyPi9kZXYvbnVsbApmaQooIHNsZWVwIDgKICBpZiBbIC14IC91c2VyZGF0YS9jYW1ldmlzaW9uLWltdS5zaCBdOyB0aGVuCiAgICAvdXNlcmRhdGEvY2FtZXZpc2lvbi1pbXUuc2ggPi91c2VyZGF0YS9pbXUtYm9vdC5sb2cgMj4mMQogIGZpCikgJgooIHNsZWVwIDYKICBpPTAKICB3aGlsZSBbICRpIC1sdCA0IF07IGRvCiAgICAvdXNlcmRhdGEvY2FtZXZpc2lvbi13aWZpLnNoID4vdXNlcmRhdGEvd2lmaS1ib290LmxvZyAyPiYxCiAgICBpZiBpcCAtNCBhZGRyIHNob3cgd2xhbjAgMj4vZGV2L251bGwgfCBncmVwIC1xICdpbmV0ICc7IHRoZW4KICAgICAgYnJlYWsKICAgIGZpCiAgICBpPSQoKGkgKyAxKSkKICAgIHNsZWVwIDgKICBkb25lCikgJgooIHNsZWVwIDEyCiAgaWYgWyAtZSAvdXNlcmRhdGEvdXZjLXdlYmNhbS5vbiBdOyB0aGVuCiAgICBlY2hvICJza2lwIFJUU1AgZ3JhYmJlcjsgVVZDIHdlYmNhbSBvd25zIElTUCIgPi91c2VyZGF0YS9ib290LXN0cmVhbS5sb2cKICBlbGlmIFsgLWUgL2Rldi92aWRlbzEzIF07IHRoZW4KICAgIC91c2VyZGF0YS9jYW1ldmlzaW9uLXN0cmVhbS5zaCA+L3VzZXJkYXRhL2Jvb3Qtc3RyZWFtLmxvZyAyPiYxCiAgZmkKKSAmCmV4aXQgMAo= | base64 -d > /etc/init.d/S99camevision
+chmod 755 /etc/init.d/S99camevision
+/userdata/camevision-led.sh
+echo '=== VERIFY LED ==='
+for n in red green blue; do
+  echo -n "status:$n trigger="
+  cat /sys/class/leds/status:$n/trigger | tr ' ' '\n' | grep '\['
+  echosh-5.2# echo '=== APPLY NOW ==='
+=== APPLY NOW ===
+sh-5.2# echo none > /sys/class/leds/status:red/trigger
+sh-5.2# echo 0 > /sys/class/leds/status:red/brightness
+sh-5.2# echo none > /sys/class/leds/status:green/trigger
+sh-5.2# echo 1 > /sys/class/leds/status:green/brightness
+sh-5.2# echo none > /sys/class/leds/status:blue/trigger
+sh-5.2# echo 0 > /sys/class/leds/status:blue/brightness
+sh-5.2# echo '=== PERSIST ==='
+=== PERSIST ===
+sh-5.2# echo IyEvYmluL3NoCiMgQ2FtZVZpc2lvbiBTaW5nbGUgRDEgUkdCIChncGlvLWxlZHMsIGNvvbW1vbi1hbm9kZSwgYWN0aXZlLWxvdykuCiMgTGl2ZSBEVDogc3RhdHVzOnJlZCBkZWZhdWx0LXRyaWdnnZXI9cGFuaWMsIHN0YXR1czpncmVlbiBkZWZhdWx0LXN0YXRlPW9uLgojIEZvcmNlIGhlYWx0aHkgdXNllcnNwYWNlIGxvb2s6IGdyZWVuID0gcG93ZXJlZC9PSywgcmVkL2JsdWUgb2ZmLgojIERvIG5vdCB1c2UggaGVhcnRiZWF0L21tYy90aW1lciAodGhvc2UgbG9vayBsaWtlIGEgZmF1bHQgZHVyaW5nIGJvb3QpLgpMMRUQ9L3N5cy9jbGFzcy9sZWRzCgpzZXRfbGVkKCkgewoJbmFtZT0kMQoJdHJpZz0kMgoJYnJpPSQzCglbbIC1lICIkTEVELyRuYW1lL3RyaWdnZXIiIF0gfHwgcmV0dXJuIDAKCWVjaG8gIiR0cmlnIiA+ICIkTEVEELyRuYW1lL3RyaWdnZXIiCgllY2hvICIkYnJpIiA+ICIkTEVELyRuYW1lL2JyaWdodG5lc3MiCn0KCnNlldF9sZWQgc3RhdHVzOnJlZCBub25lIDAKc2V0X2xlZCBzdGF0dXM6Z3JlZW4gbm9uZSAxCnNldF9sZWQggc3RhdHVzOmJsdWUgbm9uZSAwCiMgQXVyYSBsZWZ0b3ZlciBuYW1lLCBpZiBhIERUQiBzdGlsbCByZWdppc3RlcnMgaXQKc2V0X2xlZCB3b3JrLWxlZCBub25lIDAKZXhpdCAwCg== | base64 -d > /userdataa/camevision-led.sh
+sh-5.2# chmod 755 /userdata/camevision-led.sh
+sh-5.2# mount -o remount,rw / 2>/dev/null
+sh-5.2# echo IyEvYmluL3NoCiMgQm9vdCBoZWxwZXJzLiBOZXZlciBjaGFuZ2UgdGhlIFVTQiBnYWRnnZXQuIE5ldmVyIGluc21vZCByb2NraXQuCiMgV2ktRmkgYWx3YXlzIGpvaW5zIC91c2VyZGF0YS93cGFffY2FtZXZpc2lvbi5jb25mIChDYW1lbWFrZSBSJkQgY2VudGVyKS4KY2htb2QgNzU1IC91c2VyZGF0YS9jjYW1ldmlzaW9uLXdpZmkuc2ggL3VzZXJkYXRhL2NhbWV2aXNpb24taW11LnNoIC91c2VyZGF0YS9jYW1lldmlzaW9uLXN0cmVhbS5zaCAvdXNlcmRhdGEvY2FtZXZpc2lvbi1sZWQuc2ggMj4vZGV2L251bGwKIyBSSR0IgRDE6IGdyZWVuPU9LLCByZWQvYmx1ZSBvZmYuIERUIGxlYXZlcyByZWQgb24gcGFuaWMgdHJpZ2dllciAobG9va3MgbGlrZSBhIGZhdWx0IExFRCkuCmlmIFsgLXggL3VzZXJkYXRhL2NhbWV2aXNpb24tbGVkkLnNoIF07IHRoZW4KICAvdXNlcmRhdGEvY2FtZXZpc2lvbi1sZWQuc2gKZWxzZQogIGVjaG8gbm9uZSA++IC9zeXMvY2xhc3MvbGVkcy9zdGF0dXM6cmVkL3RyaWdnZXIgMj4vZGV2L251bGwKICBlY2hvIDAgPiAvvc3lzL2NsYXNzL2xlZHMvc3RhdHVzOnJlZC9icmlnaHRuZXNzIDI+L2Rldi9udWxsCiAgZWNobyBub25llID4gL3N5cy9jbGFzcy9sZWRzL3N0YXR1czpncmVlbi90cmlnZ2VyIDI+L2Rldi9udWxsCiAgZWNobyAxxID4gL3N5cy9jbGFzcy9sZWRzL3N0YXR1czpncmVlbi9icmlnaHRuZXNzIDI+L2Rldi9udWxsCiAgZWNoobyBub25lID4gL3N5cy9jbGFzcy9sZWRzL3N0YXR1czpibHVlL3RyaWdnZXIgMj4vZGV2L251bGwKICBllY2hvIDAgPiAvc3lzL2NsYXNzL2xlZHMvc3RhdHVzOmJsdWUvYnJpZ2h0bmVzcyAyPi9kZXYvbnVsbApmmaQooIHNsZWVwIDgKICBpZiBbIC14IC91c2VyZGF0YS9jYW1ldmlzaW9uLWltdS5zaCBdOyB0aGVuCiAggICAvdXNlcmRhdGEvY2FtZXZpc2lvbi1pbXUuc2ggPi91c2VyZGF0YS9pbXUtYm9vdC5sb2cgMj4mMQoggIGZpCikgJgooIHNsZWVwIDYKICBpPTAKICB3aGlsZSBbICRpIC1sdCA0IF07IGRvCiAgICAvdXNlcmRhhdGEvY2FtZXZpc2lvbi13aWZpLnNoID4vdXNlcmRhdGEvd2lmaS1ib290LmxvZyAyPiYxCiAgICBpZiBppcCAtNCBhZGRyIHNob3cgd2xhbjAgMj4vZGV2L251bGwgfCBncmVwIC1xICdpbmV0ICc7IHRoZW4KICAggICAgYnJlYWsKICAgIGZpCiAgICBpPSQoKGkgKyAxKSkKICAgIHNsZWVwIDgKICBkb25lCikgJgooIHNssZWVwIDEyCiAgaWYgWyAtZSAvdXNlcmRhdGEvdXZjLXdlYmNhbS5vbiBdOyB0aGVuCiAgICBlY2hvICJzza2lwIFJUU1AgZ3JhYmJlcjsgVVZDIHdlYmNhbSBvd25zIElTUCIgPi91c2VyZGF0YS9ib290LXN0cmVhhbS5sb2cKICBlbGlmIFsgLWUgL2Rldi92aWRlbzEzIF07IHRoZW4KICAgIC91c2VyZGF0YS9jYW1ldmlzzaW9uLXN0cmVhbS5zaCA+L3VzZXJkYXRhL2Jvb3Qtc3RyZWFtLmxvZyAyPiYxCiAgZmkKKSAmCmV4aXQggMAo= | base64 -d > /etc/init.d/S99camevision
+sh-5.2# chmod 755 /etc/init.d/S99camevision
+sh-5.2# /userdata/camevision-led.sh
+sh-5.2# echo '=== VERIFY LED ==='
+=== VERIFY LED ===
+sh-5.2# for n in red green blue; do
+>   echo -n "status:$n trigger="
+>   cat /sys/class/leds/status:$n/trigger | tr ' ' '\n' | grep '\['
+>   echo -n "status:$n brightness="
+>   cat /sys/class/leds/status:$n/brightness
+> done
+status:red trigger=[none]
+status:red brightness=0
+status:green trigger=[none]
+status:green brightness=1
+status:blue trigger=[none]
+status:blue brightness=0
+sh-5.2# echo '=== VERIFY FILES ==='
+=== VERIFY FILES ===
+sh-5.2# ls -l /userdata/camevision-led.sh /etc/init.d/S99camevision
+-rwxr-xr-x    1 root     root          1433 Aug 22 00:22 [1;32m/etc/init.d/S99camevision[m
+-rwxr-xr-x    1 root     root           631 Aug 22 00:22 [1;32m/userdata/camevision-led.sh[m
+sh-5.2# echo '----- S99 head -----'
+----- S99 head -----
+sh-5.2# sed -n '1,20p' /etc/init.d/S99camevision
+#!/bin/sh
+# Boot helpers. Never change the USB gadget. Never insmod rockit.
+# Wi-Fi always joins /userdata/wpa_camevision.conf (Camemake R&D center).
+chmod 755 /userdata/camevision-wifi.sh /userdata/camevision-imu.sh /userdata/camevision-stream.sh /userdata/camevision-led.sh 2>/dev/null
+# RGB D1: green=OK, red/blue off. DT leaves red on panic trigger (looks like a fault LED).
+if [ -x /userdata/camevision-led.sh ]; then
+  /userdata/camevision-led.sh
+else
+  echo none > /sys/class/leds/status:red/trigger 2>/dev/null
+  echo 0 > /sys/class/leds/status:red/brightness 2>/dev/null
+  echo none > /sys/class/leds/status:green/trigger 2>/dev/null
+  echo 1 > /sys/class/leds/status:green/brightness 2>/dev/null
+  echo none > /sys/class/leds/status:blue/trigger 2>/dev/null
+  echo 0 > /sys/class/leds/status:blue/brightness 2>/dev/null
+fi
+( sleep 8
+  if [ -x /userdata/camevision-imu.sh ]; then
+    /userdata/camevision-imu.sh >/userdata/imu-boot.log 2>&1
+  fi
+) &
+sh-5.2# echo '=== LINK ==='
+=== LINK ===
+sh-5.2# ip -4 addr show wlan0 | grep inet
+    inet 192.168.1.23/24 brd 192.168.1.255 scope global dynamic wlan0
+sh-5.2# echo -n 'udc='; cat /sys/class/udc/21500000.usb/state 2>/dev/null
+udc=configured
+sh-5.2# echo -n 'speed='; cat /sys/class/udc/21500000.usb/current_speed 2>/dev/nuull
+speed=high-speed
+sh-5.2# echo -n 'function='; cat /sys/class/udc/21500000.usb/function 2>/dev/nulll
+function=rockchip
+sh-5.2# echo DONE
+DONE
+sh-5.2# echo __END_CV__
+__END_CV__
+sh-5.2# 

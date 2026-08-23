@@ -1,0 +1,20 @@
+=== stream ===
+  453 root      0:00 python3 -u /userdata/isp_grab.py
+  454 root      0:00 sh -c while true; do nice -n -15 v4l2-ctl -d /dev/video13 --stream-mmap=8 --stream-to=/tmp/cam.nv12 --stream-poll >>/userdata/v4l2-stream.log 2>&1; echo restart_v4l2 >>/userdata/v4l2-stream.log; sleep 0.3; done
+  456 root      0:00 v4l2-ctl -d /dev/video13 --stream-mmap=8 --stream-to=/tmp/cam.nv12 --stream-poll
+  460 root      0:00 python3 -u /userdata/hw_rtsp.py
+crw-------    1 root     root      238,   0 Jan  1 00:00 /dev/mpp_service
+-rw-r--r--    1 root     root       3456000 Jan  1 00:00 /dev/shm/isp.nv12
+crw-rw----    1 root     video      81,  14 Jan  1 00:00 /dev/video13
+--- 3A ---
+--- grab ---
+--- rtsp ---
+c_test'
+enc [Errno 2] No such file or directory: 'mpi_enc_test'
+enc [Errno 2] No such file or directory: 'mpi_enc_test'
+enc [Errno 2] No such file or directory: 'mpi_enc_test'
+enc [Errno 2] No such file or directory: 'mpi_enc_test'
+enc [Errno 2] No such file or directory: 'mpi_enc_test'
+enc [Errno 2] No such file or directory: 'mpi_enc_test'
+enc [Errno 2] No such file or directory: 'mpi_enc_test'
+RTSP=rtsp://127.0.0.1:8554/live

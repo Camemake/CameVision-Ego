@@ -1,0 +1,41 @@
+# Toolchains and host caches
+build/zig/
+build/host-tools/
+build/wheels/
+build/sdk-drvko-pack/
+build/sdk-kernel-meta/
+build/m1-donor/
+build/readback/
+build/_rb/
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+*.part
+
+# Live dumps and debug stills
+build/*.jpg
+build/*.pid
+build/stills/
+build/emmc-check/
+build/live/
+
+# Large firmware / eMMC images (keep recovery overlays, not raw dumps)
+firmware/
+build/*.img
+build/*.bin
+# Full eMMC dumps stay local. Numbered recovery-N folders keep their boot images.
+restore/known-good-20260819-camera-adb/
+restore/_readback/
+
+# Local Wi-Fi credentials (do not publish)
+**/wpa_camevision.conf
+**/wpa_supplicant.conf
+
+# Cursor / local
+.cursor/
+agent-transcripts/
+*.swp
+Thumbs.db
+Desktop.ini

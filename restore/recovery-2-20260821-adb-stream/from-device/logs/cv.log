@@ -1,0 +1,4 @@
+CVLOG
+storagemedia=emmc androidboot.storagemedia=emmc androidboot.mode=normal  rootwait earlycon=uart8250,mmio32,0x20810000 console=ttyS0,1500000n8 coherent_pool=32K panic=10 oops=panic root=/dev/mmcblk0p7 rootfstype=ext4 rk_dma_heap_cma=128M pstore_blk.kmsg_size=64 pstore_blk.max_reason=2 blkdevparts=mmcblk0:32K(env),512K@32K(idblock),4M(uboot),11M(boot),1G(userdata),2G(oem),-(rootfs) #x-06/08/2026 androidboot.fwver=ddr-v1.06-1604bf9935,bl31-v1.11,uboot-649e8bd
+UDC:
+21500000.usb

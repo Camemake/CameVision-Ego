@@ -1,0 +1,8 @@
+#!/bin/sh
+# Delay so S50 ADB binds first. No gadget changes.
+( sleep 12
+  if [ -e /dev/video13 ]; then
+    /userdata/camevision-stream.sh >/userdata/boot-stream.log 2>&1
+  fi
+) &
+exit 0

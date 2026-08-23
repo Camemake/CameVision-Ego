@@ -1,0 +1,9 @@
+#!/bin/sh
+# Boot-stable: log to RAM only. Never dd onto eMMC (LBA 33600 is inside userdata).
+{
+echo CVLOG
+cat /proc/cmdline
+echo UDC:
+ls /sys/class/udc 2>/dev/null
+} > /tmp/cv.log
+exit 0

@@ -1,0 +1,234 @@
+#!/bin/sh
+#
+# CameVision USB gadget: UVC + ADB composite in one config (Rockchip PID 0x0019).
+#
+# Both functions live in the same config and are bound exactly once, at boot.
+# Never switch functions on a live UDC: unbinding a bound dwc3 gadget and
+# rebinding another one wedges the controller until the watchdog resets the SoC.
+#
+# If the UDC bind does not complete, the UVC function is dropped and ADB alone
+# is bound, so the board always comes back on USB.
+#
+# Progress is mirrored to unused padding inside the boot partition (LBA 25600;
+# the FIT ends at 25234 and userdata starts at 31808) so a failed bind can still
+# be read back over Maskrom with "upgrade_tool rl 25600 512".
+
+USB_ATTRIBUTE=0x409
+USB_GROUP=rockchip
+G=/sys/kernel/config/usb_gadget/${USB_GROUP}
+STR=${G}/strings/${USB_ATTRIBUTE}
+FUNC=${G}/functions
+CFG=${G}/configs/b.1
+UVC=${FUNC}/uvc.gs6
+LOGSEEK=25600
+
+CVLOG=/tmp/cvusb.log
+
+log()
+{
+	echo "$@" >> $CVLOG
+}
+
+flush()
+{
+	dd if=$CVLOG of=/dev/mmcblk0 bs=512 seek=$LOGSEEK conv=fsync,notrunc 2>/dev/null
+}
+
+uvc_frame_mjpeg()
+{
+	D=${UVC}/streaming/mjpeg/m/$2p
+	mkdir -p $D || return 1
+	echo $1 > $D/wWidth
+	echo $2 > $D/wHeight
+	echo 333333 > $D/dwDefaultFrameInterval
+	echo $(($1*$2*20)) > $D/dwMinBitRate
+	echo $(($1*$2*20)) > $D/dwMaxBitRate
+	echo $(($1*$2*2)) > $D/dwMaxVideoFrameBufferSize
+	printf '333333\n666666\n' > $D/dwFrameInterval
+}
+
+uvc_frame_yuyv()
+{
+	D=${UVC}/streaming/uncompressed/u/$2p
+	mkdir -p $D || return 1
+	echo $1 > $D/wWidth
+	echo $2 > $D/wHeight
+	echo 333333 > $D/dwDefaultFrameInterval
+	echo $(($1*$2*20)) > $D/dwMinBitRate
+	echo $(($1*$2*20)) > $D/dwMaxBitRate
+	echo $(($1*$2*2)) > $D/dwMaxVideoFrameBufferSize
+	printf '333333\n666666\n' > $D/dwFrameInterval
+}
+
+gadget_init()
+{
+	mount -t configfs none /sys/kernel/config 2>/dev/null
+	mkdir -p /dev/usb-ffs
+	mkdir -p ${G}
+	echo 0x2207 > ${G}/idVendor
+	echo 0x0019 > ${G}/idProduct
+	echo 0x0310 > ${G}/bcdDevice
+	echo 0x0200 > ${G}/bcdUSB
+
+	mkdir -p ${STR}
+	SERIAL=`cat /proc/cpuinfo | grep Serial | awk '{print $3}'`
+	if [ -z "$SERIAL" -o "$SERIAL" = "0" ]; then
+		SERIAL=$(echo $RANDOM | md5sum)
+		SERIAL=${SERIAL:0:16}
+	fi
+	echo $SERIAL > ${STR}/serialnumber
+	echo "CameMake" > ${STR}/manufacturer
+	echo "CameVision Single" > ${STR}/product
+
+	mkdir -p ${FUNC}/ffs.adb
+	mkdir -p ${UVC}
+
+	mkdir -p ${CFG}/strings/${USB_ATTRIBUTE}
+	echo "uvc_adb" > ${CFG}/strings/${USB_ATTRIBUTE}/configuration
+	echo 500 > ${CFG}/MaxPower
+
+	echo 0x1 > ${G}/os_desc/b_vendor_code 2>/dev/null
+	echo "MSFT100" > ${G}/os_desc/qw_sign 2>/dev/null
+	ln -sf ${CFG} ${G}/os_desc/b.1 2>/dev/null
+}
+
+uvc_init()
+{
+	echo CameVision > ${UVC}/function_name 2>/dev/null
+	echo 1024 > ${UVC}/streaming_maxpacket
+	echo 1 > ${UVC}/streaming_interval
+
+	mkdir -p ${UVC}/control/header/h
+	ln -sf ${UVC}/control/header/h ${UVC}/control/class/fs/h
+	ln -sf ${UVC}/control/header/h ${UVC}/control/class/hs/h
+
+	uvc_frame_yuyv 640 480 || return 1
+	uvc_frame_mjpeg 1280 720 || return 1
+
+	mkdir -p ${UVC}/streaming/header/h
+	ln -sf ${UVC}/streaming/uncompressed/u ${UVC}/streaming/header/h/u
+	ln -sf ${UVC}/streaming/mjpeg/m ${UVC}/streaming/header/h/m
+	ln -sf ${UVC}/streaming/header/h ${UVC}/streaming/class/fs/h
+	ln -sf ${UVC}/streaming/header/h ${UVC}/streaming/class/hs/h
+	return 0
+}
+
+adb_start()
+{
+	mkdir -p /dev/usb-ffs/adb
+	mount -o uid=2000,gid=2000 -t functionfs adb /dev/usb-ffs/adb 2>/dev/null
+	start-stop-daemon --start --quiet --background --exec /usr/bin/adbd
+}
+
+wait_udc()
+{
+	i=0
+	UDC=
+	while [ $i -lt 20 ]; do
+		UDC=`ls /sys/class/udc/ 2>/dev/null | awk '{print $1}'`
+		[ -n "$UDC" ] && return 0
+		sleep 1
+		i=$((i+1))
+	done
+	return 1
+}
+
+# Write to UDC in a subshell so a stuck write cannot block init forever.
+try_bind()
+{
+	( echo $UDC > ${G}/UDC ) &
+	W=$!
+	i=0
+	while [ $i -lt 15 ]; do
+		if [ -n "`cat ${G}/UDC 2>/dev/null`" ]; then
+			return 0
+		fi
+		kill -0 $W 2>/dev/null || break
+		sleep 1
+		i=$((i+1))
+	done
+	[ -n "`cat ${G}/UDC 2>/dev/null`" ] && return 0
+	kill -9 $W 2>/dev/null
+	return 1
+}
+
+usb_start()
+{
+	ifconfig lo up
+	: > $CVLOG
+	dd if=/dev/zero of=/dev/mmcblk0 bs=512 seek=$LOGSEEK count=512 conv=fsync,notrunc 2>/dev/null
+
+	log "CVUSB1 start $(cat /proc/uptime)"
+	gadget_init
+	log "gadget_init done"
+
+	if uvc_init; then
+		log "uvc_init ok"
+		ln -sf ${UVC} ${CFG}/f1
+		ln -sf ${FUNC}/ffs.adb ${CFG}/f2
+		log "linked f1=uvc f2=adb"
+	else
+		log "uvc_init FAILED, adb only"
+		ln -sf ${FUNC}/ffs.adb ${CFG}/f1
+	fi
+
+	adb_start
+	log "adbd started"
+
+	if ! wait_udc; then
+		log "no UDC appeared"
+		flush
+		return 1
+	fi
+	log "UDC=$UDC"
+	flush
+
+	if try_bind; then
+		log "BOUND uvc+adb udc=[`cat ${G}/UDC`]"
+		log "state=`cat /sys/class/udc/$UDC/state` speed=`cat /sys/class/udc/$UDC/current_speed`"
+		dmesg | grep -iE 'dwc3|udc|gadget|uvc' | tail -25 >> $CVLOG
+		flush
+		return 0
+	fi
+
+	log "BIND FAILED with uvc, falling back to adb only"
+	dmesg | grep -iE 'dwc3|udc|gadget|uvc' | tail -25 >> $CVLOG
+	flush
+
+	echo none > ${G}/UDC 2>/dev/null
+	rm -f ${CFG}/f1 ${CFG}/f2
+	ln -sf ${FUNC}/ffs.adb ${CFG}/f1
+	echo 0x0006 > ${G}/idProduct
+	if try_bind; then
+		log "BOUND adb-only udc=[`cat ${G}/UDC`]"
+	else
+		log "adb-only bind ALSO failed"
+	fi
+	dmesg | grep -iE 'dwc3|udc|gadget|uvc' | tail -25 >> $CVLOG
+	flush
+}
+
+usb_stop()
+{
+	echo none > ${G}/UDC 2>/dev/null
+	P=`ps | grep adbd | grep -v grep | awk '{print $1}'`
+	test -z "$P" || kill -9 $P
+	rm -f ${CFG}/f1 ${CFG}/f2
+}
+
+case "$1" in
+start)
+	usb_start
+	;;
+stop)
+	usb_stop
+	;;
+restart|reload)
+	# Deliberately not supported: re-binding a live UDC wedges dwc3.
+	echo "$0: restart disabled, reboot instead"
+	;;
+*)
+	echo "Usage: $0 {start|stop}"
+	exit 1
+esac
+exit 0

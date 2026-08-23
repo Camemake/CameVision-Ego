@@ -1,0 +1,131 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>CameVision Ego depth</title>
+<style>
+ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Consolas,monospace;color:#dce8f5}
+ .wrap{display:grid;grid-template-rows:58vh 42vh;width:100vw;height:100vh}
+ .cams{display:flex;min-height:0}
+ .pane{position:relative;flex:1;min-width:0;background:#000}
+ .pane img{width:100%;height:100%;object-fit:contain;display:block}
+ .hud{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.55);padding:8px 10px;border-radius:6px;font-size:13px;line-height:1.35;white-space:pre;border:1px solid rgba(180,220,255,.25)}
+ .cloud{position:relative;background:#05070c}
+ canvas{width:100%;height:100%;display:block}
+ .hint{position:absolute;left:10px;top:10px;font-size:13px;opacity:.85}
+</style></head><body>
+<div class="wrap">
+ <div class="cams">
+  <div class="pane"><img src="/ov0" alt=""><div class="hud" id="h0">CAM0 IMU0</div></div>
+  <div class="pane"><img src="/ov1" alt=""><div class="hud" id="h1">CAM1 IMU1</div></div>
+ </div>
+ <div class="cloud">
+  <canvas id="gl"></canvas>
+  <div class="hint">stereo 3D · 75.000 mm · drag to orbit · wheel zoom</div>
+ </div>
+</div>
+<script>
+function n(v,d){return (v===undefined||Number.isNaN(+v))?"—":Number(v).toFixed(d)}
+function block(label, imu, d){
+  if(!imu) return label+"\nno imu";
+  return label+"  "+(imu.bus||"")+
+    "\n"+(imu.t_iso||d.t_iso||"")+
+    "\n"+n(imu.read_hz||d.read_hz,0)+" Hz  |a| "+n(imu.a_g,3)+" g"+
+    "\nω "+n(imu.gx,1)+"  "+n(imu.gy,1)+"  "+n(imu.gz,1)+" °/s"+
+    "\nbaseline "+n(d.baseline_mm||75,3)+" mm";
+}
+async function hud(){
+  try{
+    const d = await (await fetch("http://127.0.0.1:8083/",{cache:"no-store"})).json();
+    document.getElementById("h0").textContent = block("CAM0  IMU0", d.imu0, d);
+    document.getElementById("h1").textContent = block("CAM1  IMU1", d.imu1, d);
+  }catch(e){}
+  setTimeout(hud, 80);
+}
+hud();
+
+const canvas=document.getElementById("gl");
+const gl=canvas.getContext("webgl");
+let yaw=-0.6, pitch=0.35, dist=1.6, drag=false, lx=0, ly=0;
+canvas.addEventListener("mousedown",e=>{drag=true;lx=e.clientX;ly=e.clientY});
+window.addEventListener("mouseup",()=>drag=false);
+window.addEventListener("mousemove",e=>{
+  if(!drag) return;
+  yaw += (e.clientX-lx)*0.005;
+  pitch = Math.max(-1.4, Math.min(1.4, pitch+(e.clientY-ly)*0.005));
+  lx=e.clientX; ly=e.clientY;
+});
+canvas.addEventListener("wheel",e=>{dist=Math.max(0.3, Math.min(8, dist+e.deltaY*0.002)); e.preventDefault()},{passive:false});
+
+const vs=`attribute vec3 p; attribute vec3 c; uniform mat4 m; varying vec3 vc;
+void main(){ vc=c; gl_Position=m*vec4(p,1.0); gl_PointSize=2.0; }`;
+const fs=`precision mediump float; varying vec3 vc; void main(){ gl_FragColor=vec4(vc,1.0); }`;
+function sh(t,s){const o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o); return o}
+const prog=gl.createProgram();
+gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs));
+gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
+gl.linkProgram(prog);
+const bufP=gl.createBuffer(), bufC=gl.createBuffer();
+let npts=0;
+function setCloud(pts){
+  const p=new Float32Array(pts.length*3), c=new Float32Array(pts.length*3);
+  for(let i=0;i<pts.length;i++){
+    p[i*3]=pts[i][0]; p[i*3+1]=pts[i][1]; p[i*3+2]=pts[i][2];
+    c[i*3]=pts[i][3]; c[i*3+1]=pts[i][4]; c[i*3+2]=pts[i][5];
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, bufP); gl.bufferData(gl.ARRAY_BUFFER, p, gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, bufC); gl.bufferData(gl.ARRAY_BUFFER, c, gl.DYNAMIC_DRAW);
+  npts=pts.length;
+}
+async function pull(){
+  try{
+    const d=await (await fetch("/cloud.json",{cache:"no-store"})).json();
+    if(d.pts && d.pts.length) setCloud(d.pts);
+  }catch(e){}
+  setTimeout(pull, 120);
+}
+pull();
+function mat(){
+  const w=canvas.width, h=canvas.height, asp=w/Math.max(1,h);
+  const fov=1.1, near=0.05, far=20, f=1/Math.tan(fov/2);
+  const P=new Float32Array(16);
+  P[0]=f/asp; P[5]=f; P[10]=(far+near)/(near-far); P[11]=-1; P[14]=(2*far*near)/(near-far);
+  const cy=Math.cos(yaw), sy=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch);
+  const ex=dist*cy*cp, ey=dist*sp, ez=dist*sy*cp;
+  function look(){
+    const zx=-ex, zy=-ey, zz=-ez, zl=Math.hypot(zx,zy,zz)||1;
+    let z0=zx/zl,z1=zy/zl,z2=zz/zl;
+    let x0=-z2, x1=0, x2=z0, xl=Math.hypot(x0,x1,x2)||1;
+    x0/=xl; x2/=xl;
+    const y0=z1*x2-z2*x1, y1=z2*x0-z0*x2, y2=z0*x1-z1*x0;
+    const V=new Float32Array(16);
+    V[0]=x0; V[4]=y0; V[8]=z0; V[12]=-(x0*ex+x1*ey+x2*ez);
+    V[1]=x1; V[5]=y1; V[9]=z1; V[13]=-(y0*ex+y1*ey+y2*ez);
+    V[2]=x2; V[6]=y2; V[10]=z2; V[14]=-(z0*ex+z1*ey+z2*ez);
+    V[15]=1;
+    const M=new Float32Array(16);
+    for(let i=0;i<4;i++) for(let j=0;j<4;j++){
+      let s=0; for(let k=0;k<4;k++) s+=P[k*4+i]*V[j*4+k];
+      M[j*4+i]=s;
+    }
+    return M;
+  }
+  return look();
+}
+function draw(){
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.clientWidth, h=canvas.clientHeight;
+  if(canvas.width!==w*dpr || canvas.height!==h*dpr){ canvas.width=w*dpr; canvas.height=h*dpr; }
+  gl.viewport(0,0,canvas.width,canvas.height);
+  gl.clearColor(0.02,0.03,0.05,1); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST);
+  if(npts){
+    gl.useProgram(prog);
+    gl.uniformMatrix4fv(gl.getUniformLocation(prog,"m"), false, mat());
+    const ap=gl.getAttribLocation(prog,"p"), ac=gl.getAttribLocation(prog,"c");
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufP); gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufC); gl.enableVertexAttribArray(ac); gl.vertexAttribPointer(ac,3,gl.FLOAT,false,0,0);
+    gl.drawArrays(gl.POINTS, 0, npts);
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body></html>

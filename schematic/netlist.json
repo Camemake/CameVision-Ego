@@ -1,0 +1,4560 @@
+{
+ "ALERT0n": {
+  "pins": [
+   "U3.P9",
+   "U4.4"
+  ],
+  "soc": []
+ },
+ "AUDIO0ADC00MICN": {
+  "pins": [
+   "C62.2",
+   "C63.2",
+   "C64.2",
+   "U1.2L9",
+   "U1.2N7",
+   "U1.AM17"
+  ],
+  "soc": [
+   {
+    "pad": "2L9",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VCCIO7_VCC"
+   },
+   {
+    "pad": "2N7",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "AUDIO_ADC_AVDD_1V8"
+   },
+   {
+    "pad": "AM17",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "AUDIO0ADC00MICP": {
+  "pins": [
+   "U1.AM16"
+  ],
+  "soc": [
+   {
+    "pad": "AM16",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "AUDIO0ADC00VCM": {
+  "pins": [
+   "U1.2M6"
+  ],
+  "soc": [
+   {
+    "pad": "2M6",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "AUDIO_ADC0_VCM"
+   }
+  ]
+ },
+ "AUDIO0ADC00VREF": {
+  "pins": [
+   "U1.2M7"
+  ],
+  "soc": [
+   {
+    "pad": "2M7",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "AUDIO_ADC0_VREF"
+   }
+  ]
+ },
+ "AUDIO0ADC10MICN": {
+  "pins": [
+   "U1.AL18"
+  ],
+  "soc": [
+   {
+    "pad": "AL18",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "AUDIO_ADC1_MICN"
+   }
+  ]
+ },
+ "AUDIO0ADC10MICP": {
+  "pins": [
+   "U1.AL17"
+  ],
+  "soc": [
+   {
+    "pad": "AL17",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "AUDIO_ADC1_MICP"
+   }
+  ]
+ },
+ "AUDIO0ADC10VCM": {
+  "pins": [
+   "U1.2L6"
+  ],
+  "soc": [
+   {
+    "pad": "2L6",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "AUDIO_ADC1_VCM"
+   }
+  ]
+ },
+ "AUDIO0ADC10VREF": {
+  "pins": [
+   "U1.2N8"
+  ],
+  "soc": [
+   {
+    "pad": "2N8",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "AUDIO_ADC1_VREF"
+   }
+  ]
+ },
+ "CAM0PWDN": {
+  "pins": [
+   "C108.2",
+   "J2.17",
+   "U1.1T21",
+   "U1.U31",
+   "U1.V31",
+   "U1.V32",
+   "U1.W31",
+   "U1.Y32"
+  ],
+  "soc": [
+   {
+    "pad": "1T21",
+    "gpio": "GPIO4_A6",
+    "pull": "D",
+    "funcs": [
+     "CAM_CLK0_OUT",
+     "UART5_CTSN_M0",
+     "GPIO4_B1_D",
+     "AE31CAM_CLK1_OUT",
+     "UART5_RTSN_M0",
+     "GPIO4_B0_D",
+     "AF31PWM0_CH7_M1",
+     "SPI0_CLK_M1",
+     "SAI1_SDO_M1",
+     "I2C4_SCL_M2",
+     "UART5_RX_M0",
+     "GPIO4_A7_D",
+     "1T22PWM0_CH6_M1",
+     "SPI0_CSN0_M1",
+     "SAI1_SDI_M1",
+     "I2C4_SDA_M2",
+     "UART5_TX_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "U31",
+    "gpio": "GPIO6_C2",
+    "pull": "D",
+    "funcs": [
+     "SARADC2_IN6",
+     "ETH_TXCLK_M0",
+     "VI_CIF_CLKOUT_M0FEPHY_LEDLINK_M2",
+     "UART3_TX_M2",
+     "PWM0_CH2_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "V31",
+    "gpio": "GPIO6_C3",
+    "pull": "D",
+    "funcs": [
+     "SARADC2_IN7",
+     "ETH_RXCLK_M0",
+     "VI_CIF_HSYNC_M0",
+     "FEPHY_LEDSPD_M2",
+     "I2C2_SDA_M2",
+     "UART3_RX_M2",
+     "PWM0_CH3_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "V32",
+    "gpio": "GPIO6_C0",
+    "pull": "D",
+    "funcs": [
+     "SARADC2_IN4",
+     "ETH_MDC_M0",
+     "VI_CIF_VSYNC_M0",
+     "I2C2_SCL_M2",
+     "UART3_RTSN_M2",
+     "PWM0_CH0_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "W31",
+    "gpio": "GPIO6_B0",
+    "pull": "D",
+    "funcs": [
+     "SARADC2_IN0",
+     "ETH_TXD1_M0",
+     "SAI0_SDO2_M1",
+     "VI_CIF_D8_M0",
+     "SAI0_SDI2_M1",
+     "SPI1_CSN1_M0",
+     "UART6_TX_M1"
+    ],
+    "power": null
+   },
+   {
+    "pad": "Y32",
+    "gpio": "GPIO6_A7",
+    "pull": "D",
+    "funcs": [
+     "SARADC1_IN7",
+     "ETH_TXD0_M0",
+     "SAI0_SDO1_M1",
+     "VI_CIF_D7_M0",
+     "SAI0_SDI3_M1",
+     "UART4_CTSN_M2",
+     "PWM2_CH3_M2"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "CLK0OUT0ETHERNET0M1": {
+  "pins": [
+   "C93.2",
+   "C94.2",
+   "C95.2",
+   "C96.2",
+   "U1.1F22",
+   "U1.2B12",
+   "U1.2C12",
+   "U1.2E12",
+   "U1.2F12"
+  ],
+  "soc": [
+   {
+    "pad": "1F22",
+    "gpio": "GPIO5_C1",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D6",
+     "ETH_CLK_25M_OUT_M1",
+     "PWM3_CH1_M1",
+     "VI_CIF_D13_M1",
+     "VO_LCDC_D17"
+    ],
+    "power": null
+   },
+   {
+    "pad": "2B12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "MIPI_DSI_TX0_AVDD_0V9"
+   },
+   {
+    "pad": "2C12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "MIPI_DSI_TX0_AVDD_1V8"
+   },
+   {
+    "pad": "2E12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VCCIO5_VCC_0"
+   },
+   {
+    "pad": "2F12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VCCIO5_VCC_1"
+   }
+  ]
+ },
+ "CLKOUT": {
+  "pins": [
+   "U5.1"
+  ],
+  "soc": []
+ },
+ "D0": {
+  "pins": [
+   "J1.23",
+   "R17.2",
+   "U1.AL1",
+   "U2.A3"
+  ],
+  "soc": [
+   {
+    "pad": "AL1",
+    "gpio": "GPIO1_A0",
+    "pull": "U",
+    "funcs": [
+     "PWM3_CH0_M0",
+     "FSPI1_D0_M1",
+     "E",
+     "MMC_D0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "D1": {
+  "pins": [
+   "R29.2",
+   "U1.1V3",
+   "U2.A4"
+  ],
+  "soc": [
+   {
+    "pad": "1V3",
+    "gpio": "GPIO1_A1",
+    "pull": "U",
+    "funcs": [
+     "PWM3_CH1_M0",
+     "FSPI1_D1_M1",
+     "E",
+     "MMC_D1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "D2": {
+  "pins": [
+   "R41.2",
+   "U1.1V2",
+   "U2.A5"
+  ],
+  "soc": [
+   {
+    "pad": "1V2",
+    "gpio": "GPIO1_A2",
+    "pull": "U",
+    "funcs": [
+     "PWM3_CH2_M0",
+     "FSPI1_D2_M1",
+     "E",
+     "MMC_D2"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "D3": {
+  "pins": [
+   "R42.2",
+   "U1.AK2",
+   "U2.B2"
+  ],
+  "soc": [
+   {
+    "pad": "AK2",
+    "gpio": "GPIO1_A3",
+    "pull": "U",
+    "funcs": [
+     "PWM3_CH3_M0",
+     "FSPI1_D3_M1",
+     "E",
+     "MMC_D3"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "D4": {
+  "pins": [
+   "R43.2",
+   "U1.AK1",
+   "U2.B3"
+  ],
+  "soc": [
+   {
+    "pad": "AK1",
+    "gpio": "GPIO1_A4",
+    "pull": "U",
+    "funcs": [
+     "PWM3_CH4_M0",
+     "E",
+     "MMC_D4"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "D5": {
+  "pins": [
+   "R44.2",
+   "U1.AJ2",
+   "U2.B4"
+  ],
+  "soc": [
+   {
+    "pad": "AJ2",
+    "gpio": "GPIO1_A5",
+    "pull": "U",
+    "funcs": [
+     "PWM3_CH5_M0",
+     "FSPI0",
+     "_CSN1",
+     "EMMC_D5"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "D6": {
+  "pins": [
+   "R45.2",
+   "U1.AH2",
+   "U2.B5"
+  ],
+  "soc": [
+   {
+    "pad": "AH2",
+    "gpio": "GPIO1_A6",
+    "pull": "U",
+    "funcs": [
+     "PWM3_CH6_M0",
+     "E",
+     "MMC_D6"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "D7": {
+  "pins": [
+   "R46.2",
+   "U1.AH1",
+   "U2.B6"
+  ],
+  "soc": [
+   {
+    "pad": "AH1",
+    "gpio": "GPIO1_A7",
+    "pull": "U",
+    "funcs": [
+     "PWM3_CH7_M0",
+     "E",
+     "MMC_D7"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "DDR0RZQ": {
+  "pins": [
+   "R15.2",
+   "U1.2A2"
+  ],
+  "soc": [
+   {
+    "pad": "2A2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "DDR_RZQ"
+   }
+  ]
+ },
+ "DDR40A0": {
+  "pins": [
+   "U1.B13",
+   "U3.P3"
+  ],
+  "soc": [
+   {
+    "pad": "B13",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A1": {
+  "pins": [
+   "U1.1C8",
+   "U3.P7"
+  ],
+  "soc": [
+   {
+    "pad": "1C8",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A10": {
+  "pins": [
+   "U1.1C10",
+   "U3.M3"
+  ],
+  "soc": [
+   {
+    "pad": "1C10",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A11": {
+  "pins": [
+   "U1.1A12",
+   "U3.T2"
+  ],
+  "soc": [
+   {
+    "pad": "1A12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A12": {
+  "pins": [
+   "U1.1C4",
+   "U3.M7"
+  ],
+  "soc": [
+   {
+    "pad": "1C4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A13": {
+  "pins": [
+   "U1.B14",
+   "U3.T8"
+  ],
+  "soc": [
+   {
+    "pad": "B14",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A2": {
+  "pins": [
+   "U1.1B12",
+   "U3.R3"
+  ],
+  "soc": [
+   {
+    "pad": "1B12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A3": {
+  "pins": [
+   "U1.1A6",
+   "U3.N7"
+  ],
+  "soc": [
+   {
+    "pad": "1A6",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A4": {
+  "pins": [
+   "U1.1B10",
+   "U3.N3"
+  ],
+  "soc": [
+   {
+    "pad": "1B10",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A5": {
+  "pins": [
+   "U1.A8",
+   "U3.P8"
+  ],
+  "soc": [
+   {
+    "pad": "A8",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VSSQ"
+   }
+  ]
+ },
+ "DDR40A6": {
+  "pins": [
+   "U1.B8",
+   "U3.P2"
+  ],
+  "soc": [
+   {
+    "pad": "B8",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A7": {
+  "pins": [
+   "U1.1A8",
+   "U3.R8"
+  ],
+  "soc": [
+   {
+    "pad": "1A8",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A8": {
+  "pins": [
+   "U1.A10",
+   "U3.R2"
+  ],
+  "soc": [
+   {
+    "pad": "A10",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40A9": {
+  "pins": [
+   "U1.A11",
+   "U3.R7"
+  ],
+  "soc": [
+   {
+    "pad": "A11",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40ACTN": {
+  "pins": [
+   "U1.A5",
+   "U3.L3"
+  ],
+  "soc": [
+   {
+    "pad": "A5",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "DAT2"
+   }
+  ]
+ },
+ "DDR40BA0": {
+  "pins": [
+   "U1.B11",
+   "U3.N2"
+  ],
+  "soc": [
+   {
+    "pad": "B11",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40BA1": {
+  "pins": [
+   "U1.1C6",
+   "U3.N8"
+  ],
+  "soc": [
+   {
+    "pad": "1C6",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40BG0": {
+  "pins": [
+   "U1.A7",
+   "U3.M2"
+  ],
+  "soc": [
+   {
+    "pad": "A7",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40BG1": {
+  "pins": [
+   "U1.1C12"
+  ],
+  "soc": [
+   {
+    "pad": "1C12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40CASN0A15": {
+  "pins": [
+   "U1.1A4",
+   "U3.M8"
+  ],
+  "soc": [
+   {
+    "pad": "1A4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40CKE": {
+  "pins": [
+   "U1.AA1",
+   "U1.AB1",
+   "U1.AC2",
+   "U1.AD1",
+   "U1.AD2",
+   "U1.AE1",
+   "U1.B1",
+   "U1.B2",
+   "U1.B4",
+   "U1.V1",
+   "U1.V2",
+   "U1.W1",
+   "U1.W2",
+   "U1.Y2",
+   "U3.K2"
+  ],
+  "soc": [
+   {
+    "pad": "AA1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AB1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AC2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AD1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AD2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AE1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "B1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "B2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "DAT3"
+   },
+   {
+    "pad": "B4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "DAT5"
+   },
+   {
+    "pad": "V1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "V2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "W1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "W2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "Y2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40CLKN": {
+  "pins": [
+   "C33.1",
+   "C34.1",
+   "C35.1",
+   "C36.2",
+   "C37.1",
+   "C38.1",
+   "C69.2",
+   "C70.2",
+   "C71.2",
+   "C72.2",
+   "C73.2",
+   "C75.2",
+   "C76.2",
+   "C77.2",
+   "C78.2",
+   "C79.2",
+   "C80.2",
+   "C82.2",
+   "C83.2",
+   "C84.2",
+   "C85.2",
+   "C86.2",
+   "C87.2",
+   "C88.2",
+   "C89.2",
+   "R15.1",
+   "R32.1",
+   "R34.1",
+   "R34.2",
+   "R35.1",
+   "R37.2",
+   "U1.1A2",
+   "U3.A1",
+   "U3.A9",
+   "U3.B1",
+   "U3.B3",
+   "U3.B9",
+   "U3.C1",
+   "U3.D1",
+   "U3.D9",
+   "U3.F2",
+   "U3.F8",
+   "U3.G1",
+   "U3.G7",
+   "U3.G9",
+   "U3.J1",
+   "U3.J2",
+   "U3.J8",
+   "U3.J9",
+   "U3.L1",
+   "U3.L9",
+   "U3.M1",
+   "U3.R1",
+   "U3.R9",
+   "U3.T9",
+   "U4.1",
+   "U4.5"
+  ],
+  "soc": [
+   {
+    "pad": "1A2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40CLKP": {
+  "pins": [
+   "R31.1",
+   "U1.1B2",
+   "U3.K7"
+  ],
+  "soc": [
+   {
+    "pad": "1B2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40CS1": {
+  "pins": [
+   "C33.2",
+   "C34.2",
+   "C35.2",
+   "C36.1",
+   "C37.2",
+   "C38.2",
+   "U1.2J1",
+   "U1.B10"
+  ],
+  "soc": [
+   {
+    "pad": "2J1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "DDR_VREF_OUT"
+   },
+   {
+    "pad": "B10",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40CSN0": {
+  "pins": [
+   "U1.A2",
+   "U1.A4",
+   "U3.L7"
+  ],
+  "soc": [
+   {
+    "pad": "A2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VSSQ"
+   },
+   {
+    "pad": "A4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "DAT1"
+   }
+  ]
+ },
+ "DDR40DML0A": {
+  "pins": [
+   "U1.1M1",
+   "U3.E2"
+  ],
+  "soc": [
+   {
+    "pad": "1M1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DMU0A": {
+  "pins": [
+   "U1.K2",
+   "U3.E7"
+  ],
+  "soc": [
+   {
+    "pad": "K2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "CKE"
+   }
+  ]
+ },
+ "DDR40DQL0": {
+  "pins": [
+   "U3.C8"
+  ],
+  "soc": []
+ },
+ "DDR40DQL00A": {
+  "pins": [
+   "U1.R1"
+  ],
+  "soc": [
+   {
+    "pad": "R1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQL1": {
+  "pins": [
+   "U3.A3"
+  ],
+  "soc": []
+ },
+ "DDR40DQL10A": {
+  "pins": [
+   "U1.1M3"
+  ],
+  "soc": [
+   {
+    "pad": "1M3",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQL2": {
+  "pins": [
+   "U3.C7"
+  ],
+  "soc": []
+ },
+ "DDR40DQL20A": {
+  "pins": [
+   "U1.R2"
+  ],
+  "soc": [
+   {
+    "pad": "R2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQL3": {
+  "pins": [
+   "U3.D3"
+  ],
+  "soc": []
+ },
+ "DDR40DQL30A": {
+  "pins": [
+   "U1.1H1"
+  ],
+  "soc": [
+   {
+    "pad": "1H1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQL4": {
+  "pins": [
+   "U3.B8"
+  ],
+  "soc": []
+ },
+ "DDR40DQL40A": {
+  "pins": [
+   "U1.T2"
+  ],
+  "soc": [
+   {
+    "pad": "T2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "A11"
+   }
+  ]
+ },
+ "DDR40DQL5": {
+  "pins": [
+   "U3.D7"
+  ],
+  "soc": []
+ },
+ "DDR40DQL50A": {
+  "pins": [
+   "U1.T1"
+  ],
+  "soc": [
+   {
+    "pad": "T1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VSS"
+   }
+  ]
+ },
+ "DDR40DQL6": {
+  "pins": [
+   "U3.C3"
+  ],
+  "soc": []
+ },
+ "DDR40DQL60A": {
+  "pins": [
+   "U1.1H3"
+  ],
+  "soc": [
+   {
+    "pad": "1H3",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQL7": {
+  "pins": [
+   "U3.C2"
+  ],
+  "soc": []
+ },
+ "DDR40DQL70A": {
+  "pins": [
+   "U1.1P1"
+  ],
+  "soc": [
+   {
+    "pad": "1P1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQSL0N0A": {
+  "pins": [
+   "C81.2",
+   "R33.1",
+   "R36.1",
+   "R37.1",
+   "U1.1K2",
+   "U3.A7",
+   "U3.F9",
+   "U3.T7",
+   "U4.3"
+  ],
+  "soc": [
+   {
+    "pad": "1K2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQSL0P0A": {
+  "pins": [
+   "U1.1K1",
+   "U3.B7"
+  ],
+  "soc": [
+   {
+    "pad": "1K1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQSU0N0A": {
+  "pins": [
+   "U1.1F2",
+   "U3.F3"
+  ],
+  "soc": [
+   {
+    "pad": "1F2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQSU0P0A": {
+  "pins": [
+   "U1.1D1",
+   "U1.1D2",
+   "U1.1F1",
+   "U3.G3"
+  ],
+  "soc": [
+   {
+    "pad": "1D1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1D2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1F1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQU00A": {
+  "pins": [
+   "U1.M2",
+   "U3.G2"
+  ],
+  "soc": [
+   {
+    "pad": "M2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "NC6"
+   }
+  ]
+ },
+ "DDR40DQU10A": {
+  "pins": [
+   "U1.M1",
+   "U3.H8"
+  ],
+  "soc": [
+   {
+    "pad": "M1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "NC6"
+   }
+  ]
+ },
+ "DDR40DQU20A": {
+  "pins": [
+   "U1.N1",
+   "U3.H7"
+  ],
+  "soc": [
+   {
+    "pad": "N1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "NC7"
+   }
+  ]
+ },
+ "DDR40DQU30A": {
+  "pins": [
+   "U1.N2",
+   "U3.F7"
+  ],
+  "soc": [
+   {
+    "pad": "N2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VSSQ"
+   }
+  ]
+ },
+ "DDR40DQU40A": {
+  "pins": [
+   "U1.C1",
+   "U1.D2",
+   "U1.E2",
+   "U1.F1",
+   "U1.F2",
+   "U1.G1",
+   "U1.H2",
+   "U3.H3"
+  ],
+  "soc": [
+   {
+    "pad": "C1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "D2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VSSQ"
+   },
+   {
+    "pad": "E2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "F1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VSSQ"
+   },
+   {
+    "pad": "F2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "G1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "H2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQU50A": {
+  "pins": [
+   "U1.J2",
+   "U3.H2"
+  ],
+  "soc": [
+   {
+    "pad": "J2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQU60A": {
+  "pins": [
+   "U1.J1",
+   "U3.J3"
+  ],
+  "soc": [
+   {
+    "pad": "J1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40DQU70A": {
+  "pins": [
+   "U1.K1",
+   "U3.J7"
+  ],
+  "soc": [
+   {
+    "pad": "K1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "VSS"
+   }
+  ]
+ },
+ "DDR40ODT0": {
+  "pins": [
+   "U1.B5",
+   "U3.K3"
+  ],
+  "soc": [
+   {
+    "pad": "B5",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "DAT6"
+   }
+  ]
+ },
+ "DDR40ODT1": {
+  "pins": [
+   "U1.A13"
+  ],
+  "soc": [
+   {
+    "pad": "A13",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40RASN0A16": {
+  "pins": [
+   "U1.B7",
+   "U3.L8"
+  ],
+  "soc": [
+   {
+    "pad": "B7",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40RST": {
+  "pins": [
+   "C68.1",
+   "C68.2",
+   "C69.1",
+   "C70.1",
+   "C71.1",
+   "C72.1",
+   "C73.1",
+   "C74.1",
+   "C74.2",
+   "C75.1",
+   "C76.1",
+   "C77.1",
+   "C78.1",
+   "C79.1",
+   "C80.1",
+   "C81.1",
+   "C82.1",
+   "C83.1",
+   "C84.1",
+   "C85.1",
+   "C86.1",
+   "C87.1",
+   "C88.1",
+   "C89.1",
+   "R31.2",
+   "R32.2",
+   "R33.2",
+   "R35.2",
+   "R36.2",
+   "U1.2A1",
+   "U3.B2",
+   "U3.E9",
+   "U3.M9",
+   "U3.N1",
+   "U3.N9",
+   "U3.P1",
+   "U3.T3",
+   "U4.2"
+  ],
+  "soc": [
+   {
+    "pad": "2A1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "DDR40WEN0A14": {
+  "pins": [
+   "U1.A14",
+   "U3.L2"
+  ],
+  "soc": [
+   {
+    "pad": "A14",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "EMMC0CLK": {
+  "pins": [
+   "J1.21",
+   "R20.2",
+   "U2.M6"
+  ],
+  "soc": []
+ },
+ "EMMC0CMD": {
+  "pins": [
+   "R21.1",
+   "U1.AG1",
+   "U2.M5"
+  ],
+  "soc": [
+   {
+    "pad": "AG1",
+    "gpio": "GPIO1_B1",
+    "pull": "U",
+    "funcs": [
+     "SAI1_SDO_M0",
+     "FSPI0",
+     "_D2",
+     "G",
+     "PIO1_B2_U",
+     "1T3FSPI1_CSN0_M1",
+     "E",
+     "MMC_CMD"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "EMMC0RST": {
+  "pins": [
+   "R22.1",
+   "U1.AG2",
+   "U2.K5"
+  ],
+  "soc": [
+   {
+    "pad": "AG2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "EVI": {
+  "pins": [
+   "R40.2",
+   "U5.8"
+  ],
+  "soc": []
+ },
+ "FEPHY0REXT": {
+  "pins": [
+   "C65.2",
+   "C66.2",
+   "C67.2",
+   "R30.2",
+   "U1.2A11",
+   "U1.2A12",
+   "U1.2B10",
+   "U1.2C11"
+  ],
+  "soc": [
+   {
+    "pad": "2A11",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "FEPHY_REXT"
+   },
+   {
+    "pad": "2A12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "FEPHY_AVDD_0V9"
+   },
+   {
+    "pad": "2B10",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "FEPHY_AVDD_3V3"
+   },
+   {
+    "pad": "2C11",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "FEPHY_AVDD_1V8"
+   }
+  ]
+ },
+ "GEPHY0RST03V3IO": {
+  "pins": [
+   "U1.1H22"
+  ],
+  "soc": [
+   {
+    "pad": "1H22",
+    "gpio": "GPIO5_B4",
+    "pull": "D",
+    "funcs": [
+     "DSMC_CSN0",
+     "U",
+     "ART7_TX_M0",
+     "V",
+     "I_CIF_D8_M1",
+     "VO_LCDC_D12"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0MDC0M1": {
+  "pins": [
+   "U1.J31"
+  ],
+  "soc": [
+   {
+    "pad": "J31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0MDIO0M1": {
+  "pins": [
+   "U1.1H21"
+  ],
+  "soc": [
+   {
+    "pad": "1H21",
+    "gpio": "GPIO5_B5",
+    "pull": "D",
+    "funcs": [
+     "DSMC_CLKN",
+     "DSMC_INT0",
+     "ETH_MDC_M1",
+     "UART7_RTSN_M0",
+     "PWM2_CH2_M1",
+     "VI_CIF_D10_M1",
+     "VO_LCDC_D14",
+     "GPIO5_B6_D",
+     "J31DSMC_DQS0",
+     "ETH_MDIO_M1",
+     "UART7_RX_M0",
+     "VI_CIF_D9_M1",
+     "VO_LCDC_D13"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0RXCTL0M1": {
+  "pins": [
+   "U1.K31"
+  ],
+  "soc": [
+   {
+    "pad": "K31",
+    "gpio": "GPIO5_B0",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D9",
+     "E",
+     "TH_RXCTL_M1",
+     "UART6_TX_M0",
+     "V",
+     "I_CIF_D4_M1",
+     "VO_LCDC_D8"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0RXD00M1": {
+  "pins": [
+   "U1.1K23"
+  ],
+  "soc": [
+   {
+    "pad": "1K23",
+    "gpio": "GPIO5_B1",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D8",
+     "ETH_RXD0_M1",
+     "UART6_RX_M0",
+     "VI_CIF_D5_M1",
+     "VO_LCDC_D9"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0RXD10M1": {
+  "pins": [
+   "U1.1H23"
+  ],
+  "soc": [
+   {
+    "pad": "1H23",
+    "gpio": "GPIO5_B2",
+    "pull": "D",
+    "funcs": [
+     "DSMC_RESETN",
+     "DSMC_INT1",
+     "ETH_RXD1_M1",
+     "UART6_RTSN_M0",
+     "PWM2_CH0_M1",
+     "VI_CIF_D6_M1",
+     "VO_LCDC_D10"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0TXCTL0M1": {
+  "pins": [
+   "U1.1F23"
+  ],
+  "soc": [
+   {
+    "pad": "1F23",
+    "gpio": "GPIO5_C2",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D5",
+     "ETH_TXCTL_M1",
+     "PWM3_CH2_M1",
+     "VI_CIF_D14_M1",
+     "VO_LCDC_D18"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0TXD00M1": {
+  "pins": [
+   "U1.H32"
+  ],
+  "soc": [
+   {
+    "pad": "H32",
+    "gpio": "GPIO5_B7",
+    "pull": "D",
+    "funcs": [
+     "DSMC_CLKP",
+     "ETH_TXD0_M1",
+     "UART7_CTSN_M0",
+     "PWM2_CH3_M1",
+     "VI_CIF_D11_M1",
+     "VO_LCDC_D15"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0TXD10M1": {
+  "pins": [
+   "U1.J32"
+  ],
+  "soc": [
+   {
+    "pad": "J32",
+    "gpio": "GPIO5_C0",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D7",
+     "ETH_TXD1_M1",
+     "PWM3_CH0_M1",
+     "VI_CIF_D12_M1",
+     "VO_LCDC_D16"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "GMAC0TXD30M1": {
+  "pins": [
+   "U1.R31"
+  ],
+  "soc": [
+   {
+    "pad": "R31",
+    "gpio": "GPIO5_A0",
+    "pull": "D",
+    "funcs": [
+     "DSMC_CSN1",
+     "ETH_TXD3_M1",
+     "UART4_RTSN_M1",
+     "PWM2_CH4_M0",
+     "VI_CIF_D0_M1",
+     "VO_LCDC_D0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "I2C00SCL0PMIC": {
+  "pins": [
+   "BTN1.2",
+   "C100.2",
+   "C18.1",
+   "C18.2",
+   "C19.1",
+   "C19.2",
+   "C20.1",
+   "C21.1",
+   "C21.2",
+   "C22.1",
+   "C23.1",
+   "C24.1",
+   "C24.2",
+   "C25.1",
+   "C25.2",
+   "C26.2",
+   "C27.2",
+   "C28.1",
+   "C28.2",
+   "C29.1",
+   "C29.2",
+   "C30.1",
+   "C30.2",
+   "C31.1",
+   "C31.2",
+   "C32.1",
+   "C32.2",
+   "C39.1",
+   "C40.1",
+   "C41.1",
+   "C42.1",
+   "C43.1",
+   "C44.1",
+   "C45.1",
+   "C46.2",
+   "D1.1",
+   "D2.2",
+   "ED1.2",
+   "J1.11",
+   "J1.14",
+   "J1.26",
+   "J1.39",
+   "J1.MP1",
+   "J1.MP2",
+   "J1.MP3",
+   "J1.MP4",
+   "R10.2",
+   "R11.2",
+   "R12.2",
+   "R13.2",
+   "R14.1",
+   "R14.2",
+   "R3.2",
+   "R9.2",
+   "U1.1AA12",
+   "U1.2C13",
+   "U1.2H12",
+   "U1.2J4",
+   "U1.2K4",
+   "U1.2K5",
+   "U1.2L5",
+   "U1.2M3",
+   "Y1.2",
+   "Y1.4"
+  ],
+  "soc": [
+   {
+    "pad": "1AA12",
+    "gpio": "GPIO0_C2",
+    "pull": "U",
+    "funcs": [
+     "I2C0_SCL_M0",
+     "SPI2",
+     "AHB_CSN"
+    ],
+    "power": null
+   },
+   {
+    "pad": "2C13",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "2H12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "2J4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "2K4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "2K5",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "2L5",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "PMUIO_3V3"
+   },
+   {
+    "pad": "2M3",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "I2C00SDA0PMIC": {
+  "pins": [
+   "J1.40",
+   "R13.1",
+   "U1.1AB12"
+  ],
+  "soc": [
+   {
+    "pad": "1AB12",
+    "gpio": "GPIO0_C3",
+    "pull": "U",
+    "funcs": [
+     "I2C0_SDA_M0",
+     "SPI2",
+     "AHB_CLK"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "I2C0SCL": {
+  "pins": [
+   "C97.1",
+   "C98.1",
+   "C99.2",
+   "U5.3",
+   "U5.5"
+  ],
+  "soc": []
+ },
+ "I2C0SDA": {
+  "pins": [
+   "U5.4"
+  ],
+  "soc": []
+ },
+ "I2C20SCL": {
+  "pins": [
+   "R10.1",
+   "U1.1AA8"
+  ],
+  "soc": [
+   {
+    "pad": "1AA8",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "I2C20SDA": {
+  "pins": [
+   "R11.1",
+   "U1.1AC6"
+  ],
+  "soc": [
+   {
+    "pad": "1AC6",
+    "gpio": "GPIO0_D1",
+    "pull": "D",
+    "funcs": [
+     "I2C2_SDA_M0",
+     "PWM0_CH5_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "I2C30SCL0CAM": {
+  "pins": [
+   "C56.1",
+   "C56.2",
+   "C57.1",
+   "C57.2",
+   "C58.1",
+   "C58.2",
+   "C59.1",
+   "C59.2",
+   "C60.1",
+   "C60.2",
+   "C61.1",
+   "C61.2",
+   "J2.21",
+   "R27.2",
+   "R28.1",
+   "R28.2",
+   "U1.1V22"
+  ],
+  "soc": [
+   {
+    "pad": "1V22",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "I2C30SDA0CAM": {
+  "pins": [
+   "J2.22",
+   "R27.1",
+   "U1.AF32"
+  ],
+  "soc": [
+   {
+    "pad": "AF32",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "IMU0CS": {
+  "pins": [
+   "C90.1",
+   "C90.2",
+   "C91.1",
+   "C91.2",
+   "C92.1",
+   "C92.2",
+   "R16.1",
+   "R16.2",
+   "U6.12",
+   "U6.2",
+   "U6.3",
+   "U6.5",
+   "U6.6",
+   "U6.7",
+   "U6.8"
+  ],
+  "soc": []
+ },
+ "IMU0INT1": {
+  "pins": [
+   "U1.1A14",
+   "U6.4"
+  ],
+  "soc": [
+   {
+    "pad": "1A14",
+    "gpio": "GPIO3_B4",
+    "pull": "D",
+    "funcs": [
+     "FEPHY_LEDLINK_M0",
+     "PWM2_CH2_M0",
+     "I2C4_SCL_M0",
+     "SAI2_SCLK_M0",
+     "SPI1_CLK_M1",
+     "UART1_RTSN_M1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "IMU0INT2": {
+  "pins": [
+   "U1.U32",
+   "U6.9"
+  ],
+  "soc": [
+   {
+    "pad": "U32",
+    "gpio": "GPIO6_C1",
+    "pull": "D",
+    "funcs": [
+     "SARADC2_IN5",
+     "ETH_CLK_25M_OUT_M0",
+     "VI_CIF_CLKIN_M0",
+     "UART3_CTSN_M2",
+     "PWM0_CH1_M2"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "IMU0SCK": {
+  "pins": [
+   "U6.10",
+   "U6.11",
+   "U6.13"
+  ],
+  "soc": []
+ },
+ "IMU0SDI": {
+  "pins": [
+   "U6.14"
+  ],
+  "soc": []
+ },
+ "IMU0SDO": {
+  "pins": [
+   "U6.1"
+  ],
+  "soc": []
+ },
+ "IO00A3": {
+  "pins": [
+   "U1.AL12",
+   "U1.AM11"
+  ],
+  "soc": [
+   {
+    "pad": "AL12",
+    "gpio": "GPIO0_A2",
+    "pull": "Z",
+    "funcs": [
+     "RTC_32K_OUT",
+     "CLK_32K"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AM11",
+    "gpio": "GPIO0_A3",
+    "pull": "U",
+    "funcs": [
+     "PWR_CTRL0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "IRCUT0A0": {
+  "pins": [
+   "C93.1",
+   "C94.1",
+   "C95.1",
+   "C96.1",
+   "U1.F32"
+  ],
+  "soc": [
+   {
+    "pad": "F32",
+    "gpio": "GPIO5_D0",
+    "pull": "D",
+    "funcs": [
+     "I2C3_SCL_M2",
+     "DSMC_CSN3",
+     "ETH_PTP_REFCLK_M1",
+     "PWM0_CH6_M2",
+     "SPI1_CSN0_M2",
+     "VO_LCDC_DEN"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "IRCUT0A1": {
+  "pins": [
+   "U1.E32"
+  ],
+  "soc": [
+   {
+    "pad": "E32",
+    "gpio": "GPIO5_D2",
+    "pull": "D",
+    "funcs": [
+     "DSMC_INT2",
+     "U",
+     "ART3_CTSN_M1",
+     "PWM1_CH0_M1",
+     "SPI1_MISO_M2",
+     "VO_LCDC_CLK",
+     "GPIO5_D3_D",
+     "D31DSMC_INT3",
+     "UART3_RTSN_M1",
+     "PWM1_CH1_M1",
+     "SPI1_MOSI_M2",
+     "VO_LCDC_VSYNC"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "IRCUT0B0": {
+  "pins": [
+   "U1.E31"
+  ],
+  "soc": [
+   {
+    "pad": "E31",
+    "gpio": "GPIO5_D1",
+    "pull": "D",
+    "funcs": [
+     "I2C3_SDA_M2",
+     "DSMC_CSN2",
+     "ETH_PPSTRIG_M1",
+     "PWM1_CH2_M1",
+     "SPI1_CLK_M2",
+     "VO_LCDC_HSYNC"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "IRCUT0B1": {
+  "pins": [
+   "U1.D31"
+  ],
+  "soc": [
+   {
+    "pad": "D31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "KEY0RESET": {
+  "pins": [
+   "BTN1.1",
+   "ED1.1",
+   "R4.2"
+  ],
+  "soc": []
+ },
+ "LCD0BL0PWM": {
+  "pins": [
+   "U1.P32"
+  ],
+  "soc": [
+   {
+    "pad": "P32",
+    "gpio": "GPIO5_A2",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D15",
+     "SAI2_SDI1_M1",
+     "ETH_PPSCLK_M1",
+     "UART4_TX_M1",
+     "PWM0_CH5_M2",
+     "VI_CIF_D2_M1",
+     "VO_LCDC_D2"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "LCD0PWREN0H": {
+  "pins": [
+   "U1.P31"
+  ],
+  "soc": [
+   {
+    "pad": "P31",
+    "gpio": "GPIO5_A3",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D11",
+     "SAI2_SDI0_M1",
+     "SPI0_CLK_M2",
+     "UART5_RTSN_M1",
+     "PWM0_CH1_M1",
+     "VO_LCDC_D6",
+     "GPIO5_A6_D",
+     "L32DSMC_D12",
+     "SAI2_SCLK_M1",
+     "SPI0_MISO_M2",
+     "UART5_RX_M1",
+     "PWM0_CH2_M1",
+     "VO_LCDC_D5",
+     "GPIO5_A5_D",
+     "M32DSMC_D13",
+     "SAI2_SDO_M1",
+     "SPI0_MOSI_M2",
+     "UART5_TX_M1",
+     "PWM0_CH3_M1",
+     "VO_LCDC_D4",
+     "GPIO5_A4_D",
+     "N31DSMC_D14",
+     "SAI2_MCLK_M1",
+     "SPI0_CSN0_M2",
+     "UART4_RX_M1",
+     "PWM0_CH4_M2",
+     "VO_LCDC_D3"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "MAIN0USB0DN1": {
+  "pins": [
+   "J1.12"
+  ],
+  "soc": []
+ },
+ "MAIN0USB0DP1": {
+  "pins": [
+   "J1.13"
+  ],
+  "soc": []
+ },
+ "MIPI0CSI0RX00CLK0N": {
+  "pins": [
+   "C101.1",
+   "C101.2",
+   "C102.1",
+   "C102.2",
+   "C103.1",
+   "C103.2",
+   "C108.1",
+   "D10.2",
+   "D11.2",
+   "D12.2",
+   "D3.2",
+   "D4.2",
+   "D5.2",
+   "D6.2",
+   "D7.1",
+   "D7.2",
+   "D8.2",
+   "D9.2",
+   "J2.1",
+   "J2.10",
+   "J2.13",
+   "J2.16",
+   "J2.18",
+   "J2.20",
+   "J2.23",
+   "J2.24",
+   "J2.25",
+   "J2.26",
+   "J2.27",
+   "J2.30",
+   "J2.4",
+   "J2.7",
+   "J2.8",
+   "J2.MP1",
+   "J2.MP2",
+   "J2.MP3",
+   "J2.MP4",
+   "U1.AL22",
+   "U1.AL23"
+  ],
+  "soc": [
+   {
+    "pad": "AL22",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AL23",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00CLK0P": {
+  "pins": [
+   "D8.1",
+   "J2.9",
+   "U1.AM22",
+   "U1.AM23"
+  ],
+  "soc": [
+   {
+    "pad": "AM22",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AM23",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00D0N": {
+  "pins": [
+   "D3.1",
+   "J2.2",
+   "U1.AM26"
+  ],
+  "soc": [
+   {
+    "pad": "AM26",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00D0P": {
+  "pins": [
+   "D4.1",
+   "J2.3",
+   "U1.AM25"
+  ],
+  "soc": [
+   {
+    "pad": "AM25",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00D1N": {
+  "pins": [
+   "D5.1",
+   "J2.5",
+   "U1.AL25"
+  ],
+  "soc": [
+   {
+    "pad": "AL25",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00D1P": {
+  "pins": [
+   "D6.1",
+   "J2.6",
+   "U1.AL24"
+  ],
+  "soc": [
+   {
+    "pad": "AL24",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00D2N": {
+  "pins": [
+   "D9.1",
+   "J2.11",
+   "U1.AM20"
+  ],
+  "soc": [
+   {
+    "pad": "AM20",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00D2P": {
+  "pins": [
+   "D10.1",
+   "J2.12",
+   "U1.AL29",
+   "U1.AL30",
+   "U1.AM19"
+  ],
+  "soc": [
+   {
+    "pad": "AL29",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AL30",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AM19",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00D3N": {
+  "pins": [
+   "D11.1",
+   "J2.14",
+   "U1.AL21"
+  ],
+  "soc": [
+   {
+    "pad": "AL21",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX00D3P": {
+  "pins": [
+   "D12.1",
+   "J2.15",
+   "U1.AA31",
+   "U1.AA32",
+   "U1.AB31",
+   "U1.AC31",
+   "U1.AC32",
+   "U1.AD32",
+   "U1.AG31",
+   "U1.AG32",
+   "U1.AL20"
+  ],
+  "soc": [
+   {
+    "pad": "AA31",
+    "gpio": "GPIO6_A5",
+    "pull": "D",
+    "funcs": [
+     "SARADC1_IN5",
+     "ETH_TXD2_M0",
+     "VI_CIF_D5_M0",
+     "I2C5_SDA_M3",
+     "UART5_CTSN_M2",
+     "PWM2_CH1_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AA32",
+    "gpio": "GPIO6_A6",
+    "pull": "D",
+    "funcs": [
+     "SARADC1_IN6",
+     "ETH_TXD3_M0",
+     "V",
+     "I_CIF_D6_M0",
+     "U",
+     "ART4_RTSN_M2",
+     "PWM2_CH2_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AB31",
+    "gpio": "GPIO6_A4",
+    "pull": "D",
+    "funcs": [
+     "SARADC1_IN4",
+     "ETH_RXD3_M0",
+     "VI_CIF_D4_M0",
+     "SAI0_MCLK_M1",
+     "I2C5_SCL_M3",
+     "UART5_RTSN_M2",
+     "PWM2_CH0_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AC31",
+    "gpio": "GPIO6_A3",
+    "pull": "D",
+    "funcs": [
+     "SARADC1_IN3",
+     "ETH_RXD2_M0",
+     "CAN1_TXD_M1",
+     "VI_CIF_D3_M0",
+     "SAI0_SDI0_M1",
+     "I2C4_SDA_M1",
+     "UART5_RX_M2",
+     "PWM1_CH3_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AC32",
+    "gpio": "GPIO6_A2",
+    "pull": "D",
+    "funcs": [
+     "SARADC1_IN2",
+     "ETH_PPSCLK_M0",
+     "CAN1_RXD_M1",
+     "VI_CIF_D2_M0",
+     "SAI0_SDO0_M1",
+     "I2C4_SCL_M1",
+     "UART5_TX_M2",
+     "PWM1_CH2_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AD32",
+    "gpio": "GPIO6_A1",
+    "pull": "D",
+    "funcs": [
+     "SARADC1_IN1",
+     "ETH_PTP_REFCLK_M0",
+     "CAN0_TXD_M1",
+     "VI_CIF_D1_M0",
+     "SAI0_LRCK_M1",
+     "I2C3_SDA_M3",
+     "UART4_RX_M2",
+     "PWM1_CH1_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AG31",
+    "gpio": "GPIO4_A0",
+    "pull": "U",
+    "funcs": [
+     "CAM_CLK3_OUT",
+     "I2C1_SDA_M2",
+     "UART4_RTSN_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AG32",
+    "gpio": "GPIO4_A1",
+    "pull": "U",
+    "funcs": [
+     "CAM_CLK2_OUT",
+     "I2C1_SCL_M2",
+     "UART4_CTSN_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AL20",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10CLK0N": {
+  "pins": [
+   "U1.AM31"
+  ],
+  "soc": [
+   {
+    "pad": "AM31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10CLK0P": {
+  "pins": [
+   "U1.AL31"
+  ],
+  "soc": [
+   {
+    "pad": "AL31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10D0N": {
+  "pins": [
+   "U1.AJ31"
+  ],
+  "soc": [
+   {
+    "pad": "AJ31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10D0P": {
+  "pins": [
+   "U1.AJ32"
+  ],
+  "soc": [
+   {
+    "pad": "AJ32",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10D1N": {
+  "pins": [
+   "U1.AK32"
+  ],
+  "soc": [
+   {
+    "pad": "AK32",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10D1P": {
+  "pins": [
+   "U1.AL32"
+  ],
+  "soc": [
+   {
+    "pad": "AL32",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10D2N": {
+  "pins": [
+   "U1.AL28"
+  ],
+  "soc": [
+   {
+    "pad": "AL28",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10D2P": {
+  "pins": [
+   "U1.AL27"
+  ],
+  "soc": [
+   {
+    "pad": "AL27",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10D3N": {
+  "pins": [
+   "U1.AM29"
+  ],
+  "soc": [
+   {
+    "pad": "AM29",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0CSI0RX10D3P": {
+  "pins": [
+   "U1.AM28"
+  ],
+  "soc": [
+   {
+    "pad": "AM28",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0DSI0CLKN": {
+  "pins": [
+   "U1.B29"
+  ],
+  "soc": [
+   {
+    "pad": "B29",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "MIPI_DPHY_DSI_TX_CLKN"
+   }
+  ]
+ },
+ "MIPI0DSI0CLKP": {
+  "pins": [
+   "U1.B30"
+  ],
+  "soc": [
+   {
+    "pad": "B30",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "MIPI_DPHY_DSI_TX_CLKP"
+   }
+  ]
+ },
+ "MIPI0DSI0D0N": {
+  "pins": [
+   "U1.B27"
+  ],
+  "soc": [
+   {
+    "pad": "B27",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0DSI0D0P": {
+  "pins": [
+   "U1.B28"
+  ],
+  "soc": [
+   {
+    "pad": "B28",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0DSI0D1N": {
+  "pins": [
+   "U1.A28"
+  ],
+  "soc": [
+   {
+    "pad": "A28",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0DSI0D1P": {
+  "pins": [
+   "U1.A29"
+  ],
+  "soc": [
+   {
+    "pad": "A29",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0DSI0D2N": {
+  "pins": [
+   "U1.B31"
+  ],
+  "soc": [
+   {
+    "pad": "B31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "MIPI_DPHY_DSI_TX_D2N"
+   }
+  ]
+ },
+ "MIPI0DSI0D2P": {
+  "pins": [
+   "U1.A31"
+  ],
+  "soc": [
+   {
+    "pad": "A31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "MIPI_DPHY_DSI_TX_D2P"
+   }
+  ]
+ },
+ "MIPI0DSI0D3N": {
+  "pins": [
+   "U1.B32"
+  ],
+  "soc": [
+   {
+    "pad": "B32",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "MIPI_DPHY_DSI_TX_D3N"
+   }
+  ]
+ },
+ "MIPI0DSI0D3P": {
+  "pins": [
+   "U1.C32"
+  ],
+  "soc": [
+   {
+    "pad": "C32",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "MIPI_DPHY_DSI_TX_D3P"
+   }
+  ]
+ },
+ "MIPI0MCLK0OUT1": {
+  "pins": [
+   "U1.AF31"
+  ],
+  "soc": [
+   {
+    "pad": "AF31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0RX00MCLK": {
+  "pins": [
+   "J2.19",
+   "R26.1",
+   "R26.2",
+   "U1.AE31"
+  ],
+  "soc": [
+   {
+    "pad": "AE31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0RX00SYNC": {
+  "pins": [
+   "J2.28",
+   "U1.1T23",
+   "U1.1Y23"
+  ],
+  "soc": [
+   {
+    "pad": "1T23",
+    "gpio": "GPIO6_A0",
+    "pull": "D",
+    "funcs": [
+     "SARADC1_IN0",
+     "ETH_PPSTRIG_M0",
+     "CAN0_RXD_M1",
+     "VI_CIF_D0_M0",
+     "SAI0_SCLK_M1",
+     "I2C3_SCL_M3",
+     "UART4_TX_M2",
+     "PWM1_CH0_M2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1Y23",
+    "gpio": "GPIO4_A2",
+    "pull": "D",
+    "funcs": [
+     "PWM0_CH4_M1",
+     "U",
+     "ART4_RX_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0RX00TRIGGER": {
+  "pins": [
+   "J2.29",
+   "U1.1T22"
+  ],
+  "soc": [
+   {
+    "pad": "1T22",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "MIPI0RX10PDN": {
+  "pins": [
+   "U1.1V21"
+  ],
+  "soc": [
+   {
+    "pad": "1V21",
+    "gpio": "GPIO4_A3",
+    "pull": "D",
+    "funcs": [
+     "PWM0_CH5_M1",
+     "SPI0_CSN1_M1",
+     "SAI1_MCLK_M1",
+     "UART4_TX_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "OSC0XIN": {
+  "pins": [
+   "C20.2",
+   "R2.1",
+   "U1.AL15",
+   "U1.AM13",
+   "Y1.3"
+  ],
+  "soc": [
+   {
+    "pad": "AL15",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AM13",
+    "gpio": "GPIO0_A0",
+    "pull": "Z",
+    "funcs": [
+     "TEST_CLK0_OUT",
+     "REF_CLK0_OUT"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "OSC0XOUT": {
+  "pins": [
+   "R1.1",
+   "R2.2",
+   "U1.AL14"
+  ],
+  "soc": [
+   {
+    "pad": "AL14",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "PMIC0INT": {
+  "pins": [
+   "C46.1",
+   "J1.30",
+   "R12.1",
+   "R18.1",
+   "R20.1",
+   "U1.1AA18",
+   "U1.1AA20",
+   "U1.1AB18",
+   "U1.1AB20",
+   "U1.1AC12",
+   "U1.1B14",
+   "U1.1P3",
+   "U1.1T1",
+   "U1.1T2",
+   "U1.1T3",
+   "U1.1V1",
+   "U1.A16",
+   "U1.AF2",
+   "U1.B16",
+   "U1.B22",
+   "U2.A1",
+   "U2.A10",
+   "U2.A11",
+   "U2.A12",
+   "U2.A13",
+   "U2.A14",
+   "U2.A7",
+   "U2.A9",
+   "U2.B1",
+   "U2.B10",
+   "U2.B11",
+   "U2.B12",
+   "U2.B13",
+   "U2.B14",
+   "U2.B7",
+   "U2.B8",
+   "U2.B9",
+   "U2.C1",
+   "U2.C10",
+   "U2.C11",
+   "U2.C12",
+   "U2.C13",
+   "U2.C14",
+   "U2.C3",
+   "U2.C5",
+   "U2.C7",
+   "U2.C8",
+   "U2.D1",
+   "U2.D12",
+   "U2.D13",
+   "U2.D14",
+   "U2.D3",
+   "U2.D4",
+   "U2.E10",
+   "U2.E12",
+   "U2.E13",
+   "U2.E14",
+   "U2.E2",
+   "U2.E5",
+   "U2.E9",
+   "U2.F10",
+   "U2.F12",
+   "U2.F13",
+   "U2.F14",
+   "U2.F2",
+   "U2.F3",
+   "U2.G1",
+   "U2.G10",
+   "U2.G12",
+   "U2.G13",
+   "U2.G14",
+   "U2.G2",
+   "U2.G3",
+   "U2.H12",
+   "U2.H13",
+   "U2.H14",
+   "U2.H2",
+   "U2.H3",
+   "U2.H5",
+   "U2.J1",
+   "U2.J12",
+   "U2.J13",
+   "U2.J14",
+   "U2.J2",
+   "U2.J3",
+   "U2.K10",
+   "U2.K12",
+   "U2.K13",
+   "U2.K14",
+   "U2.K2",
+   "U2.K3",
+   "U2.K6",
+   "U2.K7",
+   "U2.L1",
+   "U2.L12",
+   "U2.L13",
+   "U2.L14",
+   "U2.L2",
+   "U2.L3",
+   "U2.M1",
+   "U2.M10",
+   "U2.M11",
+   "U2.M12",
+   "U2.M13",
+   "U2.M14",
+   "U2.M2",
+   "U2.M3",
+   "U2.M7",
+   "U2.M8",
+   "U2.M9",
+   "U2.N1",
+   "U2.N10",
+   "U2.N11",
+   "U2.N12",
+   "U2.N13",
+   "U2.N14",
+   "U2.N3",
+   "U2.N6",
+   "U2.N7",
+   "U2.N8",
+   "U2.N9",
+   "U2.P1",
+   "U2.P10",
+   "U2.P11",
+   "U2.P12",
+   "U2.P13",
+   "U2.P14",
+   "U2.P2",
+   "U2.P7",
+   "U2.P8",
+   "U2.P9"
+  ],
+  "soc": [
+   {
+    "pad": "1AA18",
+    "gpio": "GPIO2_A3",
+    "pull": "D",
+    "funcs": [
+     "JTAG_TMS_M1",
+     "UART4_CTSN_M3",
+     "UART3_TX_M0",
+     "SDMMC0_D3"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AA20",
+    "gpio": "GPIO2_A1",
+    "pull": "D",
+    "funcs": [
+     "I2C0_SCL_M1",
+     "UART0_TX_M0",
+     "SDMMC0_D1"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AB18",
+    "gpio": "GPIO2_A2",
+    "pull": "D",
+    "funcs": [
+     "TEST_CLK1_OUT",
+     "JTAG_TCK_M1",
+     "UART4_RTSN_M3",
+     "UART3_RX_M0",
+     "SDMMC0_D2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AB20",
+    "gpio": "GPIO2_A0",
+    "pull": "D",
+    "funcs": [
+     "I2C0_SDA_M1",
+     "UART0_RX_M0",
+     "SDMMC0_D0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AC12",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1B14",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1P3",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1T1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1T2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1T3",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1V1",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "A16",
+    "gpio": "GPIO3_B7",
+    "pull": "D",
+    "funcs": [
+     "I2C5_SDA_M1",
+     "SAI2_SDI1_M0",
+     "UART1_RX_M1"
+    ],
+    "power": null
+   },
+   {
+    "pad": "AF2",
+    "gpio": "GPIO1_B3",
+    "pull": "D",
+    "funcs": [
+     "FSPI1_CLK_M1",
+     "E",
+     "MMC_CLK"
+    ],
+    "power": null
+   },
+   {
+    "pad": "B16",
+    "gpio": "GPIO3_B6",
+    "pull": "D",
+    "funcs": [
+     "SDMMC1_DETN",
+     "I2C5_SCL_M1",
+     "SAI2_MCLK_M0",
+     "SPI1_CSN1_M1",
+     "UART1_TX_M1"
+    ],
+    "power": null
+   },
+   {
+    "pad": "B22",
+    "gpio": "GPIO3_A0",
+    "pull": "D",
+    "funcs": [
+     "SDMMC1_CLK"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "PWR0CTRL": {
+  "pins": [
+   "D1.2",
+   "D1.3",
+   "D1.4",
+   "D2.1",
+   "J1.31",
+   "R6.2",
+   "R7.2",
+   "R8.2",
+   "R9.1",
+   "U1.1AA4",
+   "U1.1AB10",
+   "U1.1AB4",
+   "U1.1AB8",
+   "U1.1AC10",
+   "U1.1AC2",
+   "U1.1AC4"
+  ],
+  "soc": [
+   {
+    "pad": "1AA4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1AB10",
+    "gpio": "GPIO0_C6",
+    "pull": "D",
+    "funcs": [
+     "UART1_RTSN_M0",
+     "PWM0_CH2_M0",
+     "SPI2AHB_D1"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AB4",
+    "gpio": "GPIO0_B0",
+    "pull": "D",
+    "funcs": [
+     "SPI0_MISO_M0",
+     "FSPI1_D1_M0",
+     "GPIO0_B1_D",
+     "1AA4SPI0_MOSI_M0",
+     "FSPI1_D0_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AB8",
+    "gpio": "GPIO0_C7",
+    "pull": "D",
+    "funcs": [
+     "UART1_CTSN_M0",
+     "PWM0_CH3_M0",
+     "SPI2AHB_D0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AC10",
+    "gpio": "GPIO0_C1",
+    "pull": "D",
+    "funcs": [
+     "I2C3_SDA_M0",
+     "PWM0_CH6_M0",
+     "PWR_CTRL2"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AC2",
+    "gpio": "GPIO0_B2",
+    "pull": "D",
+    "funcs": [
+     "SPI0_CLK_M0",
+     "FSPI1_CLK_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1AC4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "RTC0EVI": {
+  "pins": [
+   "U1.1AC8"
+  ],
+  "soc": [
+   {
+    "pad": "1AC8",
+    "gpio": "GPIO0_C4",
+    "pull": "D",
+    "funcs": [
+     "UART1_RX_M0",
+     "I2C5_SDA_M0",
+     "PWM0_CH1_M0",
+     "SPI2AHB_D2",
+     "GPIO0_C5_D",
+     "1AA10UART1_TX_M0",
+     "I2C5_SCL_M0",
+     "PWM0_CH0_M0",
+     "SPI2AHB_D3"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "RTC0INT": {
+  "pins": [
+   "U1.1AA10"
+  ],
+  "soc": [
+   {
+    "pad": "1AA10",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "RTC0XIN": {
+  "pins": [
+   "C26.1",
+   "U1.AM8",
+   "Y2.1"
+  ],
+  "soc": [
+   {
+    "pad": "AM8",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "RTC0XOUT": {
+  "pins": [
+   "C27.1",
+   "U1.AM7",
+   "Y2.2"
+  ],
+  "soc": [
+   {
+    "pad": "AM7",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "RX": {
+  "pins": [
+   "U1.AL9"
+  ],
+  "soc": [
+   {
+    "pad": "AL9",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "SDIO0CLK": {
+  "pins": [
+   "C100.1",
+   "J1.38",
+   "R18.2"
+  ],
+  "soc": []
+ },
+ "SDIO0CMD": {
+  "pins": [
+   "J1.37",
+   "R19.2",
+   "U1.B21"
+  ],
+  "soc": [
+   {
+    "pad": "B21",
+    "gpio": "GPIO3_A1",
+    "pull": "D",
+    "funcs": [
+     "SDMMC1_CMD"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SDIO0D0": {
+  "pins": [
+   "J1.36",
+   "U1.A22"
+  ],
+  "soc": [
+   {
+    "pad": "A22",
+    "gpio": "GPIO3_A2",
+    "pull": "D",
+    "funcs": [
+     "I2C1_SCL_M1",
+     "SDMMC1_D0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SDIO0D1": {
+  "pins": [
+   "J1.35",
+   "U1.A23"
+  ],
+  "soc": [
+   {
+    "pad": "A23",
+    "gpio": "GPIO3_A3",
+    "pull": "D",
+    "funcs": [
+     "I2C1_SDA_M1",
+     "SDMMC1_D1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SDIO0D2": {
+  "pins": [
+   "J1.34",
+   "U1.A20"
+  ],
+  "soc": [
+   {
+    "pad": "A20",
+    "gpio": "GPIO3_A4",
+    "pull": "D",
+    "funcs": [
+     "SDMMC1_D2"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SDIO0D3": {
+  "pins": [
+   "J1.33",
+   "U1.B20"
+  ],
+  "soc": [
+   {
+    "pad": "B20",
+    "gpio": "GPIO3_A5",
+    "pull": "D",
+    "funcs": [
+     "SDMMC1_D3"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SPI0CLK": {
+  "pins": [
+   "U1.1K21",
+   "U1.1M21"
+  ],
+  "soc": [
+   {
+    "pad": "1K21",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1M21",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "SPI0CS0": {
+  "pins": [
+   "U1.1M22",
+   "U1.1M23",
+   "U1.1P21"
+  ],
+  "soc": [
+   {
+    "pad": "1M22",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1M23",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "1P21",
+    "gpio": "GPIO6_B1",
+    "pull": "D",
+    "funcs": [
+     "ETH_TXCTL_M0",
+     "SAI0_SDO3_M1",
+     "VI_CIF_D9_M0",
+     "SAI0_SDI1_M1",
+     "SPI1_CSN0_M0",
+     "UART6_RX_M1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SPI0MISO": {
+  "pins": [
+   "U1.1P23"
+  ],
+  "soc": [
+   {
+    "pad": "1P23",
+    "gpio": "GPIO6_B3",
+    "pull": "D",
+    "funcs": [
+     "ETH_RXD1_M0",
+     "VI_CIF_D11_M0",
+     "PDM_SDI3_M1",
+     "SPI1_MISO_M0",
+     "UART6_CTSN_M1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SPI0MOSI": {
+  "pins": [
+   "U1.1P22"
+  ],
+  "soc": [
+   {
+    "pad": "1P22",
+    "gpio": "GPIO6_B2",
+    "pull": "D",
+    "funcs": [
+     "ETH_RXD0_M0",
+     "VI_CIF_D10_M0",
+     "PDM_SDI2_M1",
+     "SPI1_MOSI_M0",
+     "UART6_RTSN_M1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SSRXN": {
+  "pins": [
+   "C106.2",
+   "C107.1",
+   "U1.AL6"
+  ],
+  "soc": [
+   {
+    "pad": "AL6",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "SSRXN2": {
+  "pins": [
+   "J1.17"
+  ],
+  "soc": []
+ },
+ "SSRXP": {
+  "pins": [
+   "C105.2",
+   "C106.1",
+   "U1.AM5"
+  ],
+  "soc": [
+   {
+    "pad": "AM5",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "SSRXP2": {
+  "pins": [
+   "J1.18"
+  ],
+  "soc": []
+ },
+ "SSTXN": {
+  "pins": [
+   "C104.2",
+   "C105.1",
+   "U1.AM4"
+  ],
+  "soc": [
+   {
+    "pad": "AM4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "SSTXN1": {
+  "pins": [
+   "J1.16"
+  ],
+  "soc": []
+ },
+ "SSTXP": {
+  "pins": [
+   "C104.1"
+  ],
+  "soc": []
+ },
+ "SSTXP1": {
+  "pins": [
+   "J1.15"
+  ],
+  "soc": []
+ },
+ "STAUS0LED0B": {
+  "pins": [
+   "R8.1",
+   "U1.1AB6"
+  ],
+  "soc": [
+   {
+    "pad": "1AB6",
+    "gpio": "GPIO0_A4",
+    "pull": "D",
+    "funcs": [
+     "PWR_CTRL1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "STAUS0LED0G": {
+  "pins": [
+   "R7.1",
+   "U1.AL10"
+  ],
+  "soc": [
+   {
+    "pad": "AL10",
+    "gpio": "GPIO0_A5",
+    "pull": "U",
+    "funcs": [
+     "PWM1_CH0_M0",
+     "SDMMC0_DET"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "STAUS0LED0R": {
+  "pins": [
+   "R6.1",
+   "U1.1AA6"
+  ],
+  "soc": [
+   {
+    "pad": "1AA6",
+    "gpio": "GPIO0_A6",
+    "pull": "U",
+    "funcs": [
+     "SPI0_CS0N_M0",
+     "FSPI1_CSN0_M0",
+     "GPIO0_A7_U",
+     "1AC4SPI0_CS1N_M0",
+     "FSPI1_D2_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "SYS0RST": {
+  "pins": [
+   "C22.2",
+   "C23.2",
+   "R1.2",
+   "R3.1",
+   "R4.1",
+   "R5.1",
+   "U1.AL13",
+   "Y1.1"
+  ],
+  "soc": [
+   {
+    "pad": "AL13",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "NPOR_DET"
+   }
+  ]
+ },
+ "SYSTEM0RESET": {
+  "pins": [
+   "J1.32"
+  ],
+  "soc": []
+ },
+ "TMS": {
+  "pins": [
+   "J1.22",
+   "U1.1A16"
+  ],
+  "soc": [
+   {
+    "pad": "1A16",
+    "gpio": "GPIO3_B5",
+    "pull": "D",
+    "funcs": [
+     "FEPHY_LEDSPD_M0",
+     "PWM2_CH3_M0",
+     "I2C4_SDA_M0",
+     "SAI2_LRCK_M0",
+     "SPI1_CSN0_M1",
+     "UART1_CTSN_M1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "TP0INT0L": {
+  "pins": [
+   "U1.1A22",
+   "U1.1B22",
+   "U1.1C22",
+   "U1.1D21",
+   "U1.1D22",
+   "U1.1D23",
+   "U1.2D13",
+   "U1.2E13",
+   "U1.F31",
+   "U1.G31",
+   "U1.L31",
+   "U1.N31",
+   "U1.R32"
+  ],
+  "soc": [
+   {
+    "pad": "1A22",
+    "gpio": "GPIO5_D6",
+    "pull": "U",
+    "funcs": [
+     "UART0_TX_M1",
+     "PWM2_CH6_M0",
+     "JTAG_TCK_M2",
+     "CAN1_RXD_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1B22",
+    "gpio": "GPIO5_D7",
+    "pull": "U",
+    "funcs": [
+     "UART0_RX_M1",
+     "PWM2_CH7_M0",
+     "JTAG_TMS_M2",
+     "CAN1_TXD_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1C22",
+    "gpio": "GPIO5_D5",
+    "pull": "U",
+    "funcs": [
+     "I2C2_SDA_M1",
+     "FE",
+     "PHY_LEDSPD_M1",
+     "U",
+     "ART3_RX_M1",
+     "PWM1_CH3_M1",
+     "CA",
+     "N0_TXD_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1D21",
+    "gpio": "GPIO5_C7",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D0",
+     "SAI1_SDI_M2",
+     "ETH_RXCLK_M1",
+     "PWM3_CH7_M1",
+     "VI_CIF_HSYNC_M1",
+     "VO_LCDC_D23"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1D22",
+    "gpio": "GPIO5_C6",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D1",
+     "SAI1_LRCK_M2",
+     "ETH_TXCLK_M1",
+     "PWM3_CH6_M1",
+     "VI_CIF_CLKIN_M1",
+     "VO_LCDC_D22"
+    ],
+    "power": null
+   },
+   {
+    "pad": "1D23",
+    "gpio": "GPIO5_C5",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D2",
+     "SAI1_SCLK_M2",
+     "ETH_TXD2_M1",
+     "PWM3_CH5_M1",
+     "VI_CIF_CLKOUT_M1VO_LCDC_D21"
+    ],
+    "power": null
+   },
+   {
+    "pad": "2D13",
+    "gpio": "GPIO5_D4",
+    "pull": "U",
+    "funcs": [
+     "I2C2_SCL_M1",
+     "FEPHY_LEDLINK_M1",
+     "UART3_TX_M1",
+     "PWM0_CH7_M2",
+     "SPI1_CSN1_M2",
+     "CAN0_RXD_M0"
+    ],
+    "power": null
+   },
+   {
+    "pad": "2E13",
+    "gpio": "GPIO5_B3",
+    "pull": "D",
+    "funcs": [
+     "DSMC_RDYN",
+     "ETH_MCLK_M1",
+     "UART6_CTSN_M0",
+     "PWM2_CH1_M1",
+     "VI_CIF_D7_M1",
+     "VO_LCDC_D11"
+    ],
+    "power": null
+   },
+   {
+    "pad": "F31",
+    "gpio": "GPIO5_C4",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D3",
+     "SAI1_SDO_M2",
+     "ETH_RXD3_M1",
+     "PWM3_CH4_M1",
+     "VI_CIF_VSYNC_M1",
+     "VO_LCDC_D20"
+    ],
+    "power": null
+   },
+   {
+    "pad": "G31",
+    "gpio": "GPIO5_C3",
+    "pull": "D",
+    "funcs": [
+     "DSMC_D4",
+     "SAI1_MCLK_M2",
+     "ETH_RXD2_M1",
+     "PWM3_CH3_M1",
+     "VI_CIF_D15_M1",
+     "VO_LCDC_D19"
+    ],
+    "power": null
+   },
+   {
+    "pad": "L31",
+    "gpio": "GPIO5_A7",
+    "pull": "D",
+    "funcs": [
+     "I2C5_SDA_M2",
+     "DSMC_D10",
+     "SAI2_LRCK_M1",
+     "SPI0_CSN1_M2",
+     "UART5_CTSN_M1",
+     "PWM0_CH0_M1",
+     "VI_CIF_D3_M1",
+     "VO_LCDC_D7"
+    ],
+    "power": null
+   },
+   {
+    "pad": "N31",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "R32",
+    "gpio": "GPIO5_A1",
+    "pull": "D",
+    "funcs": [
+     "I2C5_SCL_M2",
+     "DSMC_DQS1",
+     "SAI2_SDI2_M1",
+     "UART4_CTSN_M1",
+     "PWM2_CH5_M0",
+     "VI_CIF_D1_M1",
+     "VO_LCDC_D1"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "TP0RST0L": {
+  "pins": [
+   "U1.M32"
+  ],
+  "soc": [
+   {
+    "pad": "M32",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "TSADC0SHUT": {
+  "pins": [
+   "R5.2",
+   "U1.AL11"
+  ],
+  "soc": [
+   {
+    "pad": "AL11",
+    "gpio": "GPIO0_A1",
+    "pull": "Z",
+    "funcs": [
+     "TSADC_SHUT",
+     "TSADC_SHUTORG",
+     "PWM1_CH1_M0",
+     "FSPI1_D3_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "TX": {
+  "pins": [
+   "U1.AM10"
+  ],
+  "soc": [
+   {
+    "pad": "AM10",
+    "gpio": "GPIO0_B3",
+    "pull": "U",
+    "funcs": [
+     "JTAG_TMS_M0",
+     "I2C1_SDA_M0",
+     "PWM1_CH3_M0",
+     "UART0_RX_M2",
+     "GPIO0_B4_U",
+     "AL9JTAG_TCK_M0",
+     "I2C1_SCL_M0",
+     "PWM1_CH2_M0",
+     "UART0_TX_M2"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "UART0CTS": {
+  "pins": [
+   "J1.24",
+   "U1.B19"
+  ],
+  "soc": [
+   {
+    "pad": "B19",
+    "gpio": "GPIO3_A6",
+    "pull": "D",
+    "funcs": [
+     "UART2_RTSN_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "UART0RTS": {
+  "pins": [
+   "J1.25",
+   "U1.B18"
+  ],
+  "soc": [
+   {
+    "pad": "B18",
+    "gpio": "GPIO3_A7",
+    "pull": "D",
+    "funcs": [
+     "UART2_CTSN_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "UART20RX0SOCTX": {
+  "pins": [
+   "J1.19",
+   "U1.A17"
+  ],
+  "soc": [
+   {
+    "pad": "A17",
+    "gpio": "GPIO3_B1",
+    "pull": "D",
+    "funcs": [
+     "SAI2_SDI2_M0",
+     "UART2_TX_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "UART20TX0SOCTX": {
+  "pins": [
+   "J1.20",
+   "U1.B17"
+  ],
+  "soc": [
+   {
+    "pad": "B17",
+    "gpio": "GPIO3_B0",
+    "pull": "D",
+    "funcs": [
+     "UART2_RX_M0"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "USB20DRD0DM": {
+  "pins": [
+   "U1.AL3",
+   "U1.AL4",
+   "U1.AM2"
+  ],
+  "soc": [
+   {
+    "pad": "AL3",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AL4",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AM2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "USB20DRD0DP": {
+  "pins": [
+   "C107.2",
+   "U1.1AB2",
+   "U1.AL2",
+   "U1.AL7"
+  ],
+  "soc": [
+   {
+    "pad": "1AB2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "USB_DRD_ID"
+   },
+   {
+    "pad": "AL2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   },
+   {
+    "pad": "AL7",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "USB20DRD0VBUSDET": {
+  "pins": [
+   "C39.2",
+   "C40.2",
+   "C41.2",
+   "C42.2",
+   "C43.2",
+   "C44.2",
+   "C45.2",
+   "C47.1",
+   "C47.2",
+   "C48.1",
+   "C48.2",
+   "C49.1",
+   "C49.2",
+   "C50.1",
+   "C50.2",
+   "C51.1",
+   "C51.2",
+   "J1.1",
+   "J1.10",
+   "J1.2",
+   "J1.3",
+   "J1.4",
+   "J1.5",
+   "J1.6",
+   "J1.7",
+   "J1.8",
+   "J1.9",
+   "R17.1",
+   "R19.1",
+   "R21.2",
+   "R22.2",
+   "R29.1",
+   "R41.1",
+   "R42.1",
+   "R43.1",
+   "R44.1",
+   "R45.1",
+   "R46.1",
+   "U1.1AA2"
+  ],
+  "soc": [
+   {
+    "pad": "1AA2",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": "USB_DRD_VBUSDET"
+   }
+  ]
+ },
+ "USB20HOST0PWREN0H": {
+  "pins": [
+   "U1.L32"
+  ],
+  "soc": [
+   {
+    "pad": "L32",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "VDD": {
+  "pins": [
+   "C97.2",
+   "C98.2",
+   "R38.1",
+   "R39.1",
+   "U5.6",
+   "U5.7"
+  ],
+  "soc": []
+ },
+ "WIFI0INT": {
+  "pins": [
+   "J1.28",
+   "U1.1AC18"
+  ],
+  "soc": [
+   {
+    "pad": "1AC18",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "WIFI0RST": {
+  "pins": [
+   "J1.27",
+   "U1.1B16"
+  ],
+  "soc": [
+   {
+    "pad": "1B16",
+    "gpio": null,
+    "pull": null,
+    "funcs": [],
+    "power": null
+   }
+  ]
+ },
+ "WIFI0SOC0PWCTL": {
+  "pins": [
+   "J1.29",
+   "U1.1AC20"
+  ],
+  "soc": [
+   {
+    "pad": "1AC20",
+    "gpio": "GPIO2_A4",
+    "pull": "D",
+    "funcs": [
+     "UART4_TX_M3",
+     "UART3_CTSN_M0",
+     "SDMMC0_CMD",
+     "GPIO2_A5_D",
+     "1AC18UART4_RX_M3",
+     "UART3_RTSN_M0",
+     "SDMMC0_CLK"
+    ],
+    "power": null
+   }
+  ]
+ },
+ "\\INT": {
+  "pins": [
+   "C99.1",
+   "R38.2",
+   "R39.2",
+   "R40.1",
+   "U5.2"
+  ],
+  "soc": []
+ }
+}

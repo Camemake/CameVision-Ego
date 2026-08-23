@@ -1,0 +1,9 @@
+model: CameVision Ego
+kernel: 6.1.141-rt52 #24 SMP PREEMPT_RT
+adb: 4857b9cbd0b99e0b  2207:0006
+usb: CameVision Ego (ADB, high-speed peripheral)
+cam0: i2c 3-0030 chip id 0xcb61  CSI RX0 / dphy0 / rkisp-vir0 /dev/video24
+cam1: i2c-gpio 6-0030 chip id 0xcb61  CSI RX1 / dphy3 / rkisp-vir2 /dev/video32
+i2c4 hardware disabled (SCL/SDA swapped on PCB)
+preview: 1920x1200 NV12 ISP, hflip+vflip, http://127.0.0.1:8765/
+boot.img sha256: 17163aaee30967c4744871de43861a6bbcddecbf301a1a8cb27105005e530809

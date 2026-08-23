@@ -1,0 +1,9 @@
+383.40 1327.54 UDC=21500000.usb state=configured speed=high-speed
+=== cam ===
+  771 root      0:03 rkaiq_3A_server --silent
+ 3099 root      0:00 sh -c while true; do v4l2-ctl -d /dev/video13 --stream-mmap=8 --stream-to=/tmp/cam.nv12 --stream-poll >>/userdata/uvc-isp.log 2>&1; echo restart >>/userdata/uvc-isp.log; sleep 0.3; done
+ 3102 root      0:00 /usr/bin/python3 /userdata/camevision-uvc-mjpg.py
+ 3104 root      0:00 v4l2-ctl -d /dev/video13 --stream-mmap=8 --stream-to=/tmp/cam.nv12 --stream-poll
+pump start buf=88 req=20
+uvc mmap 4 x 3110400 (wait host STREAMON)
+385.71 1335.86 done
