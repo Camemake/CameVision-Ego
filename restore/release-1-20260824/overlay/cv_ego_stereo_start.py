@@ -17,6 +17,8 @@ CAL = ROOT / "tools" / "ego_calib.html"
 IMU = ROOT / "tools" / "ego_imu_hud.py"
 LOGO = ROOT / "tools" / "camemake-logo.png"
 SO = ROOT / "build" / "libego_stereo.so"
+BOOT_SH = ROOT / "tools" / "camevision-stereo.sh"
+S99 = ROOT / "tools" / "S99ego-stereo"
 IQ_NAME = "sc233hgs_efference-sc233hgs_default.json"
 IQ_CANDIDATES = (
     ROOT / "tools" / "iqfiles" / "sc233hgs_efference-sc233hgs_flicker50.json",
@@ -58,11 +60,21 @@ def main() -> int:
         adb(s, "shell", "mkdir -p /userdata/iqfiles")
         adb(s, "push", str(iq), "/userdata/iqfiles/" + IQ_NAME, timeout=20)
         print("pushed 50 Hz IQ", iq.stat().st_size, "bytes", flush=True)
+    if BOOT_SH.is_file():
+        adb(s, "push", str(BOOT_SH), "/userdata/camevision-stereo.sh", timeout=15)
+    if S99.is_file():
+        adb(s, "push", str(S99), "/userdata/S99ego-stereo", timeout=15)
     r = adb(
         s,
         "shell",
-        "sed -i 's/\\r$//' /userdata/ego_stereo.py /userdata/ego_cam_sync.py /userdata/ego_calib.html /userdata/ego_imu_hud.py; "
-        "rm -f /userdata/ego_dense.py /userdata/hitnet.onnx; "
+        "sed -i 's/\\r$//' /userdata/ego_stereo.py /userdata/ego_cam_sync.py /userdata/ego_calib.html /userdata/ego_imu_hud.py /userdata/camevision-stereo.sh /userdata/S99ego-stereo; "
+        "chmod 755 /userdata/camevision-stereo.sh /userdata/S99ego-stereo; "
+        "rm -f /userdata/ego_dense.py /userdata/hitnet.onnx /userdata/uvc-webcam.on; "
+        "mount -o remount,rw / 2>/dev/null; "
+        "cp -f /userdata/S99ego-stereo /etc/init.d/S99ego-stereo; "
+        "chmod 755 /etc/init.d/S99ego-stereo; "
+        "mount -o remount,ro / 2>/dev/null; "
+        "ls -l /etc/init.d/S99ego-stereo /userdata/camevision-stereo.sh; "
         "if [ -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json ]; then "
         "cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json "
         "/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json 2>/dev/null || "

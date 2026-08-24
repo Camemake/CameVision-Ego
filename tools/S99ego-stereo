@@ -1,0 +1,10 @@
+#!/bin/sh
+# Boot: start Ego stereo web service. Never change the USB gadget.
+chmod 755 /userdata/camevision-stereo.sh 2>/dev/null
+(
+	sleep 6
+	if [ -x /userdata/camevision-stereo.sh ]; then
+		/userdata/camevision-stereo.sh >/userdata/ego-stereo-boot.log 2>&1
+	fi
+) &
+exit 0

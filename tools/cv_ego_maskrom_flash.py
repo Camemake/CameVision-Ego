@@ -13,7 +13,7 @@ UT = r"C:\Users\stefa\Downloads\SocToolKit\bin\windows\upgrade_tool.exe"
 ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_window\bin\adb.exe"
 KG = Path(r"C:\Users\stefa\Desktop\CameVision Ego\restore\known-good-20260819-camera-adb")
 BOOT = Path(
-    r"C:\Users\stefa\Desktop\CameVision Ego\restore\recovery-4-20260822-ego-dtb"
+    r"C:\Users\stefa\Desktop\CameVision Ego\restore\recovery-5-20260823-imaging-adb"
     r"\camevision_boot_ego.img"
 )
 LOADER = KG / "rv1126b_spl_loader_k4a8g.bin"

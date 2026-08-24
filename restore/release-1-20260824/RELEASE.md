@@ -13,6 +13,8 @@ Do not flash Luckfox Aura. Do not reboot this board into UVC.
 - Calibrate: http://127.0.0.1:8081/cal
 - IMU HUD: http://127.0.0.1:8083/ (also `/imu` on 8081)
 
+The stereo web service starts on boot (`S99ego-stereo` → `/userdata/camevision-stereo.sh`). USB stays ADB.
+
 ## Proven in this release
 - Dual ISP colour (AWB / CCM / gamma on). 3A reattaches if a grab restart drops it.
 - Hardware FSYNC/EFSYNC: both eyes triggered together at **12.5 fps** (50 Hz aligned).
@@ -32,6 +34,7 @@ Do not flash Luckfox Aura. Do not reboot this board into UVC.
 | Native matcher | `overlay/libego_stereo.so` |
 | Matcher source | `overlay/stereo_native.c` |
 | 50 Hz IQ | `overlay/iqfiles/sc233hgs_efference-sc233hgs_default.json` |
+| Boot start | `overlay/camevision-stereo.sh`, `overlay/S99ego-stereo` |
 | Deploy from host | `overlay/cv_ego_stereo_start.py` |
 
 Python wheels stay on the board at `/userdata/pylib`. This pack does not reinstall them.

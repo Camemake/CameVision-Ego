@@ -23,6 +23,8 @@ FILES = [
     ("tools/cv_ego_build_stereo.py", "overlay/cv_ego_build_stereo.py"),
     ("tools/cv_ego_stereo_start.py", "overlay/cv_ego_stereo_start.py"),
     ("tools/cv_ego_iq_flicker50.py", "overlay/cv_ego_iq_flicker50.py"),
+    ("tools/camevision-stereo.sh", "overlay/camevision-stereo.sh"),
+    ("tools/S99ego-stereo", "overlay/S99ego-stereo"),
     ("build/libego_stereo.so", "overlay/libego_stereo.so"),
 ]
 
