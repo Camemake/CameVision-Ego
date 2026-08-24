@@ -20,6 +20,8 @@ build/*.pid
 build/stills/
 build/emmc-check/
 build/live/
+build/hitnet/
+build/*.txt
 
 # Large firmware / eMMC images (keep recovery overlays, not raw dumps)
 firmware/

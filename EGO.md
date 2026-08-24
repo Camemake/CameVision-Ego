@@ -39,10 +39,17 @@ MIPI_Camera1, WiFi_BT, uSD_Card, USB-C_PD, Battery.
 Two SmartSens **SC233HGS**, native 1920×1200. SID stuffing looks the same
 on both, so each stays `0x30` on its **own** I2C bus.
 
-| Cam | MIPI | I2C | PWDN / XSHUTDN | IMU |
-|---|---|---|---|---|
-| Cam 0 (U7) | CSI RX0, 4-lane + CLK0 | I2C3 `I2C3_SCL/SDA_CAM` | `CAM0_PWDN` | IMU0 on **SPI0** |
-| Cam 1 (U10) | CSI RX1, 4-lane + CLK0 | I2C4 `I2C4_SCL/SDA_CAM` | `CAM1_PWDN` | IMU1 on **SPI1** |
+| Cam | MIPI | I2C | PWDN / XSHUTDN | FSYNC (SYNC) | EFSYNC (TRIGGER) | IMU |
+|---|---|---|---|---|---|---|
+| Cam 0 (U7) | CSI RX0, 4-lane + CLK0 | I2C3 `I2C3_SCL/SDA_CAM` | `CAM0_PWDN` GPIO4_A3 | `MIPI_RX0_SYNC` GPIO4_A1 (AG32) → D3 | `MIPI_RX0_TRIGGER` GPIO6_C2 (U31) → B5 | IMU0 on **SPI0** |
+| Cam 1 (U10) | CSI RX1, 4-lane + CLK0 | I2C4 `I2C4_SCL/SDA_CAM` | `CAM1_PWDN` GPIO4_A2 | `MIPI_RX1_SYNC` GPIO4_A0 (AG31) → D3 | `MIPI_RX1_TRIGGER` GPIO6_C3 (V31) → B5 | IMU1 on **SPI1** |
+
+FSYNC/EFSYNC are driven by the RV1126B from `tools/ego_cam_sync.py`. Both
+sensors run SC233HGS **continuous trigger** (`0x3222[0]=1`, datasheet §2.2):
+the SoC pulses Cam0+Cam1 EFSYNC (and FSYNC) on the same tick so readout
+starts together. Slave mode (`0x3282[3]`) stays off so 3A still owns
+exposure. Trigger rate is **12.5 fps** (50 Hz lighting; VTS stays 15). GMAC
+is disabled, so GPIO6_C2/C3 are free. Do not reuse Single's GPIO4_A2/A7.
 
 Single DTB only has one sensor on i2c3 `3-0030`. That node already fails
 on Ego (`chip id high read failed: -5`) — pinmux / power / bus is not the
@@ -72,14 +79,15 @@ Single camera wiring.
 | 3 | `restore/recovery-3-20260822-uvc-wifi-rkaiq` | Single camera stack (base rootfs/oem) |
 | 4 | `restore/recovery-4-20260822-ego-dtb` | First Ego DTB (Cam 1 still NACK) |
 | **5** | `restore/recovery-5-20260823-imaging-adb` | Dual ISP + I2C-GPIO Cam 1 + ADB preview |
-| **6** | `restore/recovery-6-20260823-stereo-depth` | **On-board stereo depth overlay (no flash)** |
+| 6 | `restore/recovery-6-20260823-stereo-depth` | First on-board stereo overlay (no flash) |
+| **R1** | `restore/release-1-20260824` | **Current baseline: stereo + 50 Hz + cam sync** |
 
 Flash Ego imaging boot: `python tools/cv_flash_imaging_boot.py` or
 `restore/recovery-5-20260823-imaging-adb/flash-boot-ego.ps1`.
 
-Restore stereo only (Recovery 5 must already be live):
+Restore Release 1 (Recovery 5 must already be live):
 `python tools/cv_ego_stereo_start.py` or
-`restore/recovery-6-20260823-stereo-depth/restore-stereo.ps1`.
+`restore/release-1-20260824/restore-release1.ps1`.
 
 ## First Ego bring-up (2026-08-22)
 

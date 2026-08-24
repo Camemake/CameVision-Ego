@@ -14,6 +14,8 @@
  *   two SC233HGS (CSI0+I2C3, CSI1+I2C4), two SPI IMUs, microSD on SDMMC0,
  *   Wi-Fi GPIOs moved off GPIO2 (that bank is the SD card), BQ24072 CHG,
  *   camera LDO enables on GPIO0_B0/B1/B2.
+ *   FSYNC/EFSYNC are GPIO4_A1/A0 + GPIO6_C2/C3 — not Single's GPIO4_A2/A7
+ *   (those pads are CAM1_PWDN and I2C4 SDA on Ego).
  *
  * Do not use stock sdmmc0_detn_pins (GPIO0_A5) — that pad is the green LED.
  */
@@ -144,6 +146,28 @@
 		regulator-min-microvolt = <1800000>;
 		regulator-max-microvolt = <1800000>;
 		vin-supply = <&vcc_1v8>;
+	};
+
+	/*
+	 * SC233HGS FSYNC (D3) / EFSYNC (B5). Node stays disabled so the
+	 * kernel does not hog the GPIOs. Userspace ego_cam_sync.py muxes
+	 * them and programs 0x3222[0] continuous-trigger (datasheet §2.2).
+	 *
+	 * Cam0: MIPI_RX0_SYNC    AG32 GPIO4_A1 → U7.D3
+	 *       MIPI_RX0_TRIGGER U31  GPIO6_C2 → U7.B5
+	 * Cam1: MIPI_RX1_SYNC    AG31 GPIO4_A0 → U10.D3
+	 *       MIPI_RX1_TRIGGER V31  GPIO6_C3 → U10.B5
+	 */
+	cam_fsync: cam-fsync {
+		compatible = "camevision,cam-fsync";
+		sync-gpios = <&gpio4 RK_PA1 GPIO_ACTIVE_HIGH>,
+			     <&gpio4 RK_PA0 GPIO_ACTIVE_HIGH>;
+		trigger-gpios = <&gpio6 RK_PC2 GPIO_ACTIVE_HIGH>,
+				<&gpio6 RK_PC3 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&cam0_sync_pins &cam1_sync_pins
+			     &cam0_trigger_pins &cam1_trigger_pins>;
+		status = "disabled";
 	};
 
 	/*
@@ -495,6 +519,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&cam_clk0_pins &cam0_pwdn_pins>;
 		/* "CAM0_PWDN" GPIO4_A3, pad 1V21. Single used GPIO4_A6. */
+		/* FSYNC GPIO4_A1 / EFSYNC GPIO6_C2 — see /cam-fsync, disabled. */
 		pwdn-gpios = <&gpio4 RK_PA3 GPIO_ACTIVE_HIGH>;
 		avdd-supply = <&vcc2v8_cam>;
 		dovdd-supply = <&vcc1v8_cam>;
@@ -543,6 +568,7 @@ i2c_cam1: i2c-gpio-cam1 {
 		pinctrl-names = "default";
 		pinctrl-0 = <&cam_clk1_pins &cam1_pwdn_pins>;
 		/* "CAM1_PWDN" GPIO4_A2, pad 1Y23. XSHUTDN high = run. */
+		/* FSYNC GPIO4_A0 / EFSYNC GPIO6_C3 — see /cam-fsync, disabled. */
 		reset-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_LOW>;
 		avdd-supply = <&vcc2v8_cam>;
 		dovdd-supply = <&vcc1v8_cam>;
@@ -962,6 +988,23 @@ i2c_cam1: i2c-gpio-cam1 {
 
 		cam1_pwdn_pins: cam1-pwdn-pins {
 			rockchip,pins = <4 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+
+		/* Idle low. Not applied until cam-fsync is enabled. */
+		cam0_sync_pins: cam0-sync-pins {
+			rockchip,pins = <4 RK_PA1 RK_FUNC_GPIO &pcfg_output_low>;
+		};
+
+		cam1_sync_pins: cam1-sync-pins {
+			rockchip,pins = <4 RK_PA0 RK_FUNC_GPIO &pcfg_output_low>;
+		};
+
+		cam0_trigger_pins: cam0-trigger-pins {
+			rockchip,pins = <6 RK_PC2 RK_FUNC_GPIO &pcfg_output_low>;
+		};
+
+		cam1_trigger_pins: cam1-trigger-pins {
+			rockchip,pins = <6 RK_PC3 RK_FUNC_GPIO &pcfg_output_low>;
 		};
 
 		cam_avdd_en: cam-avdd-en {
