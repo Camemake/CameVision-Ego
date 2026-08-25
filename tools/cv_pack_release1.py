@@ -25,6 +25,9 @@ FILES = [
     ("tools/cv_ego_iq_flicker50.py", "overlay/cv_ego_iq_flicker50.py"),
     ("tools/camevision-stereo.sh", "overlay/camevision-stereo.sh"),
     ("tools/S99ego-stereo", "overlay/S99ego-stereo"),
+    ("tools/cv_ego_autostart.py", "overlay/cv_ego_autostart.py"),
+    ("tools/cv_ego_page.py", "overlay/cv_ego_page.py"),
+    ("tools/cv_ego_page.cmd", "overlay/cv_ego_page.cmd"),
     ("build/libego_stereo.so", "overlay/libego_stereo.so"),
 ]
 
@@ -40,11 +43,15 @@ def copy(src: Path, dst: Path) -> None:
 
 def main() -> int:
     keep = {}
+    so_keep = None
     if REL.exists():
         for name in ("RELEASE.md", "restore-release1.ps1"):
             p = REL / name
             if p.is_file():
                 keep[name] = p.read_bytes()
+        so = REL / "overlay" / "libego_stereo.so"
+        if so.is_file():
+            so_keep = so.read_bytes()
         shutil.rmtree(REL)
     REL.mkdir(parents=True)
     for name, data in keep.items():
@@ -53,6 +60,12 @@ def main() -> int:
     OV.mkdir(parents=True, exist_ok=True)
     for rel_src, rel_dst in FILES:
         src = ROOT / rel_src
+        if rel_src.endswith("libego_stereo.so") and not src.is_file() and so_keep:
+            dst = REL / rel_dst
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            dst.write_bytes(so_keep)
+            print(f"  kept overlay/libego_stereo.so ({len(so_keep)} bytes)")
+            continue
         if not src.is_file():
             raise SystemExit(f"missing {src}")
         copy(src, REL / rel_dst)

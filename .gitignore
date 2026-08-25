@@ -17,6 +17,9 @@ __pycache__/
 # Live dumps and debug stills
 build/*.jpg
 build/*.pid
+build/ego-autostart.log
+build/sdk-kernel.git/
+tools/cv_ego_autostart-hidden.cmd
 build/stills/
 build/emmc-check/
 build/live/

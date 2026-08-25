@@ -42,6 +42,9 @@ fi
 if ps | grep -q '[e]go_stereo'; then
 	exit 0
 fi
-start-stop-daemon -S -b -m -p /tmp/ego-stereo.pid \
-	-x /usr/bin/python3 -- /userdata/ego_stereo.py
+echo "starting ego_stereo $(date 2>/dev/null)"
+setsid /usr/bin/python3 /userdata/ego_stereo.py \
+	</dev/null >/userdata/ego-stereo.log 2>&1 &
+echo $! >/tmp/ego-stereo.pid
+echo "pid=$(cat /tmp/ego-stereo.pid)"
 exit 0

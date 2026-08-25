@@ -80,13 +80,14 @@ Single camera wiring.
 | 4 | `restore/recovery-4-20260822-ego-dtb` | First Ego DTB (Cam 1 still NACK) |
 | **5** | `restore/recovery-5-20260823-imaging-adb` | Dual ISP + I2C-GPIO Cam 1 + ADB preview |
 | 6 | `restore/recovery-6-20260823-stereo-depth` | First on-board stereo overlay (no flash) |
-| **R1** | `restore/release-1-20260824` | **Current baseline: stereo + 50 Hz + cam sync** |
+| **R1** | `restore/release-1-20260824` | **Current baseline: stereo + 50 Hz + cam sync + auto page** |
 
 Flash Ego imaging boot: `python tools/cv_flash_imaging_boot.py` or
 `restore/recovery-5-20260823-imaging-adb/flash-boot-ego.ps1`.
 
 Restore Release 1 (Recovery 5 must already be live):
-`python tools/cv_ego_stereo_start.py` or
+`python tools/cv_ego_stereo_start.py` then
+`python tools/cv_ego_autostart.py --install`, or
 `restore/release-1-20260824/restore-release1.ps1`.
 
 ## First Ego bring-up (2026-08-22)
