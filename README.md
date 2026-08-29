@@ -14,6 +14,8 @@
   ·
   <a href="https://www.camemake.eu/robotic-solutions"><strong>Camemake robotic solutions</strong></a>
   ·
+  <a href="https://camemake.github.io/CameVision-Ego/"><strong>Product page</strong></a>
+  ·
   <a href="https://www.camemake.eu">camemake.eu</a>
 </p>
 
@@ -160,10 +162,31 @@ Read the family, ODM / OEM paths and Camemake Lens (Shenzhen R&D) on **[Camemake
 
 Every Camemake camera module can be tailored — sensor, lens, housing, interface and firmware. Request a quote from the [shop page](https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414) or email [sales@camemake.com](mailto:sales@camemake.com).
 
+## Documentation
+
+| Page | What it covers |
+|---|---|
+| [Product page](https://camemake.github.io/CameVision-Ego/) | Public GitHub Pages site for this product |
+| [Get started](https://camemake.github.io/CameVision-Ego/start.html) | Install, live routes, Release 1 |
+| [Hardware](https://camemake.github.io/CameVision-Ego/hardware.html) | Camera map, GPIO, fitted parts |
+| [Robotic family](https://camemake.github.io/CameVision-Ego/family.html) | CameVision PCB counts and ODM products |
+| [`EGO.md`](EGO.md) | Full board notes |
+| [`RELEASE.md`](restore/release-1-20260824/RELEASE.md) | Release 1 overlay |
+
+## FAQ
+
+**Does the PC compute stereo?** No. Matching, depth and calibration run on the CameVision EGO. The host only deploys files and opens the browser.
+
+**Why does the page disappear after unplug?** USB port forwards live on the PC. Install `python tools/cv_ego_autostart.py --install` once so they return on every plug.
+
+**Can I turn USB into a webcam?** No. Keep the CameVision EGO developer gadget. Do not flash a non-CameVision image.
+
+**Where do I buy boards or ask for ODM?** The [webshop listing](https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414) and [Camemake robotic solutions](https://www.camemake.eu/robotic-solutions). Email [sales@camemake.com](mailto:sales@camemake.com).
+
 ## Support
 
 - Product and orders: [camemake.eu](https://www.camemake.eu) · [sales@camemake.com](mailto:sales@camemake.com)
-- This repository is the open demo. Direct one-to-one driver integration support is not included with the listing
+- This repository is the open demo for **CameVision EGO** only. Direct one-to-one driver integration support is not included with the listing
 - Keep USB as the CameVision EGO developer gadget. Do not flash a non-CameVision image onto the board
 
 © Camemake. CameVision EGO · CV-EGO01-OS.

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Get started · CameVision EGO · Camemake</title>
+  <meta name="description" content="Install and start the CameVision EGO open demo from Camemake.">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="icon" href="assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/camemake-logo.png" alt="Camemake">
+        <span>CameVision EGO</span>
+      </a>
+      <nav>
+        <a href="index.html">Product</a>
+        <a class="active" href="start.html">Get started</a>
+        <a href="hardware.html">Hardware</a>
+        <a href="family.html">Robotic family</a>
+        <a href="https://github.com/Camemake/CameVision-Ego">GitHub</a>
+        <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Buy EGO</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">Open demo software</div>
+      <h1>Get started</h1>
+      <p class="lead">Stereo matching, depth, calibration and the live page run on the CameVision EGO. The PC deploys the overlay over USB and opens a browser.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>First connection</h2>
+      <ol>
+        <li>Power the CameVision EGO and connect USB-C.</li>
+        <li>Clone <a href="https://github.com/Camemake/CameVision-Ego">Camemake/CameVision-Ego</a>.</li>
+        <li>Run:</li>
+      </ol>
+      <pre>python tools/cv_ego_stereo_start.py
+python tools/cv_ego_autostart.py --install</pre>
+      <p>Then open <strong>http://127.0.0.1:8081/</strong>.</p>
+      <table>
+        <tr><th>Command</th><th>Use</th></tr>
+        <tr><td><code>python tools/cv_ego_stereo_start.py</code></td><td>First-time or full overlay push</td></tr>
+        <tr><td><code>python tools/cv_ego_autostart.py --install</code></td><td>Always-on plug-in helper (once per PC)</td></tr>
+        <tr><td><code>python tools/cv_ego_page.py</code></td><td>Forwards only, then open the page</td></tr>
+        <tr><td><code>restore/release-1-20260824/restore-release1.ps1</code></td><td>Same as the two Python commands above</td></tr>
+      </table>
+      <p>USB port forwards live on the PC and drop on unplug. That is why the helper exists. The stereo process already starts on the camera at boot (<code>S99ego-stereo</code> → <code>/userdata/camevision-stereo.sh</code>).</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Live routes</h2>
+      <table>
+        <tr><th>URL</th><th>Content</th></tr>
+        <tr><td><code>/</code></td><td>Stereo live page (CAM1 left, CAM0 right, depth)</td></tr>
+        <tr><td><code>/cal</code></td><td>Checkerboard calibration</td></tr>
+        <tr><td><code>/ov0</code> <code>/ov1</code></td><td>Colour MJPEG, CAM0 / CAM1</td></tr>
+        <tr><td><code>/depth</code> <code>/xyz</code></td><td>Depth heatmap</td></tr>
+        <tr><td><code>/imu</code></td><td>IMU HUD (also port 8083)</td></tr>
+      </table>
+      <p>Do not invert the depth CSS (<code>scale(-1,-1)</code> is the correct view). Do not swap the eye order in software.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Release 1</h2>
+      <p>Path: <code>restore/release-1-20260824</code>. This is the software overlay to keep. It does <strong>not</strong> reflash boot, rootfs or oem. Python wheels stay on the camera at <code>/userdata/pylib</code>.</p>
+      <ul>
+        <li>Dual colour ISP (AWB / CCM / gamma). Auto-exposure reattaches if a grab restart drops it</li>
+        <li>Both eyes triggered together at 12.5 fps, aligned to 50 Hz lighting</li>
+        <li>Exposure locked on 20 ms steps</li>
+        <li>On-board depth, 640×400, jet heatmap</li>
+        <li>Calibration page and IMU HUD left running</li>
+      </ul>
+      <p>Keep USB as the CameVision EGO developer gadget. Do not flash a non-CameVision image onto the board.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div>
+        <a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Webshop</a> ·
+        <a href="https://www.camemake.eu/robotic-solutions">Robotic solutions</a> ·
+        <a href="mailto:sales@camemake.com">sales@camemake.com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hardware · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision EGO V1.I1 hardware map — cameras, IMU, GPIO and sync.">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="icon" href="assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/camemake-logo.png" alt="Camemake">
+        <span>CameVision EGO</span>
+      </a>
+      <nav>
+        <a href="index.html">Product</a>
+        <a href="start.html">Get started</a>
+        <a class="active" href="hardware.html">Hardware</a>
+        <a href="family.html">Robotic family</a>
+        <a href="https://github.com/Camemake/CameVision-Ego">GitHub</a>
+        <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Buy EGO</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">CameVision Ego V1.I1</div>
+      <h1>Hardware</h1>
+      <p class="lead">Two global-shutter imagers at 1920×1200, four MIPI lanes per eye, and one IMU beside each camera. Full board notes live in <a href="https://github.com/Camemake/CameVision-Ego/blob/main/EGO.md">EGO.md</a>.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>Camera map</h2>
+      <table>
+        <tr><th>Eye</th><th>CSI</th><th>Control</th><th>Power-down</th><th>Sync</th><th>Trigger</th><th>IMU</th></tr>
+        <tr><td>CAM0</td><td>CSI RX0, 4-lane</td><td>I2C3 @0x30</td><td>GPIO4_A3</td><td>GPIO4_A1 → FSYNC</td><td>GPIO6_C2 → EFSYNC</td><td>SPI0</td></tr>
+        <tr><td>CAM1</td><td>CSI RX1, 4-lane</td><td>I2C-GPIO @0x30</td><td>GPIO4_A2</td><td>GPIO4_A0 → FSYNC</td><td>GPIO6_C3 → EFSYNC</td><td>SPI1</td></tr>
+      </table>
+      <p>CAM1 I2C SCL/SDA are swapped on the PCB versus the SoC I2C4 functions, so that eye is bit-banged. CSI RX1 uses the 4-lane PHY on that port.</p>
+      <p>Trigger mode is continuous on both sensors. Slave-mode HDR bits stay off so the 3A stack still owns exposure. Trigger rate is 12.5 fps; programmed VTS remains 15. Do not reuse CAM1 power-down or I2C pins as sync outputs.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Fitted parts</h2>
+      <ul>
+        <li>Memory: <strong>1 GB</strong> DDR (the schematic 512 MB label is wrong)</li>
+        <li>Both IMUs are the same part</li>
+        <li>eMMC: <code>BWCTAK611G16G</code></li>
+        <li>USB-C with battery pads and charger path</li>
+        <li>Wi-Fi 6 + BLE</li>
+      </ul>
+      <p>SKU <strong>CV-EGO01-OS</strong>. Shop: <a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">CameVision EGO listing</a>.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div>
+        <a href="https://www.camemake.eu/robotic-solutions">Robotic solutions</a> ·
+        <a href="mailto:sales@camemake.com">sales@camemake.com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
