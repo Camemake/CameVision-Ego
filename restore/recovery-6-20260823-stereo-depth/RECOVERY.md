@@ -4,11 +4,11 @@ Working **on-board stereo depth** restore point. USB stays **ADB**.
 This is a software overlay on top of Recovery 5. It does **not** flash
 boot, rootfs, or oem. 3A and IMU stay running.
 
-Do not flash Luckfox Aura. Do not reboot this board into UVC.
+Do not flash a non-CameVision image. Do not switch this board to a webcam gadget.
 
 ## Product
-- Board: CameVision Ego V1.I1, Rockchip RV1126B
-- Sensors: SmartSens SC233HGS ×2
+- Board: CameVision Ego V1.I1
+- Sensors: 2.3 MP global shutter ×2
 - USB gadget: ADB, serial `4857b9cbd0b99e0b`
 - Page: http://127.0.0.1:8081/
 - Calibrate: http://127.0.0.1:8081/cal
@@ -58,8 +58,8 @@ http://127.0.0.1:8081/align
 ```
 
 ## Do not
-- Flash Luckfox Aura `boot.img` / `rootfs.img` / `oem.img`
-- Reboot Ego into UVC
+- Flash a non-CameVision `boot.img` / `rootfs.img` / `oem.img`
+- Switch Ego to a webcam USB gadget
 - Kill `rkaiq_3A_server` or `ego_imu_hud.py`
 - Roll the board back to Recovery 4 or earlier unless cameras themselves fail
 - Expect 30 fps depth: there is no hardware JPEG encoder; three 1920×1200

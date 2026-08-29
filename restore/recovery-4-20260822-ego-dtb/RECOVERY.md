@@ -7,8 +7,8 @@ the Recovery 3 kernel/rootfs **plus** the compiled Ego device tree.
 USB stays **ADB**. Do not reboot this board into UVC.
 
 ## Product
-- Board: CameVision Ego V1.I1, Rockchip RV1126B
-- RAM: Samsung `K4A8G165WG` 16-bit 1 GB (PDF `K4A4G165WG` is wrong)
+- Board: CameVision Ego V1.I1
+- RAM: `K4A8G165WG` 16-bit 1 GB (PDF `K4A4G165WG` is wrong)
 - eMMC: `BWCTAK611G16G` (same part as Single)
 - IMU: `LSM6DSVQTR` ×2 (PDF `LSM6DSV320XTR` is wrong)
 - USB gadget: ADB, VID `0x2207` PID `0x0006`, serial `b9129b95306c7715`
@@ -52,9 +52,9 @@ or from this folder: `flash-boot-ego.ps1`. That `dd`s `camevision_boot_ego.img`
 to `/dev/mmcblk0p4` and reboots. USB must stay ADB.
 
 ## Do not
-- Flash Luckfox Aura `boot.img` / `rootfs.img` / `oem.img`
+- Flash a non-CameVision `boot.img` / `rootfs.img` / `oem.img`
 - `upgrade_tool db` twice in one Maskrom session
-- Reboot Ego into UVC
+- Switch Ego to a webcam USB gadget
 - Extra leftover `S50usbdevice.*` in `/etc/init.d` (`rcS` runs `S??*`)
 - `insmod rockit` / `insmod_ko.sh`
 - `camevision-uvc-h264.py` or `isp_grab.py` burst

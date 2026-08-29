@@ -6,13 +6,13 @@ Recovery 4 was the first Ego DTB (Cam 1 still NACK). This package is
 the last proven live boot: Cam 0 + Cam 1, RKAIQ 3A, side-by-side
 1920×1200 preview.
 
-Do not flash Luckfox Aura. Do not reboot this board into UVC.
+Do not flash a non-CameVision image. Do not switch this board to a webcam gadget.
 
 ## Product
-- Board: CameVision Ego V1.I1, Rockchip RV1126B
-- RAM: Samsung `K4A8G165WG` 16-bit 1 GB
+- Board: CameVision Ego V1.I1
+- RAM: `K4A8G165WG` 16-bit 1 GB
 - eMMC: `BWCTAK611G16G`
-- Sensors: SmartSens SC233HGS ×2, chip id `0xcb61`
+- Sensors: 2.3 MP global shutter ×2, chip id `0xcb61`
 - IMU: `LSM6DSVQTR` ×2
 - USB gadget: ADB, VID `0x2207` PID `0x0006`, serial `4857b9cbd0b99e0b`
 - Strings: CameMake / **CameVision Ego**
@@ -47,7 +47,7 @@ Full eMMC rebuild (Maskrom, loader **once**):
 | 0x40 | idblock | `../known-good-20260819-camera-adb/idblock.img` |
 | 0x440 | uboot | `../known-good-20260819-camera-adb/uboot.img` |
 | 0x2440 | boot | `camevision_boot_ego.img` (this folder) |
-| 0x7C40 | userdata | Aura stock `userdata.img` (clean) |
+| 0x7C40 | userdata | clean `userdata.img` |
 | 0x207C40 | oem | `../known-good-20260819-camera-adb/oem_noko.img` |
 | 0x607C40 | rootfs | `../known-good-20260819-camera-adb/rootfs_bootstable.img` |
 
@@ -64,9 +64,9 @@ python tools/cv_flash_imaging_boot.py
 or `flash-boot-ego.ps1` in this folder. USB must stay ADB.
 
 ## Do not
-- Flash Luckfox Aura `boot.img` / `rootfs.img` / `oem.img`
+- Flash a non-CameVision `boot.img` / `rootfs.img` / `oem.img`
 - `upgrade_tool db` twice in one Maskrom session
-- Reboot Ego into UVC
+- Switch Ego to a webcam USB gadget
 - Extra leftover `S50usbdevice.*` in `/etc/init.d`
 - `insmod rockit` / `insmod_ko.sh`
 - Hold BOOT after `rd`

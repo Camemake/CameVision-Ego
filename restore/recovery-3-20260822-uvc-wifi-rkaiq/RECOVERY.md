@@ -6,11 +6,11 @@ Third restore point. Recovery 2 is `restore/recovery-2-20260821-adb-stream`
 This package is the **working camera stack**: USB webcam **CameVision Single**,
 Wi-Fi STA for debug, RKISP mainpath, standalone RKAIQ 3A, MJPEG pump.
 
-Do not flash Luckfox Aura. Do not wipe userdata unless you also re-apply
+Do not flash a non-CameVision image. Do not wipe userdata unless you also re-apply
 `overlay/` (kmpp, Wi-Fi kos, IQ helper, UVC pump).
 
 ## Product
-- Board: CameVision Single, Rockchip RV1126B, 1 GB DDR4, Samsung eMMC
+- Board: CameVision Single, 1 GB DDR4, eMMC
 - USB gadget: UVC only, VID `0x2207` PID `0x0016`, serial `CVSingle`
 - Strings: CameMake / **CameVision Single**
 - One format: MJPEG 1920×1080 @ 15 (`dwFrameInterval` 666666), `streaming_maxpacket=3072`
@@ -73,7 +73,7 @@ Camera: Windows Camera → **CameVision Single**. If the PC still shows ADB
 or nothing after a gadget change, unplug USB-C 2s and plug back in.
 
 ## Do not
-- Flash Luckfox Aura `boot.img` / `rootfs.img` / `oem.img`
+- Flash a non-CameVision `boot.img` / `rootfs.img` / `oem.img`
 - `upgrade_tool db` twice in one Maskrom session
 - Live ADB→UVC rebind (Windows will not see the new device)
 - dwc3 unbind + ISP STREAMON in the same S50 (kernel panic)

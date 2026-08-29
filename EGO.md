@@ -1,11 +1,13 @@
-# CameVision Ego
+# CameVision Ego — board notes
 
-This folder is the **CameVision Ego** project (not Dual). Schematic title
-block is `CameVisionEgo` V1.I1, released 2026-07-15 (19 sheets).
+This folder is the **CameVision Ego** project. Schematic title block is
+`CameVisionEgo` V1.I1, released 2026-07-15 (19 sheets). Product SKU:
+**CV-EGO01-OS**. Shop:
+https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414
 
-Recovery 5 is the working dual-camera ISP image:
-`restore/recovery-5-20260823-imaging-adb`. USB stays ADB. Do not reboot
-this board into UVC.
+Recovery 5 is the working dual-camera imaging image:
+`restore/recovery-5-20260823-imaging-adb`. USB stays the CameVision
+developer gadget (ADB). Do not switch this board to a webcam gadget.
 
 ## Schematic vs what is actually fitted
 
@@ -14,9 +16,9 @@ boards.
 
 | Block | Schematic label | Actual |
 |---|---|---|
-| DDR4 U3 | `K4A4G165WG-BCWE` (512 MB) | Samsung `K4A8G165WG` 16-bit **1 GB**. Loader is `rv1126b_spl_loader_k4a8g.bin`. |
-| IMU U9 / U12 | `LSM6DSV320XTR` | ST **`LSM6DSVQTR`** ×2 (`lsm6dsv_accel` / `lsm6dsv_gyro`) |
-| eMMC U2A | `BWCTAK611G16G` | **`BWCTAK611G16G`** — same part on Single and Ego |
+| DDR4 U3 | `K4A4G165WG-BCWE` (512 MB) | `K4A8G165WG` 16-bit **1 GB**. Use the 1 GB DDR loader. |
+| IMU U9 / U12 | `LSM6DSV320XTR` | **`LSM6DSVQTR`** ×2 |
+| eMMC U2A | `BWCTAK611G16G` | **`BWCTAK611G16G`** |
 
 Device tree: `device-tree/rv1126b-camevision-ego.dts`.
 
@@ -27,46 +29,42 @@ SOC_USB, SOC_ADC_Boot, SOC_COM_Audio_Camera, SOC_COM_Display,
 SOC_Audio-not-used, SOC_EPHY-not-used, DDR4_16b, MIPI_Camera0,
 MIPI_Camera1, WiFi_BT, uSD_Card, USB-C_PD, Battery.
 
-### SoC / power / RTC
-- Rockchip **RV1126B** (same family as Single)
+### Processor / power / RTC
+- CameVision Ego vision SoC
 - PMIC **RK801-2** on I2C0 (`I2C0_SCL/SDA_PMIC`)
 - RTC **RV-3028-C7** on I2C2 (live: `2-0052`)
 - Status LED D1 RGB common-anode: green GPIO0_A5, red GPIO0_A6, blue GPIO0_A4
-- Boot: SARADC0_IN7 Maskrom / eMMC (same Rockchip resistor ladder)
+- Boot: SARADC0_IN7 Maskrom / eMMC
 - Ethernet PHY sheet is **not used**
 
-### Cameras (new vs Single)
-Two SmartSens **SC233HGS**, native 1920×1200. SID stuffing looks the same
-on both, so each stays `0x30` on its **own** I2C bus.
+### Cameras
+Two 2.3 MP global-shutter imagers, native 1920×1200. SID stuffing looks
+the same on both, so each stays `0x30` on its **own** I2C bus.
 
 | Cam | MIPI | I2C | PWDN / XSHUTDN | FSYNC (SYNC) | EFSYNC (TRIGGER) | IMU |
 |---|---|---|---|---|---|---|
 | Cam 0 (U7) | CSI RX0, 4-lane + CLK0 | I2C3 `I2C3_SCL/SDA_CAM` | `CAM0_PWDN` GPIO4_A3 | `MIPI_RX0_SYNC` GPIO4_A1 (AG32) → D3 | `MIPI_RX0_TRIGGER` GPIO6_C2 (U31) → B5 | IMU0 on **SPI0** |
 | Cam 1 (U10) | CSI RX1, 4-lane + CLK0 | I2C4 `I2C4_SCL/SDA_CAM` | `CAM1_PWDN` GPIO4_A2 | `MIPI_RX1_SYNC` GPIO4_A0 (AG31) → D3 | `MIPI_RX1_TRIGGER` GPIO6_C3 (V31) → B5 | IMU1 on **SPI1** |
 
-FSYNC/EFSYNC are driven by the RV1126B from `tools/ego_cam_sync.py`. Both
-sensors run SC233HGS **continuous trigger** (`0x3222[0]=1`, datasheet §2.2):
-the SoC pulses Cam0+Cam1 EFSYNC (and FSYNC) on the same tick so readout
-starts together. Slave mode (`0x3282[3]`) stays off so 3A still owns
-exposure. Trigger rate is **12.5 fps** (50 Hz lighting; VTS stays 15). GMAC
-is disabled, so GPIO6_C2/C3 are free. Do not reuse Single's GPIO4_A2/A7.
+FSYNC/EFSYNC are driven from `tools/ego_cam_sync.py`. Both sensors run
+**continuous trigger** (`0x3222[0]=1`): the SoC pulses Cam0+Cam1 EFSYNC
+(and FSYNC) on the same tick so readout starts together. Slave mode
+(`0x3282[3]`) stays off so 3A still owns exposure. Trigger rate is
+**12.5 fps** (50 Hz lighting; VTS stays 15). GMAC is disabled, so
+GPIO6_C2/C3 are free. Do not reuse CAM1 PWDN or I2C pins as sync
+outputs.
 
-Single DTB only has one sensor on i2c3 `3-0030`. That node already fails
-on Ego (`chip id high read failed: -5`) — pinmux / power / bus is not the
-Single camera wiring.
-
-### IMUs (two, same part as Single)
+### IMUs (two)
 - IMU0 U9: SPI0 (`SPI0_CLK/CS0/MISO/MOSI`), `IMU0_INT1/INT2`, next to Cam 0
 - IMU1 U12: SPI1 (`SPI1_CLK/CS0/MISO/MOSI`), `IMU1_INT1/INT2`, next to Cam 1
-- Single DTB has one LSM6 on `spi0.0` — live whoami `0xff` (wrong mux / CS)
 
 ### Storage / wireless
 - eMMC on the dedicated EMMC/FSPI bus (live `mmc0`)
 - microSD U6 `475710001` on **SDMMC0** (`SDMMC0_CLK/CMD/D0–D3`, `DET`, `PWREN`)
-- Wi-Fi/BT **VS6621S80** U14 on **SDMMC1** + UART2 (same module as Single)
+- Wi-Fi/BT **VS6621S80** U14 on **SDMMC1** + UART2
 - Live: `mmc2` present, no `mmcblk1` until SD host + card are in the DTB
 
-### USB / battery (new vs Single)
+### USB / battery
 - USB-C J3 `10132328-10011LF`: USB2 + USB3 DRD, CC 5.1k, VBUS detect
 - Charger **BQ24072RGTR** U13: 250 mA fast charge, 1.5 A input limit, `BAT_CHG`
 - Sliding power switch + backup power-path FET
@@ -76,7 +74,7 @@ Single camera wiring.
 
 | # | Path | Meaning |
 |---|---|---|
-| 3 | `restore/recovery-3-20260822-uvc-wifi-rkaiq` | Single camera stack (base rootfs/oem) |
+| 3 | `restore/recovery-3-20260822-uvc-wifi-rkaiq` | Single-camera stack (base rootfs/oem) |
 | 4 | `restore/recovery-4-20260822-ego-dtb` | First Ego DTB (Cam 1 still NACK) |
 | **5** | `restore/recovery-5-20260823-imaging-adb` | Dual ISP + I2C-GPIO Cam 1 + ADB preview |
 | 6 | `restore/recovery-6-20260823-stereo-depth` | First on-board stereo overlay (no flash) |
@@ -93,7 +91,7 @@ Restore Release 1 (Recovery 5 must already be live):
 ## First Ego bring-up (2026-08-22)
 
 - ADB serial: `b9129b95306c7715` (`2207:0006`)
-- USB gadget strings: CameMake / **CameVision Ego** / `CVEgo` (ADB stays on)
+- USB gadget strings: Camemake / **CameVision Ego** / `CVEgo` (ADB stays on)
 - Kernel: `6.1.141-rt52` `#24 SMP PREEMPT_RT`
 - DTB model: **CameVision Ego**
 - Live ADB serial: `4857b9cbd0b99e0b`

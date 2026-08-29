@@ -1,19 +1,19 @@
 # Recovery 2 — CameVision Single — 2026-08-21 (Wi-Fi + BLE + IMU)
 
 Second restore point. Recovery 1 is `restore/lock-20260821-rt52-adb-hwrtsp`.
-This package is the **working** board config: ADB camera stream, LSM6 IMU on
-SPI1, VS6621S80 Wi-Fi STA + BLE, Seekwave F26.26.3.1 firmware, RT52 modules.
+This package is the **working** board config: ADB camera stream, IMU on
+SPI1, VS6621S80 Wi-Fi STA + BLE, F26.26.3.1 firmware, RT52 modules.
 
-Do not flash Luckfox Aura. Do not change the USB gadget. Do not wipe userdata
+Do not flash a non-CameVision image. Do not change the USB gadget. Do not wipe userdata
 unless you also re-apply `overlay/` (kmpp, Wi-Fi kos, stream, firmware).
 
 ## Product
-- Board: CameVision Single (same SoC family as M1)
-- SoC: Rockchip RV1126B, 1 GB DDR4, Samsung eMMC
+- Board: CameVision Single
+- Processor: CameVision vision SoC, 1 GB DDR4, eMMC
 - USB gadget: ADB only, `2207:0006`, strings CameMake / CameVision Single
 - Serial: `0558fa189447bc45`
 - UDC `21500000.usb` state `configured`
-- Kernel: `6.1.141-rt52` `#24 SMP PREEMPT_RT` (bryan@tronlong, 2026-07-15)
+- Kernel: `6.1.141-rt52` `#24 SMP PREEMPT_RT` (2026-07-15)
 - Wi-Fi/BT: VS6621S80 / SWT6621-S, SDIO `1FFE:6621`
 - IMU: LSM6DSVQTR on SPI1 (`lsm6dsv_accel` / `lsm6dsv_gyro`)
 
@@ -26,7 +26,7 @@ unless you also re-apply `overlay/` (kmpp, Wi-Fi kos, stream, firmware).
 ## eMMC images (base flash)
 
 Flash with `restore-camevision.ps1` from this folder. It does **not** write
-empty Aura userdata.
+empty userdata.
 
 | LBA | name | file |
 |-----|------|------|
@@ -38,8 +38,8 @@ empty Aura userdata.
 | 0x607C40 | rootfs | `known-good-20260819-camera-adb/rootfs_bootstable.img` |
 
 After ADB is up:
-1. `apply-overlay.ps1` — scripts, kmpp, Seekwave FW, RT52 Wi-Fi/BT kos
-2. `flash-boot-wifi-imu.ps1` — SPI1 IMU + `wifi_chip_type=vs6621` DTB (reboots)
+1. `apply-overlay.ps1` — scripts, kmpp, Wi-Fi firmware, RT52 Wi-Fi/BT kos
+2. `flash-boot-wifi-imu.ps1` — SPI1 IMU + Wi-Fi DTB (reboots)
 
 Or flash `camevision_boot_wifi_imu.img` from this folder instead of the stock
 boot image if you already know Maskrom is safe.
@@ -51,7 +51,7 @@ boot image if you already know Maskrom is safe.
 - `/userdata/swt6621.sh` — NPI AT over `/dev/ATC`
 - `/userdata/wpa_camevision.conf` — SSID `Camemake R&D center`
 - `/userdata/swt6621-rt52/*.ko` — real `6.1.141-rt52 preempt_rt` modules
-- `/userdata/swt6621_fw/*` — Seekwave **F26.26.3.1** SDIO firmware
+- `/userdata/swt6621_fw/*` — **F26.26.3.1** SDIO firmware
 - `/userdata/kmpp-rt52.ko` — H.264 for RTSP
 - `insmod_wifi.sh` on oem → exec `camevision-wifi.sh` (never rockit)
 
@@ -73,11 +73,11 @@ Wi-Fi IP (when AP assigns): check `wpa_cli -i wlan0 status` on device.
 RTSP can also be opened on the LAN IP once Wi-Fi is up.
 
 ## Do not
-- Flash Luckfox Aura `boot.img` / `rootfs.img` / `oem.img`
+- Flash a non-CameVision `boot.img` / `rootfs.img` / `oem.img`
 - `upgrade_tool db` twice in one Maskrom session
 - Live USB gadget rebind (ADB → UVC) / boot-time UVC
 - `insmod rockit`
-- Use vermagic-patched Aura Wi-Fi kos (`wifi-rt52/*_rt52.ko`) — they need `__mutex_init`
+- Use vermagic-patched third-party Wi-Fi kos (`wifi-rt52/*_rt52.ko`) — they need `__mutex_init`
 - Hold BOOT after `rd`
 - Wipe userdata without re-applying this overlay
 

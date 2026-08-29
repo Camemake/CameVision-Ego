@@ -3,11 +3,12 @@
 This is the **baseline** to continue from. USB stays **ADB**. Software
 overlay on Recovery 5. It does **not** flash boot, rootfs, or oem.
 
-Do not flash Luckfox Aura. Do not reboot this board into UVC.
+Product: [CameVision EGO · CV-EGO01-OS](https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414).
+Do not flash a non-CameVision image. Do not switch this board to a webcam gadget.
 
 ## Product
-- Board: CameVision Ego V1.I1, Rockchip RV1126B
-- Sensors: SmartSens SC233HGS ×2, LSM6DSVQTR ×2
+- Board: CameVision Ego V1.I1
+- Sensors: 2.3 MP global shutter ×2, IMU ×2
 - USB gadget: ADB. Serials: `4857b9cbd0b99e0b`, `53feb42973ff9142`
 - Live: http://127.0.0.1:8081/
 - Calibrate: http://127.0.0.1:8081/cal
@@ -62,8 +63,8 @@ python tools/cv_ego_autostart.py --install
 or `restore-release1.ps1` in this folder. After `--install`, plugging USB is enough.
 
 ## Do not
-- Flash Luckfox Aura `boot.img` / `rootfs.img` / `oem.img`
-- Reboot Ego into UVC
+- Flash a non-CameVision `boot.img` / `rootfs.img` / `oem.img`
+- Switch Ego to a webcam USB gadget
 - Kill `rkaiq_3A_server` or `ego_imu_hud.py` unless ISP blocks are off
 - Change depth CSS orientation or matcher eye order
-- Reuse Single's GPIO4_A2 / GPIO4_A7 for sync (those are CAM1 PWDN and I2C4 SDA on Ego)
+- Reuse CAM1 PWDN (GPIO4_A2) or I2C SDA (GPIO4_A7) for sync
