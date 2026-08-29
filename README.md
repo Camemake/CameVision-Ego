@@ -170,6 +170,7 @@ Every Camemake camera module can be tailored — sensor, lens, housing, interfac
 | [Get started](https://camemake.github.io/CameVision-Ego/start.html) | Install, live routes, Release 1 |
 | [Hardware](https://camemake.github.io/CameVision-Ego/hardware.html) | Camera map, GPIO, fitted parts |
 | [Robotic family](https://camemake.github.io/CameVision-Ego/family.html) | CameVision PCB counts and ODM products |
+| [About](https://camemake.github.io/CameVision-Ego/about.html) | Camemake, shop and robotic solutions |
 | [`EGO.md`](EGO.md) | Full board notes |
 | [`RELEASE.md`](restore/release-1-20260824/RELEASE.md) | Release 1 overlay |
 
