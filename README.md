@@ -57,8 +57,6 @@ Hardware revision in this tree: **CameVision Ego V1.I1**.
 - Display: left pane is CAM1 / IMU1, right pane is CAM0 / IMU0
 - Service starts on the board at boot; USB stays the Camemake developer gadget (ADB)
 
-The host does **not** compute depth. Do not switch the USB gadget to a webcam profile.
-
 ## Quick start
 
 1. Power the CameVision EGO and connect USB-C to the PC.
@@ -92,7 +90,7 @@ USB port forwards live on the PC and are dropped on unplug. That is why the help
 | `/depth` `/xyz` | Depth heatmap |
 | `/imu` | IMU HUD (also port 8083) |
 
-Do not invert the depth CSS (`scale(-1,-1)` is the correct view). Do not swap the eye order in software.
+Do not invert the depth CSS (`scale(-1,-1)` is the correct view).
 
 ## Release 1 (baseline)
 
@@ -146,7 +144,7 @@ Fitted memory is **1 GB** DDR (the schematic 512 MB label is wrong). Both IMUs a
 
 ## Camemake robotic family
 
-CameVision EGO is the **double-camera** evaluation board in the CameVision family. The same platform is offered as ODM PCBs and finished goods:
+CameVision EGO is the **dual-camera** board in the CameVision family. The same platform is offered as ODM PCBs and finished goods:
 
 | Cameras on the PCB | Role |
 |---|---|
@@ -179,14 +177,11 @@ Every Camemake camera module can be tailored — sensor, lens, housing, interfac
 
 **Why does the page disappear after unplug?** USB port forwards live on the PC. Install `python tools/cv_ego_autostart.py --install` once so they return on every plug.
 
-**Can I turn USB into a webcam?** No. Keep the CameVision EGO developer gadget. Do not flash a non-CameVision image.
-
 **Where do I buy boards or ask for ODM?** The [webshop listing](https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414) and [Camemake robotic solutions](https://www.camemake.eu/robotic-solutions). Email [sales@camemake.com](mailto:sales@camemake.com).
 
 ## Support
 
 - Product and orders: [camemake.eu](https://www.camemake.eu) · [sales@camemake.com](mailto:sales@camemake.com)
-- This repository is the open demo for **CameVision EGO** only. Direct one-to-one driver integration support is not included with the listing
-- Keep USB as the CameVision EGO developer gadget. Do not flash a non-CameVision image onto the board
+- This repository is the open demo for **CameVision EGO** only. 
 
 © Camemake. CameVision EGO · CV-EGO01-OS.
