@@ -1,8 +1,0 @@
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_stop success.
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_start success.
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_stop success.
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_start success.
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_stop success.
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_start success.
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_stop success.
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_start success.

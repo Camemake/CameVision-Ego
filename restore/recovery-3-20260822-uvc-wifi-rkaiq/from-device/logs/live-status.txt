@@ -1,9 +1,0 @@
-09/product
-product=CameVision Single
-pid=0x0016
-state=configured
-    inet 192.168.1.23/24 brd 192.168.1.255 scope global dynamic wlan0
-  771 root      0:05 rkaiq_3A_server --silent
- 2021 root      0:00 v4l2-ctl -d /dev/video13 --stream-mmap=8 --stream-to=/tmp/cam.nv12 --stream-poll
- 3099 root      0:00 sh -c while true; do v4l2-ctl -d /dev/video13 --stream-mmap=8 --stream-to=/tmp/cam.nv12 --stream-poll >>/userdata/uvc-isp.log 2>&1; echo restart >>/userdata/uvc-isp.log; sleep 0.3; done
- 3102 root      0:12 /usr/bin/python3 /userdata/camevision-uvc-mjpg.py
