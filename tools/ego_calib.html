@@ -39,21 +39,41 @@
  canvas.ov{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
  .tag{position:absolute;left:10px;top:10px;background:rgba(255,255,255,.9);padding:6px 8px;border-radius:8px;z-index:2;font:12px Consolas,monospace}
  .lock{position:absolute;left:10px;bottom:10px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.9);z-index:2;font:12px Consolas,monospace}
- .lock.on{color:#185} .lock.off{color:#a12}
+ .btn.focus{background:var(--came)}
+ .btn.focus.on{background:#c0392b}
+ .mtf{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line)}
+ .mtf b{font-size:22px;font-variant-numeric:tabular-nums}
+ .mtf .sub{font-size:12px;color:var(--muted);margin-top:4px}
+ .mtf.good{border-color:#7cb} .mtf.soft{border-color:#e84b8a}
+ body.focus-mode .cal-only{display:none !important}
+ body.focus-mode #calPanel{display:none !important}
+ body:not(.focus-mode) #focusPanel{display:none !important}
+ body.focus-mode .side{width:340px}
+ .chart-card{margin:10px 0 12px;background:#111;border:1px solid var(--line);border-radius:8px;padding:8px}
+ .chart-card img{width:100%;display:block;background:#fff;border-radius:4px}
+ .chart-card p{margin:8px 0 0;font-size:12px;color:#fff;text-align:center}
+ .need{position:absolute;inset:0;z-index:3;display:none;flex-direction:column;
+       align-items:center;justify-content:center;gap:10px;padding:18px;text-align:center;
+       background:rgba(0,0,0,.62);color:#fff}
+ body.focus-mode .need.show{display:flex}
+ .need img{max-width:78%;max-height:52%;background:#fff;border:3px solid #fff;border-radius:8px}
+ .need b{font-size:18px}
+ .need span{font-size:13px;opacity:.92;max-width:28em}
 </style></head><body>
 <div class="bar">
   <a class="back" href="/">← Live</a>
   <div class="plate"><img src="/brand.png" alt="Camemake"></div>
-  <div class="titles"><b>CameVision Ego</b><span>Sensor calibration · NPU</span></div>
-  <button class="btn" id="go" onclick="startCal()">Start</button>
-  <button class="btn stop" id="stop" onclick="stopCal()" disabled>Stop &amp; save</button>
-  <button class="btn reset" onclick="resetCal()">Reset</button>
-  <label>inner <input id="cols" value="11"> × <input id="rows" value="8"></label>
-  <label>square mm <input id="sq" value="25"></label>
-  <label>distance mm <input id="dist" value="1000"></label>
+  <div class="titles"><b>CameVision Ego</b><span id="modeTitle">Sensor calibration · NPU</span></div>
+  <button class="btn cal-only" id="go" onclick="startCal()">Start</button>
+  <button class="btn stop cal-only" id="stop" onclick="stopCal()" disabled>Stop &amp; save</button>
+  <button class="btn reset cal-only" onclick="resetCal()">Reset</button>
+  <button class="btn focus" id="fg" onclick="toggleFocus()">Focus test</button>
+  <label class="cal-only">inner <input id="cols" value="11"> × <input id="rows" value="8"></label>
+  <label class="cal-only">square mm <input id="sq" value="25"></label>
+  <label class="cal-only">distance mm <input id="dist" value="1000"></label>
 </div>
 <div class="body">
-  <div class="side">
+  <div class="side" id="calPanel">
     <h2>Your board</h2>
     <div>11 × 8 inner corners. Keep <b>1.00 m</b>.</div>
     <h2>On the live image</h2>
@@ -74,16 +94,45 @@
     <div class="hint" id="hint">Loading checkerboard detector…</div>
     <div class="legend" id="det">NPU detector: …</div>
   </div>
+  <div class="side" id="focusPanel">
+    <h2>Use this chart</h2>
+    <div class="chart-card">
+      <img src="/iso12233.png" alt="ISO 12233 resolution chart">
+      <p>ISO 12233 · hold at 50 cm · fill both views</p>
+    </div>
+    <div>The checkerboard is not used here. Print or mount <b>this</b> resolution chart (black frame, slanted squares, circles in the center).</div>
+    <h2>Set the lens</h2>
+    <ol>
+      <li>Hold the chart upright, parallel to the glasses, at <b>50 cm</b>.</li>
+      <li>Fill most of both live images with the black frame.</li>
+      <li>When the chart is seen, the overlay says ISO 12233 and a sharpness number appears.</li>
+      <li>Loosen the M12 lock ring. Turn the lens until that number peaks, then lock.</li>
+      <li>Repeat for the other eye.</li>
+    </ol>
+    <div class="mtf" id="mtfL"><div>LEFT · CAM0</div><b id="nL">—</b><div class="sub" id="sL">waiting for the ISO 12233 chart</div></div>
+    <div class="mtf" id="mtfR"><div>RIGHT · CAM1</div><b id="nR">—</b><div class="sub" id="sR">waiting for the ISO 12233 chart</div></div>
+    <div class="hint" id="fhint">Hold the chart shown above at 50 cm.</div>
+  </div>
   <div class="views">
     <div class="pane">
       <img class="v" id="l" src="/ov0">
       <canvas class="ov" id="ol"></canvas>
+      <div class="need" id="needL">
+        <img src="/iso12233.png" alt="ISO 12233">
+        <b>Hold this chart</b>
+        <span>ISO 12233 resolution chart at 50 cm. Fill the frame. Not the checkerboard.</span>
+      </div>
       <div class="tag">LEFT · CAM0 · IMU0</div>
       <div class="lock off" id="ll">searching</div>
     </div>
     <div class="pane">
       <img class="v" id="r" src="/ov1">
       <canvas class="ov" id="or"></canvas>
+      <div class="need" id="needR">
+        <img src="/iso12233.png" alt="ISO 12233">
+        <b>Hold this chart</b>
+        <span>ISO 12233 resolution chart at 50 cm. Fill the frame. Not the checkerboard.</span>
+      </div>
       <div class="tag">RIGHT · CAM1 · IMU1</div>
       <div class="lock off" id="lr">searching</div>
     </div>
@@ -92,7 +141,7 @@
 <script>
 const NAMES=[["TL","TC","TR"],["ML","C","MR"],["BL","BC","BR"]];
 const NEED={C:1,TL:1,TR:1,BL:1,BR:1};
-let last=null, t0=performance.now();
+let last=null, focus=null, mode="cal", t0=performance.now();
 function n(v,d){return (v===undefined||Number.isNaN(+v))?"-":Number(v).toFixed(d)}
 async function api(path, body){
   const opt=body===undefined?{}:{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)};
@@ -100,12 +149,68 @@ async function api(path, body){
 }
 function imgBox(img){
   const W=img.clientWidth, H=img.clientHeight;
-  const cw=(last&&last.cap_w)||1920, ch=(last&&last.cap_h)||1200;
+  const src=mode==="focus"?focus:last;
+  const cw=(src&&src.cap_w)||1920, ch=(src&&src.cap_h)||1200;
   const ir=cw/ch, cr=W/Math.max(H,1);
   let w,h,x,y;
   if(cr>ir){h=H;w=h*ir;x=(W-w)/2;y=0;}
   else{w=W;h=w/ir;x=0;y=(H-h)/2;}
   return {x,y,w,h};
+}
+function mapPt(s, box, sx, sy){
+  const cw=s.cap_w||1920, ch=s.cap_h||1200;
+  const dx=cw-1-sx, dy=ch-1-sy;
+  return [box.x+(dx/cw)*box.w, box.y+(dy/ch)*box.h];
+}
+function mapBox(s, box, b){
+  if(!b) return null;
+  const p0=mapPt(s,box,b.x,b.y), p1=mapPt(s,box,b.x+b.w,b.y+b.h);
+  return {x:Math.min(p0[0],p1[0]), y:Math.min(p0[1],p1[1]), w:Math.abs(p1[0]-p0[0]), h:Math.abs(p1[1]-p0[1])};
+}
+function drawFocus(cnv, img, s, eye){
+  const dpr=window.devicePixelRatio||1;
+  const cw=img.clientWidth, ch=img.clientHeight;
+  if(!cw||!ch) return;
+  if(cnv.width!==Math.round(cw*dpr)||cnv.height!==Math.round(ch*dpr)){
+    cnv.width=Math.round(cw*dpr); cnv.height=Math.round(ch*dpr);
+  }
+  const ctx=cnv.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,cw,ch);
+  const data=eye==="L"?s.left:s.right;
+  if(!data||!data.chart) return;
+  const box=imgBox(img);
+  const chb=mapBox(s, box, data.chart);
+  ctx.save();
+  ctx.beginPath(); ctx.rect(box.x,box.y,box.w,box.h); ctx.clip();
+  if(chb){
+    ctx.strokeStyle="#7dccb0";
+    ctx.lineWidth=4;
+    ctx.strokeRect(chb.x, chb.y, chb.w, chb.h);
+    ctx.fillStyle="rgba(26,111,124,.85)";
+    ctx.fillRect(chb.x, chb.y, Math.min(chb.w, 168), 26);
+    ctx.fillStyle="#fff";
+    ctx.font="700 13px Segoe UI,sans-serif";
+    ctx.textAlign="left"; ctx.textBaseline="middle";
+    ctx.fillText("ISO 12233  50 cm", chb.x+8, chb.y+13);
+  }
+  const rois=[data.center].concat(data.corners||[]).filter(Boolean);
+  rois.forEach(r=>{
+    const rb=mapBox(s, box, r.box);
+    if(!rb) return;
+    const center=r.name==="C";
+    ctx.strokeStyle=center?"#1a6f7c":"#e84b8a";
+    ctx.lineWidth=center?3:2;
+    ctx.strokeRect(rb.x, rb.y, rb.w, rb.h);
+    const label=(center?"Center  ":"Corner  ")+n(r.mtf50_cy,2);
+    ctx.fillStyle=center?"rgba(26,111,124,.9)":"rgba(232,75,138,.9)";
+    ctx.fillRect(rb.x, rb.y-20, Math.min(rb.w, 120), 20);
+    ctx.fillStyle="#fff";
+    ctx.font="700 12px Segoe UI,sans-serif";
+    ctx.textBaseline="middle";
+    ctx.fillText(label, rb.x+6, rb.y-10);
+  });
+  ctx.restore();
 }
 function draw(cnv, img, s){
   const dpr=window.devicePixelRatio||1;
@@ -197,17 +302,96 @@ function render(s){
   go.disabled=!!s.running;
   stop.disabled=!s.running;
 }
+function setMode(m){
+  mode=m;
+  document.body.classList.toggle("focus-mode", m==="focus");
+  modeTitle.textContent=m==="focus"?"Focus test · ISO 12233":"Sensor calibration · NPU";
+  fg.classList.toggle("on", m==="focus");
+  fg.textContent=m==="focus"?"Stop focus":"Focus test";
+  if(m==="focus"){
+    needL.classList.add("show");
+    needR.classList.add("show");
+    ll.textContent=lr.textContent="need ISO 12233";
+    ll.className=lr.className="lock off";
+    [ol,or].forEach(cnv=>{
+      const ctx=cnv.getContext("2d");
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.clearRect(0,0,cnv.width,cnv.height);
+    });
+  } else {
+    needL.classList.remove("show");
+    needR.classList.remove("show");
+  }
+}
+function fillEye(el, sub, box, eye){
+  const cy=eye&&eye.mtf50_cy;
+  const seen=!!(eye&&eye.chart);
+  el.textContent=cy==null?"—":n(cy,2)+" cy/px";
+  const lw=eye&&eye.mtf50_lwph, pk=eye&&eye.peak_cy, g=eye&&eye.grade;
+  let t;
+  if(!seen) t="waiting for the ISO 12233 chart";
+  else if(cy==null) t="chart seen — looking for a slanted square";
+  else{
+    t="LW/PH "+lw+"   peak "+n(pk,2);
+    if(eye.corner_cy!=null) t+="   corners "+n(eye.corner_cy,2);
+  }
+  sub.textContent=t;
+  box.className="mtf "+(g||"");
+}
+function renderFocus(s){
+  focus=s;
+  const seenL=!!(s.left&&s.left.chart);
+  const seenR=!!(s.right&&s.right.chart);
+  needL.classList.toggle("show", !seenL);
+  needR.classList.toggle("show", !seenR);
+  fillEye(nL,sL,mtfL,s.left||{});
+  fillEye(nR,sR,mtfR,s.right||{});
+  fhint.textContent=s.hint||"";
+  fhint.className="hint "+(s.verdict==="in_focus"?"ok":(s.verdict==="no_chart"||s.verdict==="no_edge"||s.verdict==="soft"||s.verdict==="turn_back"?"warn":""));
+  ll.className=lr.className="lock "+(s.verdict==="in_focus"?"on":"off");
+  ll.textContent=seenL?(s.left.mtf50_cy!=null?("MTF50 "+n(s.left.mtf50_cy,2)):"chart seen"):"need ISO 12233";
+  lr.textContent=seenR?(s.right.mtf50_cy!=null?("MTF50 "+n(s.right.mtf50_cy,2)):"chart seen"):"need ISO 12233";
+  drawFocus(ol,l,s,"L"); drawFocus(or,r,s,"R");
+  go.disabled=true;
+  stop.disabled=true;
+}
 async function startCal(){
+  if(mode==="focus") await api("/focus/stop",{});
+  setMode("cal");
   render(await api("/cal/start",{cols:+cols.value,rows:+rows.value,square_mm:+sq.value,distance_mm:+dist.value}));
 }
 async function stopCal(){ render(await api("/cal/stop",{})); }
 async function resetCal(){ render(await api("/cal/reset",{})); }
-async function tick(){
-  try{ render(await api("/cal/stat")); }catch(e){}
-  setTimeout(tick, 300);
+async function toggleFocus(){
+  if(mode==="focus"){
+    const s=await api("/focus/stop",{});
+    renderFocus(s);
+    setMode("cal");
+    try{ render(await api("/cal/stat")); }catch(e){}
+    return;
+  }
+  setMode("focus");
+  renderFocus(await api("/focus/start",{}));
 }
-function pulse(){ if(last){ draw(ol,l,last); draw(or,r,last);} requestAnimationFrame(pulse); }
-window.addEventListener("resize", ()=>{ if(last) render(last); });
+async function tick(){
+  try{
+    if(mode==="focus") renderFocus(await api("/focus/stat"));
+    else render(await api("/cal/stat"));
+  }catch(e){}
+  setTimeout(tick, mode==="focus"?200:300);
+}
+function pulse(){
+  if(mode==="focus"){
+    if(focus){ drawFocus(ol,l,focus,"L"); drawFocus(or,r,focus,"R"); }
+  } else if(last){
+    draw(ol,l,last); draw(or,r,last);
+  }
+  requestAnimationFrame(pulse);
+}
+window.addEventListener("resize", ()=>{
+  if(mode==="focus" && focus) renderFocus(focus);
+  else if(last) render(last);
+});
 tick();
 pulse();
 </script>

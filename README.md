@@ -46,86 +46,64 @@ Evaluation pricing and volume breaks are on the [webshop listing](https://www.ca
 
 Hardware revision in this tree: **CameVision Ego V1.I1**.
 
-## What this software does
+## Get started
 
-- Live stereo page at `http://127.0.0.1:8081/`
-- Checkerboard calibration at `http://127.0.0.1:8081/cal`
-- IMU HUD at `http://127.0.0.1:8083/` (also `/imu` on the stereo page)
-- Hardware frame sync (FSYNC / EFSYNC) so both eyes expose together
-- 50 Hz lighting lock (Europe mains) with 12.5 fps trigger, 20 ms exposure steps
-- On-board block matcher, 640×400 depth grid, jet heatmap
-- Display: left pane is CAM1 / IMU1, right pane is CAM0 / IMU0
-- Service starts on the board at boot; USB stays the Camemake developer gadget (ADB)
+Flash starts from **Maskrom**. Same path on an empty board and on a board that already has images. USB stays ADB.
 
-## Quick start
+Windows: double-click `CameVision-Ego.exe`.
 
-1. Power the CameVision EGO and connect USB-C to the PC.
-2. From this repository:
+Linux: open `CameVision-Ego` (or the desktop entry).
+
+From a clone:
 
 ```
-python tools/cv_ego_stereo_start.py
-python tools/cv_ego_autostart.py --install
+python tools/cv_ego_studio.py
 ```
 
-3. Open **http://127.0.0.1:8081/**
+The tool opens at `http://127.0.0.1:8765/tool.html`.
 
-`--install` adds a Windows logon helper. After that, plugging the camera deploys the overlay if needed, starts the page service, restores the USB port forwards, and opens the live view.
+1. **USB / Maskrom** — Install USB driver. Hold BOOT, tap RESET, keep BOOT held.
+2. **Package** — Select CameVision Ego (or GitHub update / a zip). Click Install. Writes loader, env, idblock, U-Boot, boot, userdata, oem, rootfs, then the overlay.
+3. **ADB** — Click Open. Live page: `http://127.0.0.1:8081/`.
 
-| Command | Use |
-|---|---|
-| `python tools/cv_ego_stereo_start.py` | First-time or full overlay push |
-| `python tools/cv_ego_autostart.py --install` | Always-on plug-in helper (once per PC) |
-| `python tools/cv_ego_page.py` | Forwards only, then open the page |
-| `restore/release-1-20260824/restore-release1.ps1` | Same as the two Python commands above |
+Command line:
 
-USB port forwards live on the PC and are dropped on unplug. That is why the helper exists. The stereo process itself already starts on the camera at boot (`S99ego-stereo` → `/userdata/camevision-stereo.sh`).
+```
+python tools/cv_ego_flash.py --prebuilt
+python tools/cv_ego_page.py
+```
 
-### Live routes
+Full Maskrom map, image names and overlay list: [`FLASH.md`](FLASH.md) · [flash.html](https://camemake.github.io/CameVision-Ego/flash.html)
 
-| URL | Content |
-|---|---|
-| `/` | Stereo live page (CAM1 left, CAM0 right, depth) |
-| `/cal` | Checkerboard calibration |
-| `/ov0` `/ov1` | Colour MJPEG, CAM0 / CAM1 |
-| `/depth` `/xyz` | Depth heatmap |
-| `/imu` | IMU HUD (also port 8083) |
-
-Do not invert the depth CSS (`scale(-1,-1)` is the correct view).
-
-## Release 1 (baseline)
-
-Path: [`restore/release-1-20260824`](restore/release-1-20260824). Notes: [`RELEASE.md`](restore/release-1-20260824/RELEASE.md).
-
-This is the software overlay to keep. It does **not** reflash boot, rootfs or oem. Python wheels stay on the camera at `/userdata/pylib`.
-
-**Proven on CameVision EGO**
-
-- Dual colour ISP (AWB / CCM / gamma). Auto-exposure reattaches if a grab restart drops it
-- Both eyes triggered together at **12.5 fps**, aligned to 50 Hz lighting
-- Exposure locked on **20 ms** steps
-- On-board SGBM depth, 640×400, jet heatmap
-- Calibration page and IMU HUD left running
-
-Board notes and GPIO map: [`EGO.md`](EGO.md).
+```
+python tools/cv_ego_pack_offline.py
+```
 
 ## Repository layout
 
 ```
+docs/                           GitHub Pages + offline tool website
+  tool.html                     Offline installer UI (USB / Package / ADB)
+  flash.html                    Maskrom partition map
+  hardware.html                 Fitted parts and pinmux
+  mechanical.html               Housing, thermal, assembly
+  optics.html                   Modules, FOV, baseline
+  software.html                 Drivers, boot chain, live routes
 tools/                          Host deploy and on-board sources
+  cv_ego_studio.py              Offline tool at :8765
+  cv_ego_flash.py               Maskrom write, then overlay
+  cv_ego_overlay_deploy.py      ADB copy into /userdata
   ego_stereo.py                 Live stereo, depth, calibration HTTP
   ego_cam_sync.py               Hardware FSYNC / EFSYNC
   ego_imu_hud.py                IMU HUD
-  ego_calib.html                Calibration UI
-  camevision-stereo.sh          Board boot start
-  S99ego-stereo                 Init unit (installs to /etc/init.d)
-  cv_ego_stereo_start.py        Push overlay and start
-  cv_ego_autostart.py           PC watcher: deploy + forwards + page
-  cv_ego_page.py                Forwards only
   stereo_native.c               Native matcher
-device-tree/                    CameVision Ego board tree
-restore/release-1-20260824/     Current baseline overlay
-restore/recovery-5-*/           Dual-camera imaging restore (boot)
+device-tree/                    CameVision Ego board tree (no PCB schematic)
+restore/release-0.2-20260902/   Full Maskrom kit: loader, env, idblock, U-Boot, boot, userdata, oem, rootfs + overlay
+FLASH.md                        Maskrom from the command line
+WIFI.md                         VS6621 / BSS84 / STA
 ```
+
+PCB schematics, netlists and the schematic PDF are not in this repository.
 
 ## Hardware notes (this board)
 
@@ -138,7 +116,7 @@ CameVision Ego V1.I1 carries two global-shutter imagers at 1920×1200, four MIPI
 
 CAM1 I2C SCL/SDA are swapped on the PCB versus the SoC I2C4 functions, so that eye is bit-banged. CSI RX1 uses the 4-lane PHY on that port (not the 2-lane split of CSI0).
 
-Trigger mode is **continuous** on both sensors. Slave-mode HDR bits stay off so the 3A stack still owns exposure. Trigger rate is 12.5 fps; programmed VTS remains 15. Do not reuse CAM1 power-down or I2C pins as sync outputs.
+Trigger mode is **continuous** on both sensors. Slave-mode HDR bits stay off so the 3A stack still owns exposure. Trigger rate is 12.5 fps; programmed VTS remains 15.
 
 Fitted memory is **1 GB** DDR (the schematic 512 MB label is wrong). Both IMUs are the same part. eMMC is `BWCTAK611G16G`.
 
@@ -165,18 +143,20 @@ Every Camemake camera module can be tailored — sensor, lens, housing, interfac
 | Page | What it covers |
 |---|---|
 | [Product page](https://camemake.github.io/CameVision-Ego/) | Public GitHub Pages site for this product |
-| [Get started](https://camemake.github.io/CameVision-Ego/start.html) | Install, live routes, Release 1 |
+| [Get started](https://camemake.github.io/CameVision-Ego/start.html) | USB, package, ADB |
+| [Offline tool](https://camemake.github.io/CameVision-Ego/tool.html) | Installer UI (local :8765) |
+| [Flash](https://camemake.github.io/CameVision-Ego/flash.html) | Maskrom, partition map, overlay |
 | [Hardware](https://camemake.github.io/CameVision-Ego/hardware.html) | Camera map, GPIO, fitted parts |
-| [Robotic family](https://camemake.github.io/CameVision-Ego/family.html) | CameVision PCB counts and ODM products |
-| [About](https://camemake.github.io/CameVision-Ego/about.html) | Camemake, shop and robotic solutions |
+| [Mechanical](https://camemake.github.io/CameVision-Ego/mechanical.html) | Thermal path, housing, assembly |
+| [Optics](https://camemake.github.io/CameVision-Ego/optics.html) | Modules, FOV, baseline |
+| [Software](https://camemake.github.io/CameVision-Ego/software.html) | Drivers, boot chain, live-page routes |
+| [Datasheet](https://camemake.github.io/CameVision-Ego/datasheet.html) | SKU table |
+| [`FLASH.md`](FLASH.md) | Maskrom from the command line |
 | [`EGO.md`](EGO.md) | Full board notes |
-| [`RELEASE.md`](restore/release-1-20260824/RELEASE.md) | Release 1 overlay |
+| [`WIFI.md`](WIFI.md) | VS6621 / BSS84 / STA |
+| [`RELEASE.md`](restore/release-0.2-20260902/RELEASE.md) | Flash V0.2 |
 
 ## FAQ
-
-**Does the PC compute stereo?** No. Matching, depth and calibration run on the CameVision EGO. The host only deploys files and opens the browser.
-
-**Why does the page disappear after unplug?** USB port forwards live on the PC. Install `python tools/cv_ego_autostart.py --install` once so they return on every plug.
 
 **Where do I buy boards or ask for ODM?** The [webshop listing](https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414) and [Camemake robotic solutions](https://www.camemake.eu/robotic-solutions). Email [sales@camemake.com](mailto:sales@camemake.com).
 

@@ -4,7 +4,7 @@ build/host-tools/
 build/wheels/
 build/sdk-drvko-pack/
 build/sdk-kernel-meta/
-build/m1-donor/
+build/cv-donor/
 build/readback/
 build/_rb/
 __pycache__/
@@ -30,7 +30,8 @@ build/*.txt
 firmware/
 build/*.img
 build/*.bin
-# Full eMMC dumps stay local. Numbered recovery-N folders keep their boot images.
+My Recordings/
+# Donor dumps stay local. The V0.2 Maskrom kit is published.
 restore/known-good-20260819-camera-adb/
 restore/_readback/
 
@@ -38,7 +39,35 @@ restore/_readback/
 **/wpa_camevision.conf
 **/wpa_supplicant.conf
 
-# Cursor / local
+# PCB schematics stay private (netlist, PDF, extracted text)
+schematic/
+schematic-ego/
+tools/parse_schematic.py
+**/*schematic*.pdf
+CameVisionEgo*.pdf
+
+# Shop / Odoo helpers stay local
+tools/cv_ego_odoo_*.py
+tools/cv_ego_i18n_*.py
+tools/_patch_i18n_tail.py
+build/odoo-ego-*.json
+build/odoo-ego-*.html
+
+# Extra image copies (the published Maskrom set is restore/release-0.2-20260902/)
+restore/images/
+restore/updates/
+
+# Bundled host runtimes (offline zip only)
+host/python/
+host/tmp/
+host/linux/python-*.tar.gz
+host/DriverAssitant_v5.14.zip
+
+# Agent / local
+KNOWLEDGE.md
+My Recordings/
+My Recordings.zip
+share/
 .cursor/
 agent-transcripts/
 *.swp

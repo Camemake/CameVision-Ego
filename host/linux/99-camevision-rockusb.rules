@@ -1,0 +1,3 @@
+# CameVision Ego / Rockchip USB (Maskrom, Loader, ADB)
+SUBSYSTEM=="usb", ATTR{idVendor}=="2207", MODE="0666"
+KERNEL=="usb*", ATTRS{idVendor}=="2207", MODE="0666"

@@ -78,15 +78,24 @@ outputs.
 | 4 | `restore/recovery-4-20260822-ego-dtb` | First Ego DTB (Cam 1 still NACK) |
 | **5** | `restore/recovery-5-20260823-imaging-adb` | Dual ISP + I2C-GPIO Cam 1 + ADB preview |
 | 6 | `restore/recovery-6-20260823-stereo-depth` | First on-board stereo overlay (no flash) |
-| **R1** | `restore/release-1-20260824` | **Current baseline: stereo + 50 Hz + cam sync + auto page** |
+| **R1** | `restore/release-1-20260824` | Stereo overlay on Recovery 5 (no boot flash) |
+| **V0.2** | `restore/release-0.2-20260902` | **Default empty-board flash** — Wi-Fi + RTC + stereo |
 
-Flash Ego imaging boot: `python tools/cv_flash_imaging_boot.py` or
+**Default empty-board flash** (Maskrom, USB stays ADB). Full map: [`FLASH.md`](FLASH.md). Hardware needs the BSS84 Q1 fix (`WIFI.md`) only for Wi-Fi. Then:
+
+```
+python tools/cv_ego_flash.py --prebuilt
+```
+
+That is **flash V0.2**: rebuilds the Ego Wi-Fi + RV-3028 boot FIT, packs `restore/release-0.2-20260902`, writes CameVision env/idb/uboot/boot/userdata/oem/rootfs, and installs the stereo + STA overlay (rt52 modules, pylib, `S99ego-stereo`, `S11hwclock`). `python tools/cv_ego_maskrom_flash.py` is the same command.
+
+Flash Ego imaging boot only: `python tools/cv_flash_imaging_boot.py` or
 `restore/recovery-5-20260823-imaging-adb/flash-boot-ego.ps1`.
 
-Restore Release 1 (Recovery 5 must already be live):
+Restore overlay onto a board that already boots Recovery 5:
+`python tools/cv_ego_overlay_deploy.py` or
 `python tools/cv_ego_stereo_start.py` then
-`python tools/cv_ego_autostart.py --install`, or
-`restore/release-1-20260824/restore-release1.ps1`.
+`python tools/cv_ego_autostart.py --install`.
 
 ## First Ego bring-up (2026-08-22)
 
@@ -105,5 +114,4 @@ Restore Release 1 (Recovery 5 must already be live):
 
 ### Not proven yet
 - microSD (1.8 V VDD — consumer cards will not enumerate)
-- Wi-Fi STA join
 - BQ24072

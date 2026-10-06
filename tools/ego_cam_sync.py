@@ -31,6 +31,7 @@ import fcntl
 import mmap
 import os
 import struct
+import subprocess
 import threading
 import time
 
@@ -55,6 +56,15 @@ REG_TRIG = 0x3222
 REG_HOLD = 0x3800
 REG_SLAVE = 0x3282
 REG_MIPI_LANE = 0x3018
+REG_VTS_H = 0x320E
+REG_VTS_L = 0x320F
+REG_HTS_H = 0x320C
+REG_HTS_L = 0x320D
+HEIGHT = 1200
+VTS_30 = 3200
+VTS_60 = 1600
+VBLANK_30 = 2000
+SUBDEVS = ("/dev/v4l-subdev10", "/dev/v4l-subdev5")
 GPIO_GET_LINEHANDLE = 0xC16CB403
 GPIOHANDLE_REQUEST_OUTPUT = 0x02
 
@@ -110,6 +120,14 @@ def _hold_wr(bus: int, reg: int, val: int) -> None:
     _i2c_wr(bus, REG_HOLD, 0x40)
 
 
+def _hold_wr_many(bus: int, pairs: list[tuple[int, int]]) -> None:
+    _i2c_wr(bus, REG_HOLD, 0x00)
+    for reg, val in pairs:
+        _i2c_wr(bus, reg, val)
+    _i2c_wr(bus, REG_HOLD, 0x10)
+    _i2c_wr(bus, REG_HOLD, 0x40)
+
+
 def _request_lines(chip: int, offsets: list[int]) -> int:
     """Ask pinctrl to mux these lines as GPIO outputs. Keep the fd."""
     req = bytearray(364)
@@ -142,6 +160,8 @@ class CamSync:
         self.err = ""
         self.pulses = 0
         self.last_t = 0.0
+        self.last_t_ns = 0
+        self.pulse_ns = [0] * 512
         self.regs = {}
         self._lock = threading.Lock()
         self._fd = -1
@@ -161,6 +181,7 @@ class CamSync:
                 "fps": self.fps,
                 "pulses": self.pulses,
                 "last_t": self.last_t,
+                "last_t_ns": self.last_t_ns,
                 "regs": dict(self.regs),
                 "mode": "continuous-trigger",
                 "pins": PINS,
@@ -202,6 +223,12 @@ class CamSync:
                     self.err = type(exc).__name__ + ":" + str(exc)
                     self.armed = False
                     self._release()
+                    return
+            try:
+                self.apply_vts()
+            except Exception as exc:
+                with self._lock:
+                    self.err = type(exc).__name__ + ":" + str(exc)
 
     def set_fps(self, fps: float) -> None:
         fps = float(fps)
@@ -210,6 +237,56 @@ class CamSync:
         with self._lock:
             self.fps = fps
             self.period = 1.0 / fps
+        if fps >= 55:
+            self.apply_vts(fps)
+
+    def vts_for_fps(self, fps: float | None = None) -> int:
+        fps = float(self.fps if fps is None else fps)
+        return VTS_60 if fps >= 55 else VTS_30
+
+    def apply_vts_30(self) -> None:
+        self.apply_vts(30)
+
+    def apply_vts(self, fps: float | None = None) -> None:
+        vts = self.vts_for_fps(fps)
+        vblank = max(0, vts - HEIGHT)
+        try:
+            for bus in I2C_BUSES:
+                _hold_wr_many(
+                    bus,
+                    [(REG_VTS_H, (vts >> 8) & 0xFF), (REG_VTS_L, vts & 0xFF)],
+                )
+        except Exception as exc:
+            with self._lock:
+                self.err = type(exc).__name__ + ":" + str(exc)
+            return
+        if vblank >= VBLANK_30:
+            for dev in SUBDEVS:
+                if not os.path.exists(dev):
+                    continue
+                try:
+                    subprocess.call(
+                        ["v4l2-ctl", "-d", dev, "--set-ctrl", "vertical_blanking=%d" % vblank],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
+                except Exception:
+                    pass
+        snap = {}
+        try:
+            for bus in I2C_BUSES:
+                hts = (_i2c_rd(bus, REG_HTS_H) << 8) | _i2c_rd(bus, REG_HTS_L)
+                got = (_i2c_rd(bus, REG_VTS_H) << 8) | _i2c_rd(bus, REG_VTS_L)
+                snap["i2c%d_hts" % bus] = hts
+                snap["i2c%d_vts" % bus] = got
+        except Exception:
+            pass
+        with self._lock:
+            cur = dict(self.regs)
+            cur.update(snap)
+            cur["vts"] = vts
+            cur["vblank"] = vblank
+            self.regs = cur
 
     def pulse_once(self) -> None:
         with self._lock:
@@ -260,7 +337,7 @@ class CamSync:
                     with self._lock:
                         self.err = type(exc).__name__ + ":" + str(exc)
             return
-        if last and (now - last) > 2.5:
+        if last and (now - last) > 2.5 and not flag.get("rec_on"):
             try:
                 self._sensor_trigger(False)
             except Exception:
@@ -273,6 +350,8 @@ class CamSync:
         if now - last_i2c > 1.0:
             try:
                 self._sensor_trigger(True)
+                if self.fps >= 55:
+                    self.apply_vts()
             except Exception as exc:
                 with self._lock:
                     self.err = type(exc).__name__ + ":" + str(exc)
@@ -379,6 +458,8 @@ class CamSync:
         self._wr(self._g4, DR_L, SYNC_BOTH, 0)
         self.pulses += 1
         self.last_t = time.monotonic()
+        self.last_t_ns = time.clock_gettime_ns(time.CLOCK_MONOTONIC)
+        self.pulse_ns[self.pulses & 511] = self.last_t_ns
 
 
 def _spin(seconds: float) -> None:

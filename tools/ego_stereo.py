@@ -31,8 +31,8 @@ CAM_FRAME = CAM_W * CAM_H * 3 // 2
 W, H = 640, 400
 FRAME = W * H * 3 // 2
 YSIZE = W * H
-VIEW_W, VIEW_H = CAM_W, CAM_H
-VIEW_FRAME = CAM_FRAME
+VIEW_W, VIEW_H = 960, 600
+VIEW_FRAME = VIEW_W * VIEW_H * 3 // 2
 PORT = 8081
 CAM0, CAM1 = "/dev/video24", "/dev/video32"
 # Physical left eye is CAM0 / video24 / IMU0. Right eye is CAM1 / video32 / IMU1.
@@ -41,6 +41,7 @@ LIB = "/userdata/libego_stereo.so"
 TJ = "/oem/usr/lib/libturbojpeg.so"
 CALIB_PATH = "/userdata/ego_calib.json"
 CAL_HTML = "/userdata/ego_calib.html"
+CHART_PATH = "/userdata/iso12233.png"
 LOGO_PATH = "/userdata/camemake-logo.png"
 BASELINE_MM = 75.0
 DISTANCE_MM = 1000.0
@@ -48,8 +49,8 @@ DISTANCE_MM = 1000.0
 # Fine grid is 640x400 (3 sensor pixels per match cell). At f=1260 px that
 # is ~8 cells across 1 cm at 0.5 m, which is what makes a hand readable.
 # SGBM stays on 160x100; two refine stages recover the rest.
-CAP_FPS = 15
-COLOR_PERIOD = 0.16
+CAP_FPS = 60
+COLOR_PERIOD = 0.0
 BW_FAST, BH_FAST, ND_FAST, TH_FAST = 640, 400, 96, 40
 BW_SLOW, BH_SLOW, ND_SLOW, TH_SLOW = 320, 200, 32, 40
 XW, XH = CAM_W, CAM_H
@@ -106,6 +107,12 @@ def _load_native():
         POINTER(c_ubyte), c_int, c_int, POINTER(c_ubyte), c_int, c_int,
         POINTER(c_ubyte), POINTER(c_ubyte), POINTER(c_ubyte), c_int,
     ]
+    try:
+        lib.ego_nv12_rot180_crop.argtypes = [
+            POINTER(c_ubyte), c_int, c_int, POINTER(c_ubyte), c_int,
+        ]
+    except AttributeError:
+        pass
     NATIVE = lib
 
 
@@ -131,6 +138,9 @@ PAGE = b"""<!doctype html>
  .titles span{font-size:13px;color:var(--came)}
  .brand a{margin-left:auto;color:#fff;background:var(--pink);text-decoration:none;
   padding:10px 18px;border-radius:8px;font-size:14px;font-weight:700}
+ .brand button.rec{margin-left:10px;color:#fff;background:var(--came);border:0;
+  padding:10px 18px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+ .brand button.rec.on{background:#c0392b}
  .stage{height:calc(100% - 72px);padding:10px 12px 12px;box-sizing:border-box}
  .top{display:flex;height:58%;gap:10px}
  .pane{flex:1;position:relative;min-width:0;background:#111;border-radius:10px;overflow:hidden}
@@ -146,6 +156,7 @@ PAGE = b"""<!doctype html>
  <div class="plate"><img src="/brand.png" alt="Camemake"></div>
  <div class="titles"><b>CameVision Ego</b><span>Camemake stereo &middot; NPU</span></div>
  <a href="/cal">Calibrate</a>
+ <button class="rec" id="rec" type="button" title="Saves to this PC">Record</button>
 </div>
 <div class="stage">
 <div class="top">
@@ -159,10 +170,42 @@ function n(v,d){return (v===undefined||Number.isNaN(+v))?"-":Number(v).toFixed(d
 function blk(l,i,d,s){
  if(!i) return l+"\\nno imu";
  return l+"  "+(i.bus||"")+"\\n"+(i.t_iso||d.t_iso||"")+
-  "\\nIMU "+n(i.read_hz||d.read_hz,0)+" Hz   color "+n(s&&s.color_fps,1)+" fps"+
+  "\\nIMU "+n(i.read_hz||d.read_hz,0)+" Hz   "+n((s&&(s.cif0_fps||s.cam0_fps)),0)+"/"+n((s&&(s.cif1_fps||s.cam1_fps)),0)+" fps"+
   "\\n|a| "+n(i.a_g,3)+" g   w "+n(i.gx,1)+" "+n(i.gy,1)+" "+n(i.gz,1)+
   "\\nbaseline 75.000 mm  "+((s&&s.w)||1920)+"x"+((s&&s.h)||1200);
 }
+async function recToggle(){
+ try{
+  if(rec.className.indexOf("on")>=0){
+   rec.textContent="Stopping...";
+   let r=await fetch("/record/stop",{method:"POST"});
+   let j=await r.json();
+   rec.className="rec";
+   rec.textContent="Record";
+   try{
+    let l=await (await fetch("http://127.0.0.1:8093/last")).json();
+    if(l.path) rec.title="Saved on this PC: "+l.path;
+    else if(j.err) rec.title=j.err;
+   }catch(e){ if(j.err) rec.title=j.err; }
+   return;
+  }
+  rec.textContent="Starting...";
+  rec.title="";
+  let startP=fetch("/record/start",{method:"POST"});
+  for(let i=0;i<80;i++){
+   try{
+    let c=await fetch("http://127.0.0.1:8093/connect",{method:"POST"});
+    if(c.status===200||c.status===409) break;
+   }catch(e){}
+   await new Promise(r=>setTimeout(r,150));
+  }
+  let j=await (await startP).json();
+  rec.className="rec"+(j.on?" on":"");
+  rec.textContent=j.on?"Stop":"Record";
+  if(j.err) rec.title=j.err;
+ }catch(e){ rec.title=String(e); rec.className="rec"; rec.textContent="Record"; }
+}
+rec.onclick=recToggle;
 async function t(){
  let d=null,s=null;
  try{ d=await (await fetch("/imu")).json(); }catch(e){}
@@ -170,6 +213,14 @@ async function t(){
  try{ s=await (await fetch("/stat")).json(); }catch(e){}
  h0.textContent=blk("LEFT   CAM1  IMU1",d&&d.imu1,d||{},s);
  h1.textContent=blk("RIGHT  CAM0  IMU0",d&&d.imu0,d||{},s);
+ if(rec.textContent==="Starting..."||rec.textContent==="Stopping..."){ /* keep */ }
+ else if(s&&s.rec_on){
+  rec.className="rec on";
+  rec.textContent="Stop";
+ }else if(rec.className.indexOf("on")<0){
+  rec.className="rec";
+  rec.textContent="Record";
+ }
  if(s) hz.textContent="3D depth  "+n(s.heat_fps||s.depth_fps,1)+" fps";
  setTimeout(t,40);
 }
@@ -195,6 +246,8 @@ shared = {
     "trig_on": True,
     "cam0_t": 0.0,
     "cam1_t": 0.0,
+    "rec_on": False,
+    "rec_dest": {},
 }
 
 try:
@@ -204,6 +257,24 @@ except Exception:
 
     def start_cam_sync(flag, key="trig_on", fps=CAP_FPS):
         return None
+
+
+try:
+    from ego_record import Recorder as EgoRecorder
+except Exception:
+    EgoRecorder = None
+
+try:
+    from ego_mtf import FocusMeter
+except Exception:
+    FocusMeter = None
+
+REC = EgoRecorder(shared) if EgoRecorder else None
+if REC is not None:
+    shared["recorder"] = REC
+shared["latest_jpegs"] = latest
+
+FOCUS = FocusMeter() if FocusMeter else None
 
 
 cal = {
@@ -262,6 +333,21 @@ def load_logo() -> bytes:
 
 
 LOGO = load_logo()
+
+
+def load_chart() -> bytes:
+    for path in (CHART_PATH, os.path.join(os.path.dirname(__file__), "iso12233.png")):
+        try:
+            with open(path, "rb") as fh:
+                data = fh.read()
+            if data:
+                return data
+        except OSError:
+            continue
+    return b""
+
+
+CHART = load_chart()
 
 
 def load_cal_page() -> bytes:
@@ -763,6 +849,19 @@ def cal_loop() -> None:
         time.sleep(0.05)
 
 
+def focus_loop() -> None:
+    while True:
+        if FOCUS is None or not FOCUS.running:
+            time.sleep(0.12)
+            continue
+        left, right = eyes()
+        if not left or not right:
+            time.sleep(0.05)
+            continue
+        FOCUS.update(left, right)
+        time.sleep(0.12)
+
+
 class TurboEnc:
     def __init__(self, w: int, h: int, q: int = 70) -> None:
         self.w, self.h, self.q = w, h, q
@@ -925,6 +1024,21 @@ def make_enc(w: int, h: int, q: int = 70):
         return FfmpegEnc(w, h)
 
 
+def preview_nv12(src):
+    if _cv_ok():
+        import cv2
+        import numpy as np
+
+        y = np.frombuffer(src, dtype=np.uint8, count=CAM_W * CAM_H).reshape(CAM_H, CAM_W)
+        uv = np.frombuffer(src, dtype=np.uint8, count=CAM_W * CAM_H // 2, offset=CAM_W * CAM_H).reshape(
+            CAM_H // 2, CAM_W // 2, 2
+        )
+        y2 = cv2.resize(y, (VIEW_W, VIEW_H), interpolation=cv2.INTER_AREA)
+        uv2 = cv2.resize(uv, (VIEW_W // 2, VIEW_H // 2), interpolation=cv2.INTER_LINEAR)
+        return y2.tobytes() + uv2.tobytes()
+    return scale_nv12(src, CAM_W, CAM_H, VIEW_W, VIEW_H)
+
+
 def scale_nv12(src, sw: int, sh: int, dw: int, dh: int) -> bytearray:
     xs, ys = sw // dw, sh // dh
     out = bytearray(dw * dh * 3 // 2)
@@ -943,6 +1057,22 @@ def scale_nv12(src, sw: int, sh: int, dw: int, dh: int) -> bytearray:
     return out
 
 
+def poll_cif() -> None:
+    for path, key in (
+        ("/proc/rkcif-mipi-lvds", "cif0_fps"),
+        ("/proc/rkcif-mipi-lvds2", "cif1_fps"),
+    ):
+        try:
+            fps = 0.0
+            with open(path, "r") as fh:
+                for line in fh:
+                    if "fps:" in line:
+                        fps = float(line.split(":")[-1].strip())
+            shared[key] = fps
+        except Exception:
+            pass
+
+
 def _ps_has(name: str) -> bool:
     try:
         out = subprocess.check_output(["ps"], timeout=2)
@@ -953,11 +1083,13 @@ def _ps_has(name: str) -> bool:
 
 
 def _isp_blocks_on() -> bool:
-    try:
-        txt = open("/proc/rkisp-vir0", "r").read()
-    except Exception:
-        return True
-    return "AWBGAIN    ON" in txt
+    def awb(path: str) -> bool:
+        try:
+            return "AWBGAIN    ON" in open(path, "r").read()
+        except Exception:
+            return False
+
+    return awb("/proc/rkisp-vir0") and awb("/proc/rkisp-vir2")
 
 
 def _start_3a(env: dict) -> None:
@@ -985,7 +1117,8 @@ def ensure_companions() -> None:
         except Exception as exc:
             print("isp start", exc, flush=True)
     elif (
-        shared.get("cam0")
+        not shared.get("rec_on")
+        and shared.get("cam0")
         and shared.get("cam1")
         and not _isp_blocks_on()
         and time.monotonic() - float(shared.get("_isp_started_t") or 0) > 5.0
@@ -1031,51 +1164,86 @@ def companion_loop() -> None:
         time.sleep(3)
 
 
+def _grab_dest(key: str, live: str) -> str:
+    dest = (shared.get("rec_dest") or {}).get(key)
+    return dest if dest else live
+
+
 def grab(dev: str, key: str) -> None:
-    fifo = f"/tmp/{key}.nv12"
+    live = f"/tmp/{key}.nv12"
     try:
-        os.remove(fifo)
+        os.remove(live)
     except OSError:
         pass
-    os.mkfifo(fifo)
+    os.mkfifo(live)
     ring = [bytearray(CAM_FRAME) for _ in range(5)]
     slot = 0
-    # Two 1920x1200 NV12 streams saturate memory bandwidth long before the
-    # encoders keep up, so ask for the rate we can actually deliver.
-    rates = [CAP_FPS, 30]
-    ri = 0
     while True:
+        dest = _grab_dest(key, live)
+        direct = dest != live
         cmd = (
             f"v4l2-ctl -d {dev} --set-fmt-video=width={CAM_W},height={CAM_H},pixelformat=NV12 "
-            f"--set-parm={rates[ri]} --stream-mmap=4 --stream-to={fifo} --stream-poll"
+            f"--set-parm=60 --stream-mmap=8 --stream-to={dest} --stream-poll"
         )
         proc = subprocess.Popen(["sh", "-c", cmd], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        frames = 0
-        time.sleep(0.3)
+        time.sleep(0.15)
         try:
-            if proc.poll() is None:
-                with open(fifo, "rb") as fh:
-                    while proc.poll() is None:
-                        mv = memoryview(ring[slot])
-                        got = 0
-                        while got < CAM_FRAME:
-                            n = fh.readinto(mv[got:])
-                            if not n:
-                                got = 0
-                                break
-                            got += n
-                        if got != CAM_FRAME:
+            if proc.poll() is not None:
+                time.sleep(0.2)
+                continue
+            if direct:
+                print("grab %s: encode fifo %s" % (key, dest), flush=True)
+                while proc.poll() is None:
+                    if _grab_dest(key, live) != dest:
+                        break
+                    shared[key + "_t"] = time.monotonic()
+                    time.sleep(0.02)
+                continue
+            with open(live, "rb") as fh:
+                while proc.poll() is None:
+                    if _grab_dest(key, live) != live:
+                        break
+                    mv = memoryview(ring[slot])
+                    got = 0
+                    while got < CAM_FRAME:
+                        n = fh.readinto(mv[got:])
+                        if not n:
+                            got = 0
                             break
-                        shared[key] = ring[slot]
-                        shared[key + "_t"] = time.monotonic()
-                        slot = (slot + 1) % 5
-                        frames += 1
+                        got += n
+                    if got != CAM_FRAME:
+                        break
+                    shared[key] = ring[slot]
+                    now = time.monotonic()
+                    shared[key + "_t"] = now
+                    t0 = shared.get(key + "_fps_t")
+                    n = int(shared.get(key + "_n") or 0) + 1
+                    if t0 is None:
+                        shared[key + "_fps_t"] = now
+                        shared[key + "_n"] = 1
+                    elif now - float(t0) >= 1.0:
+                        shared[key + "_fps"] = n / (now - float(t0))
+                        shared[key + "_n"] = 0
+                        shared[key + "_fps_t"] = now
+                    else:
+                        shared[key + "_n"] = n
+                    rec = shared.get("recorder")
+                    if rec is not None and getattr(rec, "active", False):
+                        trig = 0
+                        t_ns = time.clock_gettime_ns(time.CLOCK_MONOTONIC)
+                        sync = shared.get("cam_sync")
+                        if sync is not None:
+                            trig = int(getattr(sync, "pulses", 0) or 0)
+                            t_ns = int(getattr(sync, "last_t_ns", 0) or t_ns)
+                        rec.on_frame(key, ring[slot], trig, t_ns, {})
+                    slot = (slot + 1) % 5
         finally:
             proc.kill()
-        if not frames and ri + 1 < len(rates):
-            ri += 1
-            print("grab %s: %d fps refused, using %d" % (dev, rates[ri - 1], rates[ri]), flush=True)
-        time.sleep(0.2)
+            try:
+                proc.wait(timeout=1)
+            except Exception:
+                pass
+        time.sleep(0.05)
 
 
 def _c_u8(buf):
@@ -1750,6 +1918,23 @@ def bm_loop(ex) -> None:
     last_ms = 0.0
     seen = (None, None)
     while True:
+        if shared.get("rec_on"):
+            rec = shared.get("recorder")
+            st = rec.status() if rec is not None else {}
+            poll_cif()
+            set_stat(
+                color_fps=shared.get("color_fps", 0.0),
+                cam0_fps=float(shared.get("cam0_fps") or 0.0),
+                cam1_fps=float(shared.get("cam1_fps") or 0.0),
+                cif0_fps=float(shared.get("cif0_fps") or 0.0),
+                cif1_fps=float(shared.get("cif1_fps") or 0.0),
+                depth_fps=0.0,
+                rec_on=1,
+                rec_fps=float(st.get("fps") or 0),
+                rec_session=st.get("session_id") or "",
+            )
+            time.sleep(0.2)
+            continue
         a, b = eyes()
         if not a or not b or (a is seen[0] and b is seen[1]):
             time.sleep(0.003)
@@ -1799,8 +1984,13 @@ def bm_loop(ex) -> None:
             fps = n / (now - t0)
             n = 0
             t0 = now
+            poll_cif()
             set_stat(
                 color_fps=shared.get("color_fps", 0.0),
+                cam0_fps=float(shared.get("cam0_fps") or 0.0),
+                cam1_fps=float(shared.get("cam1_fps") or 0.0),
+                cif0_fps=float(shared.get("cif0_fps") or 0.0),
+                cif1_fps=float(shared.get("cif1_fps") or 0.0),
                 depth_fps=fps,
                 heat_fps=float(shared.get("heat_fps") or 0.0),
                 w=VIEW_W,
@@ -1830,6 +2020,8 @@ def bm_loop(ex) -> None:
                 grid="%dx%d" % (BW, BH),
                 cm50=(float(res.get("f_px") or 1260.0) * 0.01 / 0.50) * (float(BW) / float(CAM_W)),
                 trig=1 if shared.get("trig_on") else 0,
+                rec_on=1 if shared.get("rec_on") else 0,
+                rec_fps=float((shared.get("recorder").status() or {}).get("fps") or 0) if shared.get("recorder") else 0.0,
             )
         leftover = 0.008 - (time.monotonic() - t_a)
         if leftover > 0:
@@ -1841,6 +2033,9 @@ def heat_loop(ex) -> None:
     n = 0
     t0 = time.monotonic()
     while True:
+        if shared.get("rec_on"):
+            time.sleep(0.2)
+            continue
         d = shared.get("disp")
         if not d or d is last:
             time.sleep(0.004)
@@ -1903,20 +2098,25 @@ def color_loop(e0, e1, er0, er1) -> None:
     w1 = EncWorker(e1, "ov1") if isinstance(e1, TurboEnc) else None
     seen = (None, None)
     while True:
+        if shared.get("rec_on"):
+            time.sleep(0.05)
+            continue
         a, b = eyes()
         if not a or not b or (a is seen[0] and b is seen[1]):
             time.sleep(0.002)
             continue
         seen = (a, b)
         t_a = time.monotonic()
+        pa = a if VIEW_W == CAM_W and VIEW_H == CAM_H else preview_nv12(a)
+        pb = b if VIEW_W == CAM_W and VIEW_H == CAM_H else preview_nv12(b)
         if w0 and w1:
-            w0.submit(a)
-            w1.submit(b)
+            w0.submit(pa)
+            w1.submit(pb)
             w0.join()
             w1.join()
         else:
-            e0.push(a)
-            e1.push(b)
+            e0.push(pa)
+            e1.push(pb)
         want = cal["running"] or (time.monotonic() - shared.get("want_raw", 0.0) < 5.0)
         if want:
             with lock:
@@ -2034,6 +2234,9 @@ def handle(conn: socket.socket) -> None:
         if path in (b"/brand.png", b"/logo.png"):
             _send(conn, b"image/png", LOGO)
             return
+        if path in (b"/iso12233.png", b"/chart.png"):
+            _send(conn, b"image/png", CHART)
+            return
         if path in (b"/cal", b"/cal/", b"/calib"):
             shared["want_raw"] = time.monotonic()
             _send(conn, b"text/html; charset=utf-8", CAL_PAGE)
@@ -2070,6 +2273,25 @@ def handle(conn: socket.socket) -> None:
                 body.update(CAM_SYNC.status())
             _send(conn, b"application/json", json.dumps(body).encode())
             return
+        if path in (b"/record", b"/record/stat"):
+            rec = shared.get("recorder")
+            body = rec.status() if rec is not None else {"on": 0, "err": "no recorder"}
+            _send(conn, b"application/json", json.dumps(body).encode())
+            return
+        if path in (b"/record/toggle", b"/record/start", b"/record/stop",
+                    b"/record/local/start", b"/record/local/stop"):
+            rec = shared.get("recorder")
+            if rec is None:
+                _send(conn, b"application/json", b'{"on":0,"err":"no recorder"}')
+                return
+            if path == b"/record/local/start":
+                body = rec.start(local=True)
+            elif path == b"/record/start" or (path == b"/record/toggle" and not rec.active):
+                body = rec.start()
+            else:
+                body = rec.stop()
+            _send(conn, b"application/json", json.dumps(body).encode())
+            return
         if path == b"/align":
             shared["align"] = None
             shared["align_res"] = None
@@ -2104,8 +2326,27 @@ def handle(conn: socket.socket) -> None:
             cal["msg"] = "recording — move the device, keep 1.00 m"
             cal["hint"] = ZONE_HINT["C"]
             cal["running"] = True
+            if FOCUS is not None:
+                FOCUS.running = False
             shared["want_raw"] = time.monotonic()
             _send(conn, b"application/json", _cal_json())
+            return
+        if path in (b"/focus", b"/focus/stat"):
+            body = FOCUS.status() if FOCUS is not None else {"running": 0, "err": "no focus meter"}
+            _send(conn, b"application/json", json.dumps(body).encode())
+            return
+        if path == b"/focus/start":
+            cal["running"] = False
+            if FOCUS is None:
+                _send(conn, b"application/json", b'{"running":0,"err":"no focus meter"}')
+                return
+            _send(conn, b"application/json", json.dumps(FOCUS.start()).encode())
+            return
+        if path == b"/focus/stop":
+            if FOCUS is None:
+                _send(conn, b"application/json", b'{"running":0,"err":"no focus meter"}')
+                return
+            _send(conn, b"application/json", json.dumps(FOCUS.stop()).encode())
             return
         if path == b"/cal/sample":
             payload = {}
@@ -2200,11 +2441,12 @@ def serve() -> None:
 
 
 def main() -> int:
-    global CAL_PAGE, LOGO, BW, BH, ND, TH, SCALE, LUT_Y, LUT_U, LUT_V
+    global CAL_PAGE, LOGO, CHART, BW, BH, ND, TH, SCALE, LUT_Y, LUT_U, LUT_V
     _np_ok()
     _cv_ok()
     CAL_PAGE = load_cal_page()
     LOGO = load_logo()
+    CHART = load_chart()
     if _cv_ok():
         BW, BH, ND, TH = 640, 400, 96, 40
     else:
@@ -2219,15 +2461,18 @@ def main() -> int:
     er0, er1 = make_enc(CAM_W, CAM_H, 55), make_enc(CAM_W, CAM_H, 55)
     threading.Thread(target=companion_loop, daemon=True).start()
     if start_cam_sync is not None:
-        trig_fps = 12.5
-        start_cam_sync(shared, "trig_on", trig_fps)
-        print("cam sync armed continuous-trigger fps=%.2f (50 Hz)" % trig_fps, flush=True)
+        trig_fps = 60.0
+        shared["cam_sync"] = start_cam_sync(shared, "trig_on", trig_fps)
+        if CAM_SYNC is not None:
+            CAM_SYNC.apply_vts(trig_fps)
+        print("cam sync armed continuous-trigger fps=%.2f" % trig_fps, flush=True)
     threading.Thread(target=grab, args=(CAM0, "cam0"), daemon=True).start()
     threading.Thread(target=grab, args=(CAM1, "cam1"), daemon=True).start()
     threading.Thread(target=bm_loop, args=(ex,), daemon=True).start()
     threading.Thread(target=heat_loop, args=(ex,), daemon=True).start()
     threading.Thread(target=color_loop, args=(e0, e1, er0, er1), daemon=True).start()
     threading.Thread(target=cal_loop, daemon=True).start()
+    threading.Thread(target=focus_loop, daemon=True).start()
     if not isinstance(e0, TurboEnc):
         threading.Thread(target=pump_ff, args=(e0, "ov0"), daemon=True).start()
         threading.Thread(target=pump_ff, args=(e1, "ov1"), daemon=True).start()

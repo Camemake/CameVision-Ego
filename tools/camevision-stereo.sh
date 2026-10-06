@@ -6,15 +6,30 @@ export LD_LIBRARY_PATH=/oem/usr/lib:/oem/lib:$LD_LIBRARY_PATH
 export PYTHONPATH=/userdata/pylib
 export TZ=UTC-2
 
-if [ -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json ]; then
-	cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json \
-		/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json 2>/dev/null \
-		|| (mount -o remount,rw /oem 2>/dev/null \
-		    && cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json \
-			/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json)
+# RV-3028 is rtc0. Load it so logs are not 1970.
+[ -e /dev/rtc0 ] && hwclock -s -f /dev/rtc0 2>/dev/null || true
+
+BC=/userdata/boot_count
+n=0
+[ -f "$BC" ] && n=$(cat "$BC" 2>/dev/null || echo 0)
+n=$((n + 1))
+echo "$n" > "$BC"
+
+[ -e /dev/mpp_service ] || insmod /userdata/kmpp-rt52.ko 2>/dev/null || true
+
+# VS6621 STA. Background so the live page does not wait on WPA.
+if [ -x /userdata/camevision-wifi.sh ]; then
+	if ! ip -4 addr show wlan0 2>/dev/null | grep -q 'inet '; then
+		if ! ps | grep -q '[c]amevision-wifi'; then
+			setsid /bin/sh /userdata/camevision-wifi.sh \
+				</dev/null >/userdata/wifi-boot.log 2>&1 &
+		fi
+	fi
 fi
 
-if ! ps | grep -q '[r]kaiq_3A_server'; then
+if [ -x /userdata/camevision-aiq.sh ]; then
+	/bin/sh /userdata/camevision-aiq.sh >>/userdata/aiq-boot.log 2>&1 || true
+elif ! ps | grep -q '[r]kaiq_3A_server'; then
 	setsid /oem/usr/bin/rkaiq_3A_server --silent \
 		</dev/null >/userdata/rkaiq.log 2>&1 &
 	echo $! >/userdata/rkaiq.pid
@@ -39,9 +54,18 @@ if [ ! -f /userdata/ego_stereo.py ]; then
 	echo "missing /userdata/ego_stereo.py"
 	exit 0
 fi
+if ! PYTHONPATH=/userdata/pylib python3 -c 'import numpy, cv2' >/dev/null 2>&1; then
+	if [ -f /userdata/cv_ego_extract_pylib.py ]; then
+		python3 /userdata/cv_ego_extract_pylib.py >>/userdata/pylib-boot.log 2>&1 || true
+	fi
+fi
+if ! PYTHONPATH=/userdata/pylib python3 -c 'import numpy, cv2' >/dev/null 2>&1; then
+	echo "pylib missing — depth matcher needs numpy/cv2" >&2
+fi
 if ps | grep -q '[e]go_stereo'; then
 	exit 0
 fi
+killall v4l2-ctl 2>/dev/null || true
 echo "starting ego_stereo $(date 2>/dev/null)"
 setsid /usr/bin/python3 /userdata/ego_stereo.py \
 	</dev/null >/userdata/ego-stereo.log 2>&1 &

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mechanical · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision Ego mechanical assembly, housing, and thermal path for the RV1126B.">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="icon" href="assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake stereo &middot; NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">Product</a>
+        <a href="start.html">Get started</a>
+        <a href="tool.html">Offline tool</a>
+        <a href="flash.html">Flash</a>
+        <a href="hardware.html">Hardware</a>
+        <a class="active" href="mechanical.html">Mechanical</a>
+        <a href="optics.html">Optics</a>
+        <a href="software.html">Software</a>
+        <a href="datasheet.html">Datasheet</a>
+      </nav>
+      <a class="buy" href="http://127.0.0.1:8081/">Live page</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">CameVision Ego V1.I1 · AM V1.3</div>
+      <h1>Mechanical and thermal</h1>
+      <p class="lead">Housing, 75.0 mm baseline, RV1126B thermal path.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>The two faces</h2>
+      <div class="board-grid">
+        <figure class="board-fig">
+          <img src="assets/ego-pcb-cameras.png" alt="CameVision Ego camera side: two SC233HGS modules and the RV1126B in the centre">
+          <figcaption>
+            <strong>Camera side.</strong> Dual modules left and right. Centre square: <strong>RV1126B</strong>. microSD between the left camera and the SoC. Smaller square to the right of the SoC: storage / RF.
+          </figcaption>
+        </figure>
+        <figure class="board-fig">
+          <img src="assets/ego-pcb-connectors.png" alt="CameVision Ego connector side: USB-C, PH, RST, BOOT, UART, thermal via field">
+          <figcaption>
+            <strong>Connector side.</strong> USB-C, PH, RST, BOOT, UART RX/TX. Centre via field: back-side thermal landing under the RV1126B. Right-hand square: Wi-Fi / antenna.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Where the heat is</h2>
+      <p class="callout">Thermal path: <strong>RV1126B</strong>, centre of the camera side. Dual ISP, stereo and NPU. Cameras, eMMC and VS6621 stay clear of that path.</p>
+      <table>
+        <tr><th>Zone</th><th>On the PCB</th><th>In the housing</th></tr>
+        <tr>
+          <td>SoC lid</td>
+          <td>Large square, camera side, between the two eyes</td>
+          <td>Primary cool point. Soft thermal pad or putty onto a metal wall, spreader or small heatsink.</td>
+        </tr>
+        <tr>
+          <td>SoC via field</td>
+          <td>Centre of the connector side, under the BGA</td>
+          <td>Secondary cool point. Isolating gap pad from that copper into the same metal volume.</td>
+        </tr>
+        <tr>
+          <td>PMIC / power</td>
+          <td>Dark block left of centre on the connector side</td>
+          <td>Air or a light pad. Keep USB-C and PH clear.</td>
+        </tr>
+        <tr>
+          <td>Cameras</td>
+          <td>Black barrels at each end</td>
+          <td>Optical keep-out. Support the PCB, never clamp or twist the modules.</td>
+        </tr>
+        <tr>
+          <td>Wi-Fi / antennas</td>
+          <td>Right-hand square and gold RF pads</td>
+          <td>Plastic or air in front of the antennas. Metal here kills range and does not cool the SoC.</td>
+        </tr>
+      </table>
+      <p>Die operating <strong>35–45 °C</strong>. Kernel trip <strong>115 °C</strong> (<code>cpu-thermal</code> / <code>soc-crit</code>). Passive sink sized for the top of the band in still 25 °C air. NPU off at the low end.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Cooling is part of the housing</h2>
+      <p>The metal that holds the cameras is the heat path off the RV1126B.</p>
+      <div class="grid">
+        <div class="card">
+          <strong>1. Pick up the lid</strong>
+          A 1–2 mm silicone gap pad (electrically isolating, 3 W/m·K or better) on the RV1126B lid, compressed 10–30 % onto a flat aluminium or steel wall. That wall can be the rear of the housing or a small spreader glued to it.
+        </div>
+        <div class="card">
+          <strong>2. Use the via field</strong>
+          A second pad on the connector-side via field, into the same metal.
+        </div>
+        <div class="card">
+          <strong>3. One stiff volume</strong>
+          The stereo baseline is the PCB. Housing holds the board, not the camera barrels. Bosses or a pocket under the green outline; cameras float in their holes.
+        </div>
+        <div class="card">
+          <strong>4. Leave service faces</strong>
+          USB-C, BOOT, RST and PH stay reachable, or come out on a short harness. Maskrom: hold BOOT, tap RST.
+        </div>
+      </div>
+      <h3>Mass and air surface</h3>
+      <p><strong>Passive.</strong> Lid pad onto aluminium that can see room air. No fan.</p>
+      <p>About <strong>2.0 W</strong> with dual ISP and stereo, NPU off. About <strong>3.0 W</strong> with the NPU on. Room <strong>25 °C</strong>. Design die: <strong>42 °C</strong> off, <strong>45 °C</strong> on. Pad about <strong>1.5 °C/W</strong>. Still aluminium in free air about <strong>12 W/m²·K</strong> with radiation.</p>
+      <p><code>A = P<sub>sink</sub> / (h · (T<sub>die</sub> − 25 − P<sub>sink</sub> · 1.5))</code>. About 0.4 W stays in the board, so the sink sees 1.6 W off and 2.6 W on.</p>
+      <table>
+        <tr><th></th><th>NPU off · 2.0 W</th><th>NPU on · 3.0 W</th></tr>
+        <tr><td>Die in still 25 °C air</td><td>35–42 °C</td><td>40–45 °C</td></tr>
+        <tr><td>Air skin on the metal</td><td><strong>100 cm²</strong></td><td><strong>160 cm²</strong></td></tr>
+        <tr><td>Aluminium</td><td><strong>60 g</strong></td><td><strong>100 g</strong></td></tr>
+        <tr><td>Practical part</td><td>50 × 50 mm, 12 mm fins</td><td>60 × 60 mm, 15–18 mm fins, or one 80 × 50 mm housing wall</td></tr>
+      </table>
+      <p>Fins count as both faces. A 50 × 50 × 12 mm extrusion is about 100 cm². Pad the block to the RV1126B square. Fins see open air or sit on a thin aluminium housing wall.</p>
+      <p>At 30 °C room, stay at the top of the 45 °C band or add a few millimetres of fin height.</p>
+      <div class="grid">
+        <div class="card">
+          <strong>NPU off</strong>
+          50 × 50 × 12 mm, about 60 g. Dual ISP and depth stay in the low to mid 35–45 °C band in still air.
+        </div>
+        <div class="card">
+          <strong>NPU on</strong>
+          60 × 60 × 16 mm, about 100 g. Same band, near 45 °C. A metal cover that size over the centre of the board is enough if the outside can breathe.
+        </div>
+      </div>
+      <h3>Pad and metal</h3>
+      <table>
+        <tr><th></th><th>Use</th><th>Avoid</th></tr>
+        <tr><td>Interface</td><td>Soft isolating gap pad or putty on the SoC lid and via field</td><td>Bare metal on the via field, liquid metal, hard thermal epoxy that locks the BGA</td></tr>
+        <tr><td>Pressure</td><td>Even, light compression from the lid</td><td>A point load, a screw through the SoC, or a spring that bends the board</td></tr>
+        <tr><td>Metal</td><td>Aluminium pocket or plate over the centre of the board</td><td>Metal over the right-hand RF square or in front of the lenses</td></tr>
+        <tr><td>Air</td><td>A short chimney past the SoC if the shell is plastic-only</td><td>Foam, tape or a logo plate sitting on the RV1126B</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Assembly order</h2>
+      <div class="steps">
+        <article class="step">
+          <div class="step-num">1</div>
+          <h2>Board</h2>
+          <ol>
+            <li>Handle the green outline, not the camera barrels and not the SoC lid.</li>
+            <li>Both modules square. Baseline is this PCB.</li>
+            <li>Keep the connector side clean. Flux or grease on the via field blocks the pad.</li>
+          </ol>
+        </article>
+        <article class="step">
+          <div class="step-num">2</div>
+          <h2>Thermal parts</h2>
+          <ol>
+            <li>Lid pad on the RV1126B square only.</li>
+            <li>Cut the back pad to the via field only. Stay off USB-C, PH, RST, BOOT and the UART pads.</li>
+            <li>Stick pads to the metal first if that keeps them from sliding when the board goes in.</li>
+          </ol>
+        </article>
+        <article class="step">
+          <div class="step-num">3</div>
+          <h2>Housing</h2>
+          <ol>
+            <li>Lower the board onto the bosses. Cameras enter their holes last, with no side load.</li>
+            <li>Close the lid so the SoC pad compresses. Check that BOOT and RST still click.</li>
+            <li>Route USB-C and PH without pulling the board against the thermal pads.</li>
+          </ol>
+        </article>
+        <article class="step">
+          <div class="step-num">4</div>
+          <h2>Prove the path</h2>
+          <ol>
+            <li>Power from USB-C. Wait until stereo and ISP are up (live page on <code>:8081</code>).</li>
+            <li>On-die sensor after depth is up: <strong>35–45 °C</strong> (35000–45000). NPU off at the low end; NPU on near 45 °C.</li>
+            <li>Above 45 °C: pad off the lid, or fins with no air.</li>
+          </ol>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Keep-outs</h2>
+      <table>
+        <tr><th>Feature</th><th>Why</th></tr>
+        <tr><td>Camera barrels</td><td>Optical axis and stereo baseline. A clamp here shifts depth and can crack the module.</td></tr>
+        <tr><td>microSD</td><td>Card eject. SoC pad stays off the slot.</td></tr>
+        <tr><td>BOOT / RST / RX / TX</td><td>Maskrom and console.</td></tr>
+        <tr><td>PH</td><td>Battery lead. Strain-relieve the cable in the shell, not on the connector.</td></tr>
+        <tr><td>Right-hand RF square</td><td>Wi-Fi / BT. Metal or a graphite sheet here is an antenna shield, not a cooler.</td></tr>
+        <tr><td>Board flex</td><td>The outline is the stereo bar. One screw that twists the PCB is a calibration failure.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Read the SoC temperature</h2>
+      <p>On a board with ADB, the die sensor is the thermal zone:</p>
+      <pre>adb shell cat /sys/class/thermal/thermal_zone0/temp</pre>
+      <p>Millidegrees C. <code>40000</code> is 40 °C. Operating <strong>35000–45000</strong>. Critical trip <strong>115000</strong> (115 °C). Zone follows <code>cpu-thermal</code>.</p>
+      <p><a href="hardware.html">Hardware pinmux</a> · <a href="start.html">Get started</a> · <a href="tool.html">Offline tool</a></p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div>
+        <a href="https://www.camemake.eu/robotic-solutions">Robotic solutions</a> ·
+        <a href="mailto:sales@camemake.com">sales@camemake.com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

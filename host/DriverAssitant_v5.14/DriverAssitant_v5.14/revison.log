@@ -1,0 +1,8 @@
+2025/05/20 v5.14:
+1.set not install adb driver as default
+
+2023/11/09 v5.13:
+1.increase bulk max buffer size as 16MB
+
+2022/02/28 v5.12:
+1.fix 471/472 timeout bug

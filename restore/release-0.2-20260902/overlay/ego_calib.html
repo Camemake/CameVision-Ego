@@ -1,0 +1,214 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Camemake | CameVision Ego — Calibrate</title>
+<link rel="icon" href="/brand.png">
+<style>
+ :root{--came:#1a6f7c;--pink:#e84b8a;--bg:#f4efe8;--ink:#222;--muted:#5c5c5c;--line:#e4ddd4}
+ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:Segoe UI,Helvetica Neue,Arial,sans-serif;overflow:hidden}
+ .bar{height:72px;display:flex;align-items:center;gap:12px;padding:0 18px;
+      background:#fff;border-bottom:1px solid var(--line)}
+ .plate{background:transparent;padding:0;flex:0 0 auto}
+ .plate img{height:26px;width:auto;display:block}
+ .titles{display:flex;flex-direction:column;line-height:1.15;min-width:160px}
+ .titles b{font-size:18px;font-weight:800}
+ .titles span{font-size:12px;color:var(--came)}
+ a.back{color:var(--came);text-decoration:none;font-size:13px;font-weight:600}
+ .btn{background:var(--pink);color:#fff;border:0;padding:9px 14px;border-radius:8px;
+      font:700 13px Segoe UI,sans-serif;cursor:pointer}
+ .btn:disabled{opacity:.4;cursor:default}
+ .btn.stop{background:#fff;color:var(--pink);border:2px solid var(--pink)}
+ .btn.reset{background:#fff;color:var(--ink);border:1px solid var(--line)}
+ label{font-size:11px;color:var(--muted)}
+ input{width:42px;background:#fff;color:var(--ink);border:1px solid var(--line);padding:4px 5px;border-radius:4px}
+ .body{display:flex;height:calc(100% - 72px)}
+ .side{width:300px;padding:16px 18px;background:#fff;border-right:1px solid var(--line);
+       overflow:auto;font-size:14px;line-height:1.45}
+ .side h2{font-size:12px;margin:16px 0 6px;color:var(--came);letter-spacing:.06em;text-transform:uppercase}
+ .side ol{margin:0 0 0 18px;padding:0}
+ .side li{margin:0 0 8px}
+ .hint{margin-top:14px;padding:12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);
+       color:#333;white-space:pre-wrap;font-size:13px}
+ .hint.ok{border-color:#7cb;color:#185}
+ .hint.warn{border-color:#e84b8a;color:#a12}
+ .legend{margin-top:10px;font-size:13px;color:var(--muted)}
+ .legend i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+ .lg-need{background:#f7b0b0} .lg-next{background:var(--pink)} .lg-have{background:#8fd9a4}
+ .views{flex:1;display:flex;min-width:0;gap:10px;padding:10px;background:var(--bg)}
+ .pane{flex:1;position:relative;min-width:0;background:#111;border-radius:10px;overflow:hidden}
+ img.v{width:100%;height:100%;object-fit:contain;display:block;background:#111;transform:scale(-1,-1)}
+ canvas.ov{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+ .tag{position:absolute;left:10px;top:10px;background:rgba(255,255,255,.9);padding:6px 8px;border-radius:8px;z-index:2;font:12px Consolas,monospace}
+ .lock{position:absolute;left:10px;bottom:10px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.9);z-index:2;font:12px Consolas,monospace}
+ .lock.on{color:#185} .lock.off{color:#a12}
+</style></head><body>
+<div class="bar">
+  <a class="back" href="/">← Live</a>
+  <div class="plate"><img src="/brand.png" alt="Camemake"></div>
+  <div class="titles"><b>CameVision Ego</b><span>Sensor calibration · NPU</span></div>
+  <button class="btn" id="go" onclick="startCal()">Start</button>
+  <button class="btn stop" id="stop" onclick="stopCal()" disabled>Stop &amp; save</button>
+  <button class="btn reset" onclick="resetCal()">Reset</button>
+  <label>inner <input id="cols" value="11"> × <input id="rows" value="8"></label>
+  <label>square mm <input id="sq" value="25"></label>
+  <label>distance mm <input id="dist" value="1000"></label>
+</div>
+<div class="body">
+  <div class="side">
+    <h2>Your board</h2>
+    <div>11 × 8 inner corners. Keep <b>1.00 m</b>.</div>
+    <h2>On the live image</h2>
+    <div>Pink = put the board there now. Red = still needed. Green = done. Magenta dots = corners the NPU page just locked.</div>
+    <div class="legend">
+      <div><i class="lg-need"></i>still to calibrate</div>
+      <div><i class="lg-next"></i>move here next</div>
+      <div><i class="lg-have"></i>already captured</div>
+    </div>
+    <h2>While recording</h2>
+    <ol>
+      <li>Hold the board <b>upright in your hands</b>, facing the glasses. Do not lean it on the floor.</li>
+      <li>Stand ~1.00 m away. The whole 11×8 grid must fill most of <b>both</b> live images. The NPU searches the whole frame.</li>
+      <li>Wait for magenta dots / LOCKED. Then slide the board into the pink cell.</li>
+      <li>A little tilt is good. Avoid window glare on the squares.</li>
+      <li>When center + 4 corners are green, press <b>Stop &amp; save</b>.</li>
+    </ol>
+    <div class="hint" id="hint">Loading checkerboard detector…</div>
+    <div class="legend" id="det">NPU detector: …</div>
+  </div>
+  <div class="views">
+    <div class="pane">
+      <img class="v" id="l" src="/ov0">
+      <canvas class="ov" id="ol"></canvas>
+      <div class="tag">LEFT · CAM0 · IMU0</div>
+      <div class="lock off" id="ll">searching</div>
+    </div>
+    <div class="pane">
+      <img class="v" id="r" src="/ov1">
+      <canvas class="ov" id="or"></canvas>
+      <div class="tag">RIGHT · CAM1 · IMU1</div>
+      <div class="lock off" id="lr">searching</div>
+    </div>
+  </div>
+</div>
+<script>
+const NAMES=[["TL","TC","TR"],["ML","C","MR"],["BL","BC","BR"]];
+const NEED={C:1,TL:1,TR:1,BL:1,BR:1};
+let last=null, t0=performance.now();
+function n(v,d){return (v===undefined||Number.isNaN(+v))?"-":Number(v).toFixed(d)}
+async function api(path, body){
+  const opt=body===undefined?{}:{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)};
+  return await (await fetch(path,opt)).json();
+}
+function imgBox(img){
+  const W=img.clientWidth, H=img.clientHeight;
+  const cw=(last&&last.cap_w)||1920, ch=(last&&last.cap_h)||1200;
+  const ir=cw/ch, cr=W/Math.max(H,1);
+  let w,h,x,y;
+  if(cr>ir){h=H;w=h*ir;x=(W-w)/2;y=0;}
+  else{w=W;h=w/ir;x=0;y=(H-h)/2;}
+  return {x,y,w,h};
+}
+function draw(cnv, img, s){
+  const dpr=window.devicePixelRatio||1;
+  const cw=img.clientWidth, ch=img.clientHeight;
+  if(!cw||!ch) return;
+  if(cnv.width!==Math.round(cw*dpr)||cnv.height!==Math.round(ch*dpr)){
+    cnv.width=Math.round(cw*dpr); cnv.height=Math.round(ch*dpr);
+  }
+  const ctx=cnv.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,cw,ch);
+  const box=imgBox(img);
+  const cellW=box.w/3, cellH=box.h/3;
+  const have=s.zones||{};
+  const next=s.next_zone||"";
+  const pulse=0.28+0.22*Math.sin((performance.now()-t0)/180);
+  ctx.save();
+  ctx.beginPath(); ctx.rect(box.x,box.y,box.w,box.h); ctx.clip();
+  for(let r=0;r<3;r++){
+    for(let c=0;c<3;c++){
+      const name=NAMES[r][c];
+      const x=box.x+c*cellW, y=box.y+r*cellH;
+      const done=!!have[name];
+      const isNext=s.running && name===next;
+      const req=!!NEED[name];
+      if(done){ ctx.fillStyle="rgba(80,190,120,0.28)"; ctx.fillRect(x,y,cellW,cellH); }
+      else if(isNext){ ctx.fillStyle="rgba(232,75,138,"+pulse+")"; ctx.fillRect(x,y,cellW,cellH); }
+      else if(req && s.running){ ctx.fillStyle="rgba(232,75,138,0.14)"; ctx.fillRect(x,y,cellW,cellH); }
+      ctx.strokeStyle=done?"#4c3":(isNext?"#e84b8a":"rgba(255,255,255,.25)");
+      ctx.lineWidth=isNext?4:1.5;
+      ctx.setLineDash(isNext?[10,6]:[]);
+      ctx.strokeRect(x+3,y+3,cellW-6,cellH-6);
+      ctx.setLineDash([]);
+      ctx.fillStyle="#fff";
+      ctx.font="700 14px Segoe UI,sans-serif";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      let label=name;
+      if(done) label=name+"  ✓";
+      else if(isNext) label="PUT BOARD HERE";
+      else if(req && s.running) label=name+"  still need";
+      ctx.fillText(label, x+cellW/2, y+cellH/2);
+    }
+  }
+  const corners=(cnv===ol?s.corners_l:s.corners_r)||[];
+  if(corners.length){
+    ctx.fillStyle="#e84b8a";
+    corners.forEach(p=>{
+      const sx=p[0], sy=p[1];
+      const cw=(s.cap_w||1920), ch=(s.cap_h||1200);
+      const dx=cw-1-sx, dy=ch-1-sy;
+      const px=box.x+(dx/cw)*box.w, py=box.y+(dy/ch)*box.h;
+      ctx.fillRect(px-2,py-2,4,4);
+    });
+  }
+  if(s.last_ok && s.board_u!=null && s.board_v!=null){
+    const px=box.x+s.board_u*box.w, py=box.y+s.board_v*box.h;
+    ctx.strokeStyle="#e84b8a"; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(px,py,26,0,Math.PI*2); ctx.stroke();
+  }
+  ctx.restore();
+}
+function render(s){
+  last=s;
+  const locked=!!s.last_ok;
+  ll.className=lr.className="lock "+(locked?"on":"off");
+  ll.textContent=lr.textContent=locked?("LOCKED  d "+n(s.last_dx,1)+" px"):"searching on NPU";
+  draw(ol,l,s); draw(or,r,s);
+  let t="";
+  if(!s.running && !s.result){
+    t="Hold the 11×8 board upright in your hands, facing both cameras, at 1.00 m.\nFill most of both images. Do not put it on the floor. Press Start.";
+    hint.className="hint";
+  } else if(s.running && !s.last_ok){
+    t="RECORDING — NPU is searching the whole frame.\nHold the board upright at 1.00 m so the 11×8 grid fills both images. Floor / steep angle will not lock.";
+    hint.className="hint warn";
+  } else if(s.running){
+    t="LOCKED. Move into the pink cell: "+(s.next_zone||"done")+".\n"+
+      "frames "+(s.good||0)+" / "+(s.need||15)+"   required zones "+(s.zone_n||0)+"/5";
+    hint.className="hint ok";
+  } else if(s.result){
+    const r=s.result;
+    t="Saved on NPU   f "+n(r.f_px,1)+" px   d@1m "+n(r.d_at_1m,2)+" px   dy "+n(r.dy,2)+" px";
+    hint.className="hint ok";
+  }
+  if(s.msg && s.running) t+="\n"+s.msg;
+  hint.textContent=t;
+  det.textContent = s.cv ? "NPU detector: OpenCV ready"
+    : (s.np ? "NPU detector: on (numpy). Hold the board upright, filling both views."
+    : "NPU detector: missing — lock cannot work");
+  go.disabled=!!s.running;
+  stop.disabled=!s.running;
+}
+async function startCal(){
+  render(await api("/cal/start",{cols:+cols.value,rows:+rows.value,square_mm:+sq.value,distance_mm:+dist.value}));
+}
+async function stopCal(){ render(await api("/cal/stop",{})); }
+async function resetCal(){ render(await api("/cal/reset",{})); }
+async function tick(){
+  try{ render(await api("/cal/stat")); }catch(e){}
+  setTimeout(tick, 300);
+}
+function pulse(){ if(last){ draw(ol,l,last); draw(or,r,last);} requestAnimationFrame(pulse); }
+window.addEventListener("resize", ()=>{ if(last) render(last); });
+tick();
+pulse();
+</script>
+</body></html>

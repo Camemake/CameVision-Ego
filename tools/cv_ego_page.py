@@ -8,11 +8,15 @@ to open until this runs.
 from __future__ import annotations
 
 import subprocess
+import sys
 import time
 import webbrowser
 from pathlib import Path
 
-ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_window\bin\adb.exe"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cv_ego_paths import adb_exe  # noqa: E402
+
+ADB = adb_exe()
 PAGE = "http://127.0.0.1:8081/"
 CAL = "http://127.0.0.1:8081/cal"
 

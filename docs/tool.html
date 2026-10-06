@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline tool · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision EGO offline installer: USB, package, ADB, diagnostics.">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="icon" href="assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake stereo &middot; NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">Product</a>
+        <a href="start.html">Get started</a>
+        <a class="active" href="tool.html">Offline tool</a>
+        <a href="flash.html">Flash</a>
+        <a href="hardware.html">Hardware</a>
+        <a href="mechanical.html">Mechanical</a>
+        <a href="optics.html">Optics</a>
+        <a href="software.html">Software</a>
+        <a href="datasheet.html">Datasheet</a>
+      </nav>
+      <a class="buy" href="http://127.0.0.1:8081/">Live page</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">Offline installer</div>
+      <h1>CameVision Ego</h1>
+      <p class="lead">USB, package, ADB. Windows and Linux. Empty board or a board that already has images.</p>
+      <p class="muted">The Install / Open buttons run when this page is served by <code>python tools/cv_ego_studio.py</code> at <code>http://127.0.0.1:8765/tool.html</code>. On GitHub Pages they are the same three steps; use <a href="flash.html">Flash</a> for the Maskrom map.</p>
+      <p id="ready" class="muted">Checking local files…</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap steps">
+      <article class="step">
+        <div class="step-num">USB</div>
+        <h2>Maskrom</h2>
+        <ol>
+          <li>Connect USB-C and power the board.</li>
+          <li>Install the USB driver that ships in this package.</li>
+          <li>Hold <strong>BOOT</strong>, tap <strong>RESET</strong>, keep BOOT held.</li>
+          <li>When the log shows Maskrom or Loader, continue.</li>
+        </ol>
+        <div class="step-actions">
+          <button class="primary" id="btn-driver" type="button">Install USB driver</button>
+        </div>
+        <p id="step1-note" class="muted"></p>
+      </article>
+
+      <article class="step">
+        <div class="step-num">Package</div>
+        <h2>Install</h2>
+        <p>Writes loader, env, idblock, U-Boot, boot, userdata, oem, rootfs, and the overlay.</p>
+        <label class="pkg-label" for="pkg">Package</label>
+        <select id="pkg"></select>
+        <div class="file-row">
+          <button type="button" id="btn-github">GitHub update</button>
+          <label class="file-btn" for="pkg-file">Package file</label>
+          <input id="pkg-file" type="file" accept=".zip">
+        </div>
+        <div class="step-actions">
+          <button class="primary" id="btn-install" type="button">Install</button>
+        </div>
+        <p class="muted">Release BOOT when the write finishes and the board starts.</p>
+      </article>
+
+      <article class="step">
+        <div class="step-num">ADB</div>
+        <h2>Open</h2>
+        <p>USB forwards and the live page at <code>http://127.0.0.1:8081/</code>.</p>
+        <div class="step-actions">
+          <button class="primary" id="btn-page" type="button">Open</button>
+          <button type="button" id="btn-diag">Extended diagnostics</button>
+          <button type="button" id="btn-stop" hidden>Stop</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Log</h2>
+      <pre id="log">waiting for the local tool…</pre>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div>Local tool · 127.0.0.1</div>
+    </div>
+  </footer>
+  <script>
+    const logEl = document.getElementById("log");
+    const readyEl = document.getElementById("ready");
+    const note1 = document.getElementById("step1-note");
+    const pkgEl = document.getElementById("pkg");
+    const fileEl = document.getElementById("pkg-file");
+    const buttons = {
+      driver: document.getElementById("btn-driver"),
+      install: document.getElementById("btn-install"),
+      page: document.getElementById("btn-page"),
+      github: document.getElementById("btn-github"),
+      diag: document.getElementById("btn-diag"),
+      stop: document.getElementById("btn-stop"),
+    };
+    let lastPkg = "";
+
+    async function post(path, body) {
+      await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body || {}),
+      });
+    }
+    buttons.driver.onclick = () => post("/api/driver");
+    buttons.install.onclick = () => post("/api/install", { package: pkgEl.value || "camevision-ego" });
+    buttons.page.onclick = () => post("/api/page");
+    buttons.github.onclick = () => post("/api/update-github");
+    buttons.diag.onclick = () => post("/api/diag");
+    buttons.stop.onclick = () => post("/api/stop");
+    fileEl.onchange = async () => {
+      if (!fileEl.files || !fileEl.files[0]) return;
+      const fd = new FormData();
+      fd.append("file", fileEl.files[0], fileEl.files[0].name);
+      await fetch("/api/update-file", { method: "POST", body: fd });
+    };
+
+    function pill(ok, label) {
+      return `<span class="pill ${ok ? "ok" : "bad"}">${label}</span>`;
+    }
+
+    function fillPackages(list) {
+      const ids = (list || []).map((p) => p.id).join("|");
+      if (ids === lastPkg) return;
+      lastPkg = ids;
+      const keep = pkgEl.value;
+      pkgEl.innerHTML = "";
+      (list || []).forEach((p) => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = p.name;
+        pkgEl.appendChild(opt);
+      });
+      if (keep && [...pkgEl.options].some((o) => o.value === keep)) pkgEl.value = keep;
+    }
+
+    async function tick() {
+      try {
+        const r = await fetch("/api/status", { cache: "no-store" });
+        const s = await r.json();
+        const usb = s.usb || {};
+        const inMaskrom = !!(usb.maskrom || usb.loader);
+        const adbUp = !!(usb.adb && usb.adb.length);
+        fillPackages(s.packages);
+        const busy = !!(s.job && s.job.running);
+        const jobName = (s.job && s.job.name) || "job";
+        readyEl.innerHTML =
+          (busy ? pill(true, "Working: " + jobName) : "") +
+          pill(s.driver_present, s.os === "windows" ? "Driver in package" : "udev rule in package") +
+          pill(inMaskrom, inMaskrom ? "Maskrom" : "Waiting for Maskrom") +
+          pill(adbUp, adbUp ? "ADB " + usb.adb[0] : "ADB") +
+          `<span class="muted"> ${s.root}</span>`;
+        note1.textContent = busy
+          ? jobName + " is running. Stop it to use the other buttons."
+          : (s.os === "windows"
+            ? "Rockchip Driver Assistant is inside this package. Windows may ask for Administrator."
+            : "The udev rule for USB vendor 2207 is inside this package. Linux may ask for a password.");
+        buttons.stop.hidden = !busy;
+        buttons.stop.disabled = false;
+        ["driver", "install", "page", "github", "diag"].forEach((k) => {
+          buttons[k].disabled = busy;
+        });
+        if (s.log && s.log.length) {
+          logEl.textContent = s.log.join("\n");
+          logEl.scrollTop = logEl.scrollHeight;
+        }
+      } catch (e) {
+        readyEl.innerHTML = pill(false, "Open this page from the offline tool");
+        logEl.textContent =
+          "This page needs the local tool.\n\n" +
+          "Windows: open CameVision-Ego\n" +
+          "Linux: open CameVision-Ego";
+        Object.values(buttons).forEach((b) => { b.disabled = true; });
+      }
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>

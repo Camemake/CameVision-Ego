@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=CameVision Ego
+Comment=Camemake installer
+Exec=sh -c "exec \"$(dirname \"$(readlink -f %k)\")/CameVision-Ego\""
+Icon=camemake-logo
+Terminal=false
+Categories=Development;Electronics;
+StartupNotify=true

@@ -4,92 +4,121 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CameVision EGO · CV-EGO01-OS · Camemake</title>
-  <meta name="description" content="CameVision EGO (CV-EGO01-OS) — dual global-shutter AI stereo camera. Open demo software from Camemake.">
+  <meta name="description" content="CameVision EGO: dual global-shutter stereo. CV-EGO01-OS-SC, CV-EGO01-OS-OV, CV-EGO01-OS-AM. RV1126B NPU.">
   <link rel="stylesheet" href="assets/style.css">
   <link rel="icon" href="assets/camemake-logo.png">
 </head>
 <body>
   <header class="top">
-    <div class="wrap top-inner">
-      <a class="brand" href="index.html">
-        <img src="assets/camemake-logo.png" alt="Camemake">
-        <span>CameVision EGO</span>
-      </a>
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake stereo &middot; NPU</span>
+      </div>
       <nav>
         <a class="active" href="index.html">Product</a>
         <a href="start.html">Get started</a>
+        <a href="tool.html">Offline tool</a>
+        <a href="flash.html">Flash</a>
         <a href="hardware.html">Hardware</a>
-        <a href="family.html">Robotic family</a>
-        <a href="about.html">About</a>
-        <a href="https://github.com/Camemake/CameVision-Ego">GitHub</a>
-        <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Buy EGO</a>
+        <a href="mechanical.html">Mechanical</a>
+        <a href="optics.html">Optics</a>
+        <a href="software.html">Software</a>
+        <a href="datasheet.html">Datasheet</a>
       </nav>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Buy EGO</a>
     </div>
   </header>
 
   <div class="hero">
     <div class="wrap">
-      <div class="kicker">Camemake · CV-EGO01-OS</div>
-      <h1>CameVision EGO</h1>
-      <p class="lead">Dual global-shutter AI stereo camera. Two hardware-synchronised 2.3 MP cameras, one IMU per eye, on-board stereo, depth and calibration. The host only deploys over USB and opens a browser.</p>
+      <div class="kicker">CV-EGO01-OS-SC · CV-EGO01-OS-OV · CV-EGO01-OS-AM · V1.I1</div>
+      <h1>CameVision Ego</h1>
+      <p class="lead">Dual global-shutter stereo on one board. Two cameras, one IMU per eye, on-board NPU, USB-C, Wi-Fi 6, BLE, eMMC and battery pads.</p>
       <div class="cta">
         <a class="btn btn-primary" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Buy CameVision EGO</a>
-        <a class="btn" href="https://www.camemake.eu/robotic-solutions">Camemake robotic solutions</a>
-        <a class="btn" href="https://github.com/Camemake/CameVision-Ego#readme">Repository README</a>
+        <a class="btn" href="start.html">Get started</a>
+        <a class="btn" href="tool.html">Offline tool</a>
       </div>
     </div>
   </div>
 
   <section>
     <div class="wrap">
-      <h2>Product</h2>
+      <h2>This board</h2>
       <div class="grid">
-        <div class="card"><strong>Cameras</strong>2 × 2.3 MP global shutter, hardware-synchronised stereo</div>
-        <div class="card"><strong>IMU</strong>One IMU at each camera</div>
-        <div class="card"><strong>Compute</strong>On-board vision SoC with integrated NPU</div>
-        <div class="card"><strong>Memory / storage</strong>1 GB RAM · 16 GB eMMC + microSD</div>
-        <div class="card"><strong>I/O</strong>USB-C · Wi-Fi 6 · BLE · battery pads</div>
-        <div class="card"><strong>Software</strong>This GitHub demo — stereo, calibration, IMU HUD</div>
+        <div class="card"><strong>SKU</strong>CV-EGO01-OS-SC · CV-EGO01-OS-OV · CV-EGO01-OS-AM · hardware V1.I1</div>
+        <div class="card"><strong>Cameras</strong>SC233HGS · OG02C10 · AM220. Dual global shutter, 4-lane MIPI per eye. <a href="datasheet.html">Datasheet</a></div>
+        <div class="card"><strong>Sync</strong>Shared FSYNC + EFSYNC on the same tick, 27 MHz XVCLK, 75.0 mm baseline</div>
+        <div class="card"><strong>IMU</strong>LSM6DSVQTR ×2: one SPI bus beside each camera</div>
+        <div class="card"><strong>Compute</strong>RV1126B · NPU · 1 GB DDR4 · 16 GB eMMC</div>
+        <div class="card"><strong>I/O</strong>USB-C ADB · Wi-Fi 6 + BLE (VS6621) · microSD · RV-3028 RTC · BQ24072 charge</div>
       </div>
-      <p class="muted" style="margin-top:18px">Evaluation pricing and volume breaks are on the <a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">webshop listing</a> (MOQ 10). Hardware revision in this tree: CameVision Ego V1.I1.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2>What this software does</h2>
-      <ul>
-        <li>Live stereo page at <code>http://127.0.0.1:8081/</code></li>
-        <li>Checkerboard calibration at <code>/cal</code></li>
-        <li>IMU HUD at <code>http://127.0.0.1:8083/</code> (also <code>/imu</code>)</li>
-        <li>Hardware frame sync so both eyes expose together</li>
-        <li>50 Hz lighting lock with 12.5 fps trigger and 20 ms exposure steps</li>
-        <li>On-board block matcher, 640×400 depth grid, jet heatmap</li>
-        <li>Display: left pane is CAM1 / IMU1, right pane is CAM0 / IMU0</li>
-      </ul>
-      <p>The host does <strong>not</strong> compute depth. USB stays the Camemake developer gadget. Do not switch the board to a webcam profile. Do not flash a non-CameVision image.</p>
+      <h2>Global shutter on this platform</h2>
+      <p>EGO is a stereo MIPI board. Both eyes share one SoC, one pair of CSI PHYs, and one hardware tick. SKUs on this PCB: SC233HGS, OG02C10, AM220. Other global-shutter imagers from the Camemake catalogue fit the same two-camera footprint: SmartSens, OmniVision, onsemi and Sony Pregius. Colour, mono and NIR.</p>
+      <p>Every option on this platform is a global-shutter MIPI module. Address on each bus is 0x30. CAM0 is I2C3; CAM1 is bit-banged I2C (SCL/SDA swapped on the PCB).</p>
+      <table>
+        <tr><th>Class</th><th>Optical / pixels</th><th>Typical sensors</th><th>On EGO</th></tr>
+        <tr><td>VGA / 0.3–0.4 MP</td><td>1/6″–1/4″ · 640×480</td><td>SC035HGS, IMX287</td><td>Compact colour or mono</td></tr>
+        <tr><td>~1 MP</td><td>1/4″–1/3″ · 1280×800 class</td><td>SC135HGS, OV9281 / OV9282, OG01A1B, AR0144</td><td>Mono machine vision, RGB-IR</td></tr>
+        <tr><td>~1.3–1.6 MP</td><td>1/3″–1/2.9″</td><td>SC132GS, AR0134 / AR0135, IMX296, IMX273</td><td>Industrial mono or colour</td></tr>
+        <tr><td>2–2.3 MP</td><td>1/2.7 in – 1/2.3 in</td><td>SC233HGS (OS-SC), OG02C10 (OS-OV), AM220 (OS-AM), SC235HGS, SC231HGS, OV2311, AR0234, IMX392</td><td>EGO SKUs and catalogue</td></tr>
+        <tr><td>4–5 MP</td><td>1/1.8″–1/1.7″</td><td>SC430HGS, SC535HGS, OG05B1B, IMX265, IMX250</td><td>Higher-grade colour or mono</td></tr>
+      </table>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2>Quick start</h2>
-      <ol>
-        <li>Power the CameVision EGO and connect USB-C to the PC.</li>
-        <li>From the repository:</li>
-      </ol>
-      <pre>python tools/cv_ego_stereo_start.py
-python tools/cv_ego_autostart.py --install</pre>
-      <p>Open <strong>http://127.0.0.1:8081/</strong>. <code>--install</code> adds a Windows logon helper so plugging the camera deploys the overlay, starts the page service, restores USB port forwards, and opens the live view.</p>
-      <p><a href="start.html">Full getting-started notes →</a></p>
+      <h2>Sensor families</h2>
+      <table>
+        <tr><th>Maker</th><th>Lines</th><th>Examples in the Camemake catalogue</th><th>Notes</th></tr>
+        <tr>
+          <td>SmartSens</td>
+          <td>HGS / GS / AT</td>
+          <td>SC035HGS, SC135HGS, SC221HGS, SC231HGS, SC233HGS, SC235HGS, SC430HGS, SC535HGS</td>
+          <td>CV-EGO01-OS-SC is SC233HGS colour. HGS is the high-speed GS line.</td>
+        </tr>
+        <tr>
+          <td>OmniVision</td>
+          <td>OG / OV / OX</td>
+          <td>OV9281, OV9282, OV2311, OG01A1B, OG02B10, OG02C10, OG05B1B, OX03C10</td>
+          <td>CV-EGO01-OS-OV is OG02C10. Mono, colour and RGB-IR. OX is the automotive GS line.</td>
+        </tr>
+        <tr>
+          <td>onsemi</td>
+          <td>AR / PYTHON</td>
+          <td>AR0134, AR0135, AR0144, AR0234, NOIP1SN1300A</td>
+          <td>Industrial mono and colour. PYTHON 1300 sits in the 1.3 MP band.</td>
+        </tr>
+        <tr>
+          <td>Sony</td>
+          <td>Pregius</td>
+          <td>IMX287, IMX296, IMX273, IMX392, IMX265, IMX250, IMX252</td>
+          <td>Higher-grade colour or mono. Pregius is Sony’s GS machine-vision line.</td>
+        </tr>
+        <tr>
+          <td>Camemake</td>
+          <td>AM</td>
+          <td>AM220</td>
+          <td>CV-EGO01-OS-AM. 1600 × 1400, 2.80 um, BSI global.</td>
+        </tr>
+      </table>
+      <p>Colour Bayer, mono and NIR are variants of the same footprint. Catalogue: <a href="https://www.camemake.eu">camemake.eu</a>.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2>Camemake robotic family</h2>
-      <p>CameVision EGO is the double-camera evaluation board. The same platform is offered as ODM PCBs and finished goods: single, triple, 5-fold and 9-camera boards, plus headset, cap, helmet, backpack and gripper products.</p>
-      <p><a href="family.html">Family overview</a> · <a href="https://www.camemake.eu/robotic-solutions">Camemake robotic solutions</a></p>
+      <h2>On the camera</h2>
+      <p>Live page <code>http://127.0.0.1:8081/</code> · calibration <code>/cal</code> · IMU HUD <code>http://127.0.0.1:8083/</code>.</p>
+      <p><a href="datasheet.html">Datasheet</a> · <a href="start.html">Get started</a> · <a href="hardware.html">Pinmux</a> · <a href="mechanical.html">Mechanical</a> · <a href="optics.html">Optics</a> · <a href="software.html">Software</a></p>
     </div>
   </section>
 
@@ -97,7 +126,7 @@ python tools/cv_ego_autostart.py --install</pre>
     <div class="wrap foot-row">
       <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
       <div>
-        <a href="https://www.camemake.eu">camemake.eu</a> ·
+        <a href="https://www.camemake.eu/robotic-solutions">Robotic solutions</a> ·
         <a href="mailto:sales@camemake.com">sales@camemake.com</a>
       </div>
     </div>

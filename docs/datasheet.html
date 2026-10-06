@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Datasheet · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision EGO digital datasheet: CV-EGO01-OS-SC, CV-EGO01-OS-OV, CV-EGO01-OS-AM.">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="icon" href="assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake stereo &middot; NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">Product</a>
+        <a href="start.html">Get started</a>
+        <a href="tool.html">Offline tool</a>
+        <a href="flash.html">Flash</a>
+        <a href="hardware.html">Hardware</a>
+        <a href="mechanical.html">Mechanical</a>
+        <a href="optics.html">Optics</a>
+        <a href="software.html">Software</a>
+        <a class="active" href="datasheet.html">Datasheet</a>
+      </nav>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Buy EGO</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">CV-EGO01-OS · V1.I1 · digital datasheet</div>
+      <h1>CameVision Ego</h1>
+      <p class="lead">Dual global-shutter stereo on one board. Three sensor SKUs on the same PCB, 2G4P module, RV1126B NPU.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>Ordering</h2>
+      <div class="sku-grid">
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-SC</div>
+          <h3>SC233HGS</h3>
+          <dl>
+            <dt>Pixels</dt><dd>1920 × 1200</dd>
+            <dt>Pitch</dt><dd>3.00 um</dd>
+            <dt>Format</dt><dd>1/2.6 in · 5.760 × 3.600 mm</dd>
+            <dt>Shutter</dt><dd>Colour Bayer, global</dd>
+            <dt>Field</dt><dd>D 160° · H 144° · V 100°</dd>
+            <dt>f</dt><dd>597 px</dd>
+          </dl>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-OV</div>
+          <h3>OG02C10</h3>
+          <dl>
+            <dt>Pixels</dt><dd>1600 × 1200</dd>
+            <dt>Pitch</dt><dd>3.45 um</dd>
+            <dt>Format</dt><dd>1/2.5 in · 5.520 × 4.140 mm</dd>
+            <dt>Shutter</dt><dd>Colour global</dd>
+            <dt>Field</dt><dd>D 160° · H 140° · V 112°</dd>
+            <dt>f</dt><dd>519 px</dd>
+          </dl>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-AM</div>
+          <h3>AM220</h3>
+          <dl>
+            <dt>Pixels</dt><dd>1600 × 1400</dd>
+            <dt>Pitch</dt><dd>2.80 um</dd>
+            <dt>Format</dt><dd>1/2.7 in · 4.488 × 3.922 mm</dd>
+            <dt>Shutter</dt><dd>BSI global</dd>
+            <dt>Field</dt><dd>D 147.4° · H 118.6° · V 106.4°</dd>
+            <dt>f</dt><dd>639 px</dd>
+          </dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Identification</h2>
+      <table>
+        <tr><th>Item</th><th>Value</th></tr>
+        <tr><td>Product</td><td>CameVision EGO</td></tr>
+        <tr><td>Family</td><td>CV-EGO01-OS</td></tr>
+        <tr><td>SKUs</td><td>CV-EGO01-OS-SC · CV-EGO01-OS-OV · CV-EGO01-OS-AM</td></tr>
+        <tr><td>Hardware</td><td>CameVision Ego V1.I1</td></tr>
+        <tr><td>Optics</td><td>AM V1.3 · 2G4P + 1 IR, M12</td></tr>
+        <tr><td>Model string</td><td><code>CameVision Ego</code> · <code>camemake,camevision-ego</code></td></tr>
+        <tr><td>USB gadget</td><td>Camemake / CameVision Ego / <code>CVEgo</code> · ADB <code>2207:0006</code></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Platform</h2>
+      <table>
+        <tr><th>Block</th><th>Specification</th></tr>
+        <tr><td>SoC</td><td>RV1126B · dual ISP · NPU · Mali GPU · MPP</td></tr>
+        <tr><td>Memory</td><td>K4A8G165WG DDR4, 16-bit, 1 GB</td></tr>
+        <tr><td>eMMC</td><td>BWCTAK611G16G, 16 GB</td></tr>
+        <tr><td>Kernel</td><td>6.1.141-rt52</td></tr>
+        <tr><td>Cameras</td><td>×2, 4-lane MIPI each, 27 MHz XVCLK, I2C 0x30 per bus</td></tr>
+        <tr><td>Sync</td><td>Shared FSYNC + EFSYNC · continuous trigger · 12.5 fps</td></tr>
+        <tr><td>Baseline</td><td>75.0 mm · CAM0 left · CAM1 right</td></tr>
+        <tr><td>IMU</td><td>LSM6DSVQTR ×2 · SPI0 / SPI1 · 480 Hz HUD default</td></tr>
+        <tr><td>USB</td><td>USB-C · USB2 + USB3 DRD · ADB peripheral</td></tr>
+        <tr><td>Wireless</td><td>VS6621S80 · Wi-Fi 6 + BLE · SDMMC1 + UART2</td></tr>
+        <tr><td>Storage slot</td><td>microSD on SDMMC0, 1.8 V VDD</td></tr>
+        <tr><td>RTC</td><td>RV-3028-C7 · I2C2 0x52</td></tr>
+        <tr><td>PMIC</td><td>RK801-2 · I2C0 0x27</td></tr>
+        <tr><td>Charge</td><td>BQ24072 · 250 mA fast charge · 1.5 A input limit</td></tr>
+        <tr><td>Console</td><td>UART0 · 1.5 Mbaud</td></tr>
+        <tr><td>Power</td><td>USB-C and PH battery pads</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Optics</h2>
+      <table>
+        <tr><th>Item</th><th>Value</th></tr>
+        <tr><td>Construction</td><td>2G4P + 1 IR, M12</td></tr>
+        <tr><td>EFL</td><td>1.79 mm</td></tr>
+        <tr><td>F-number</td><td>2.0</td></tr>
+        <tr><td>TV distortion</td><td>&lt; −22.3 %</td></tr>
+        <tr><td>CRA</td><td>15.94° (SC / AM) · 15.95° (OV)</td></tr>
+        <tr><td>Relative illumination</td><td>&gt; 40 %</td></tr>
+        <tr><td>Optical TTL</td><td>15.00 ± 0.3 mm</td></tr>
+        <tr><td>Mechanical TTL</td><td>13.92 ± 0.3 mm</td></tr>
+        <tr><td>Back focal</td><td>3.40 mm</td></tr>
+        <tr><td>Thread / barrel</td><td>M12 × 12.00 mm · OD 16.00 mm</td></tr>
+        <tr><td>IR-cut</td><td>420–600 nm Tavg ≥ 90 % · 650 ± 10 nm T = 50 %</td></tr>
+        <tr><td>Closest object</td><td>0.20 m</td></tr>
+        <tr><td>Seal / storage</td><td>IP69 · −40 to +85 °C</td></tr>
+      </table>
+      <table>
+        <tr><th></th><th>CV-EGO01-OS-SC</th><th>CV-EGO01-OS-OV</th><th>CV-EGO01-OS-AM</th></tr>
+        <tr><td>Sensor</td><td>SC233HGS</td><td>OG02C10</td><td>AM220</td></tr>
+        <tr><td>Active array</td><td>5.760 × 3.600 mm</td><td>5.520 × 4.140 mm</td><td>4.488 × 3.922 mm</td></tr>
+        <tr><td>Diagonal</td><td>6.79 mm</td><td>6.90 mm</td><td>5.95 mm</td></tr>
+        <tr><td>Image circle</td><td>6.60 mm</td><td>7.00 mm</td><td>-</td></tr>
+        <tr><td>D / H / V</td><td>160° / 144° / 100°</td><td>160° / 140° / 112°</td><td>147.4° / 118.6° / 106.4°</td></tr>
+        <tr><td>f</td><td>597 px</td><td>519 px</td><td>639 px</td></tr>
+        <tr><td>10 mm at 0.40 m</td><td>15 px</td><td>13 px</td><td>16 px</td></tr>
+        <tr><td>180 mm hand at 0.40 m</td><td>269 px</td><td>233 px</td><td>288 px</td></tr>
+        <tr><td>Disparity 0.40 m</td><td>112 px</td><td>97 px</td><td>120 px</td></tr>
+        <tr><td>Video nodes</td><td colspan="3"><code>/dev/video24</code> CAM0 · <code>/dev/video32</code> CAM1</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>I/O map</h2>
+      <table>
+        <tr><th>Net</th><th>Function</th></tr>
+        <tr><td>CAM0</td><td>CSI RX0 · I2C3 0x30 · FSYNC GPIO4_A1 · EFSYNC GPIO6_C2 · IMU SPI0</td></tr>
+        <tr><td>CAM1</td><td>CSI RX1 · bit-bang I2C 0x30 · FSYNC GPIO4_A0 · EFSYNC GPIO6_C3 · IMU SPI1</td></tr>
+        <tr><td>USB-C J3</td><td>ADB gadget, <code>dr_mode</code> peripheral</td></tr>
+        <tr><td>PH</td><td>Battery</td></tr>
+        <tr><td>BOOT / RST</td><td>Maskrom: hold BOOT, tap RST</td></tr>
+        <tr><td>UART RX/TX</td><td>Console</td></tr>
+        <tr><td>microSD</td><td>SDMMC0 · detect GPIO3_B3 · enable GPIO3_B4</td></tr>
+        <tr><td>RGB LED</td><td>Common-anode, active low, GPIO0_A6 / A5 / A4</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Thermal</h2>
+      <table>
+        <tr><th></th><th>NPU off · 2.0 W</th><th>NPU on · 3.0 W</th></tr>
+        <tr><td>Die, still 25 °C air</td><td>35–42 °C</td><td>40–45 °C</td></tr>
+        <tr><td>Air skin</td><td>100 cm²</td><td>160 cm²</td></tr>
+        <tr><td>Aluminium</td><td>60 g</td><td>100 g</td></tr>
+        <tr><td>Part</td><td>50 × 50 mm, 12 mm fins</td><td>60 × 60 mm, 15–18 mm fins</td></tr>
+        <tr><td>Kernel trip</td><td colspan="2">115 °C · <code>cpu-thermal</code> / <code>soc-crit</code></td></tr>
+        <tr><td>Path</td><td colspan="2">RV1126B lid and connector-side via field. Soft isolating pad.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Software</h2>
+      <table>
+        <tr><th>Item</th><th>Value</th></tr>
+        <tr><td>Live page</td><td><code>http://127.0.0.1:8081/</code></td></tr>
+        <tr><td>Calibration</td><td><code>/cal</code></td></tr>
+        <tr><td>IMU HUD</td><td><code>http://127.0.0.1:8083/</code></td></tr>
+        <tr><td>3A</td><td><code>rkaiq_3A_server</code></td></tr>
+        <tr><td>IQ (SC)</td><td><code>camevision-sc233hgs</code></td></tr>
+        <tr><td>Flash</td><td>loader · env · idblock · U-Boot · boot FIT · userdata · oem · rootfs · overlay</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Board</h2>
+      <div class="board-grid">
+        <figure class="board-fig">
+          <img src="assets/ego-pcb-cameras.png" alt="CameVision Ego camera side">
+          <figcaption>Camera side · dual modules · RV1126B centre</figcaption>
+        </figure>
+        <figure class="board-fig">
+          <img src="assets/ego-pcb-connectors.png" alt="CameVision Ego connector side">
+          <figcaption>Connector side · USB-C · PH · RST · BOOT · UART</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Pages</h2>
+      <table>
+        <tr><th>Page</th><th></th></tr>
+        <tr><td><a href="start.html">Get started</a></td><td>USB · package · ADB</td></tr>
+        <tr><td><a href="tool.html">Offline tool</a></td><td>Installer</td></tr>
+        <tr><td><a href="hardware.html">Hardware</a></td><td>Pinmux</td></tr>
+        <tr><td><a href="mechanical.html">Mechanical</a></td><td>Housing and thermal</td></tr>
+        <tr><td><a href="optics.html">Optics</a></td><td>2G4P, FOV, frames</td></tr>
+        <tr><td><a href="software.html">Software</a></td><td>Drivers, DTB, routes</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Camemake</h2>
+      <table>
+        <tr><th>Item</th><th>Value</th></tr>
+        <tr><td>Shop</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">CameVision EGO</a></td></tr>
+        <tr><td>Source</td><td><a href="https://github.com/Camemake/CameVision-Ego">github.com/Camemake/CameVision-Ego</a></td></tr>
+        <tr><td>Site</td><td><a href="https://www.camemake.eu">camemake.eu</a> · <a href="https://www.camemake.eu/robotic-solutions">Robotic solutions</a></td></tr>
+        <tr><td>Sales</td><td><a href="mailto:sales@camemake.com">sales@camemake.com</a></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS-SC · CV-EGO01-OS-OV · CV-EGO01-OS-AM</div>
+      <div><a href="mailto:sales@camemake.com">sales@camemake.com</a></div>
+    </div>
+  </footer>
+</body>
+</html>

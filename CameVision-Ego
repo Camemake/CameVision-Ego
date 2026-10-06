@@ -1,0 +1,43 @@
+#!/bin/sh
+# CameVision Ego — Camemake installer (Linux).
+set -e
+export CAMEVISION_EGO_ROOT="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
+cd "$CAMEVISION_EGO_ROOT" || exit 1
+if [ ! -f "$CAMEVISION_EGO_ROOT/tools/cv_ego_setup.py" ]; then
+	echo "CameVision-Ego must sit in the unzipped package folder (next to tools/)." >&2
+	echo "Do not copy the launcher out, and do not run one from another tree." >&2
+	exit 1
+fi
+
+ARCH=$(uname -m 2>/dev/null || echo x86_64)
+LINUX="$CAMEVISION_EGO_ROOT/host/linux"
+PY="$LINUX/python/bin/python3"
+
+if [ ! -x "$PY" ]; then
+  if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+    TAR="$LINUX/python-aarch64.tar.gz"
+  else
+    TAR="$LINUX/python-x86_64.tar.gz"
+  fi
+  if [ -f "$TAR" ]; then
+    tar -xzf "$TAR" -C "$LINUX"
+  fi
+fi
+
+GUI_PY=""
+if command -v python3 >/dev/null 2>&1 && python3 -c "import tkinter" >/dev/null 2>&1; then
+  GUI_PY="python3"
+elif [ -x "$PY" ] && "$PY" -c "import tkinter" >/dev/null 2>&1; then
+  GUI_PY="$PY"
+fi
+
+if [ -n "$GUI_PY" ]; then
+  exec "$GUI_PY" "$CAMEVISION_EGO_ROOT/tools/cv_ego_setup.py" --gui
+fi
+
+if [ -x "$PY" ]; then
+  exec "$PY" "$CAMEVISION_EGO_ROOT/tools/cv_ego_setup.py" --gui
+fi
+
+echo "This package is missing the Python runtime." >&2
+exit 1

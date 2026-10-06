@@ -6,11 +6,15 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 import time
 from pathlib import Path
 
-ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_window\bin\adb.exe"
-ROOT = Path(r"C:\Users\stefa\Desktop\CameVision Ego")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cv_ego_paths import adb_exe, repo_root  # noqa: E402
+
+ADB = adb_exe()
+ROOT = repo_root()
 SRC = ROOT / "tools" / "ego_stereo.py"
 SYNC = ROOT / "tools" / "ego_cam_sync.py"
 CAL = ROOT / "tools" / "ego_calib.html"
@@ -18,11 +22,14 @@ IMU = ROOT / "tools" / "ego_imu_hud.py"
 LOGO = ROOT / "tools" / "camemake-logo.png"
 SO = ROOT / "build" / "libego_stereo.so"
 BOOT_SH = ROOT / "tools" / "camevision-stereo.sh"
+WIFI_SH = ROOT / "tools" / "camevision-wifi.sh"
+WPA_CONF = ROOT / "tools" / "wpa_camevision.conf"
 S99 = ROOT / "tools" / "S99ego-stereo"
-IQ_NAME = "sc233hgs_efference-sc233hgs_default.json"
+IQ_NAME = "sc233hgs_camevision-sc233hgs_default.json"
 IQ_CANDIDATES = (
-    ROOT / "tools" / "iqfiles" / "sc233hgs_efference-sc233hgs_flicker50.json",
-    ROOT / "build" / "live" / "sc233hgs_efference-sc233hgs_flicker50.json",
+    ROOT / "tools" / "iqfiles" / "sc233hgs_camevision-sc233hgs_flicker50.json",
+    ROOT / "build" / "live" / "sc233hgs_camevision-sc233hgs_flicker50.json",
+    ROOT / "restore" / "release-0.2-20260902" / "overlay" / "iqfiles" / IQ_NAME,
     ROOT / "restore" / "release-1-20260824" / "overlay" / "iqfiles" / IQ_NAME,
 )
 
@@ -62,24 +69,28 @@ def main() -> int:
         print("pushed 50 Hz IQ", iq.stat().st_size, "bytes", flush=True)
     if BOOT_SH.is_file():
         adb(s, "push", str(BOOT_SH), "/userdata/camevision-stereo.sh", timeout=15)
+    if WIFI_SH.is_file():
+        adb(s, "push", str(WIFI_SH), "/userdata/camevision-wifi.sh", timeout=15)
+    if WPA_CONF.is_file():
+        adb(s, "push", str(WPA_CONF), "/userdata/wpa_camevision.conf", timeout=15)
     if S99.is_file():
         adb(s, "push", str(S99), "/userdata/S99ego-stereo", timeout=15)
     r = adb(
         s,
         "shell",
-        "sed -i 's/\\r$//' /userdata/ego_stereo.py /userdata/ego_cam_sync.py /userdata/ego_calib.html /userdata/ego_imu_hud.py /userdata/camevision-stereo.sh /userdata/S99ego-stereo; "
-        "chmod 755 /userdata/camevision-stereo.sh /userdata/S99ego-stereo; "
+        "sed -i 's/\\r$//' /userdata/ego_stereo.py /userdata/ego_cam_sync.py /userdata/ego_calib.html /userdata/ego_imu_hud.py /userdata/camevision-stereo.sh /userdata/camevision-wifi.sh /userdata/wpa_camevision.conf /userdata/S99ego-stereo; "
+        "chmod 755 /userdata/camevision-stereo.sh /userdata/camevision-wifi.sh /userdata/S99ego-stereo; "
         "rm -f /userdata/ego_dense.py /userdata/hitnet.onnx /userdata/uvc-webcam.on; "
         "mount -o remount,rw / 2>/dev/null; "
         "cp -f /userdata/S99ego-stereo /etc/init.d/S99ego-stereo; "
         "chmod 755 /etc/init.d/S99ego-stereo; "
         "mount -o remount,ro / 2>/dev/null; "
         "ls -l /etc/init.d/S99ego-stereo /userdata/camevision-stereo.sh; "
-        "if [ -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json ]; then "
-        "cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json "
-        "/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json 2>/dev/null || "
-        "(mount -o remount,rw /oem && cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json "
-        "/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json); fi; "
+        "if [ -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json ]; then "
+        "cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json "
+        "/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json 2>/dev/null || "
+        "(mount -o remount,rw /oem && cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json "
+        "/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json); fi; "
         "kill $(cat /tmp/ego-stereo.pid 2>/dev/null) 2>/dev/null; "
         "P=$(ps | grep ego_stereo | grep -v grep | awk '{print $1}'); "
         "[ -n \"$P\" ] && kill $P 2>/dev/null; "

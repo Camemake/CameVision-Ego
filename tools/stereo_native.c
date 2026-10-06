@@ -1,6 +1,9 @@
 /* Fast stereo + NV12 overlay for RV1126B. Built as libego_stereo.so */
+#include <errno.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 void ego_y_down(const uint8_t *y, int w, int h, uint8_t *out, int bw, int bh) {
     const int xs = w / bw;
@@ -99,6 +102,90 @@ void ego_paint_nv12(uint8_t *nv12, int w, int h, const uint8_t *disp,
             }
         }
     }
+}
+
+/* 180° (same as the live CSS scale(-1,-1)) and center-crop width src_w -> dst_w. */
+void ego_nv12_rot180_crop(const uint8_t *src, int src_w, int src_h,
+                          uint8_t *dst, int dst_w) {
+    const int x0 = (src_w - dst_w) / 2;
+    const uint8_t *sy = src;
+    const uint8_t *suv = src + src_w * src_h;
+    uint8_t *dy = dst;
+    uint8_t *duv = dst + dst_w * src_h;
+    for (int y = 0; y < src_h; y++) {
+        const uint8_t *srow = sy + (src_h - 1 - y) * src_w + x0;
+        uint8_t *drow = dy + y * dst_w;
+        for (int x = 0; x < dst_w; x++) {
+            drow[x] = srow[dst_w - 1 - x];
+        }
+    }
+    const int ch = src_h / 2;
+    for (int y = 0; y < ch; y++) {
+        const uint8_t *srow = suv + (ch - 1 - y) * src_w + x0;
+        uint8_t *drow = duv + y * dst_w;
+        for (int x = 0; x < dst_w; x += 2) {
+            const int sx = dst_w - 2 - x;
+            drow[x] = srow[sx];
+            drow[x + 1] = srow[sx + 1];
+        }
+    }
+}
+
+int ego_nv12_prep_loop(int in_fd, int out_fd, int src_w, int src_h, int dst_w,
+                       volatile int *stop, volatile int *frames) {
+    const size_t src_n = (size_t)src_w * (size_t)src_h * 3u / 2u;
+    const size_t dst_n = (size_t)dst_w * (size_t)src_h * 3u / 2u;
+    uint8_t *src = (uint8_t *)malloc(src_n);
+    uint8_t *dst = (uint8_t *)malloc(dst_n);
+    if (!src || !dst) {
+        free(src);
+        free(dst);
+        return -1;
+    }
+    while (!stop || !*stop) {
+        size_t got = 0;
+        while (got < src_n) {
+            if (stop && *stop) {
+                goto done;
+            }
+            ssize_t n = read(in_fd, src + got, src_n - got);
+            if (n < 0) {
+                if (errno == EINTR) {
+                    continue;
+                }
+                goto done;
+            }
+            if (n == 0) {
+                goto done;
+            }
+            got += (size_t)n;
+        }
+        ego_nv12_rot180_crop(src, src_w, src_h, dst, dst_w);
+        size_t put = 0;
+        while (put < dst_n) {
+            if (stop && *stop) {
+                goto done;
+            }
+            ssize_t n = write(out_fd, dst + put, dst_n - put);
+            if (n < 0) {
+                if (errno == EINTR) {
+                    continue;
+                }
+                goto done;
+            }
+            if (n == 0) {
+                goto done;
+            }
+            put += (size_t)n;
+        }
+        if (frames) {
+            __sync_add_and_fetch(frames, 1);
+        }
+    }
+done:
+    free(src);
+    free(dst);
+    return 0;
 }
 
 void ego_render_xyz(uint8_t *out, int xw, int xh, const uint8_t *disp,

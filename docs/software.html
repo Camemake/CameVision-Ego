@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Software · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision EGO software blocks in this package: live stereo, sync, IMU, IQ, host tools.">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="icon" href="assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake stereo &middot; NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">Product</a>
+        <a href="start.html">Get started</a>
+        <a href="tool.html">Offline tool</a>
+        <a href="flash.html">Flash</a>
+        <a href="hardware.html">Hardware</a>
+        <a href="mechanical.html">Mechanical</a>
+        <a href="optics.html">Optics</a>
+        <a class="active" href="software.html">Software</a>
+        <a href="datasheet.html">Datasheet</a>
+      </nav>
+      <a class="buy" href="http://127.0.0.1:8081/">Live page</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">This package</div>
+      <h1>Software</h1>
+      <p class="lead">Drivers, device tree, userspace, flash.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>Where it runs</h2>
+      <table>
+        <tr><th>Place</th><th>What sits there</th></tr>
+        <tr><td>This PC</td><td>Offline tool, USB driver, flash, overlay push, ADB forwards, diagnostics, session writer</td></tr>
+        <tr><td>Board <code>/userdata</code></td><td>Stereo page, FSYNC/EFSYNC, IMU HUD, calibration UI, Wi-Fi STA, IQ JSON, native matcher, boot scripts</td></tr>
+        <tr><td>Board kernel</td><td>Device tree, CSI, I2C/SPI, SDIO Wi-Fi, ADB gadget: <code>device-tree/rv1126b-camevision-ego.dts</code></td></tr>
+      </table>
+      <p>Sources: <code>tools/</code>. Overlay: <code>restore/release-0.2-20260902/overlay/</code> → <code>/userdata/</code>. Links: <code>/src/…</code>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Drivers</h2>
+      <p>Kernel in the boot FIT is <code>6.1.141-rt52</code>. In-tree nodes come from the DTB. Out-of-tree modules sit in the overlay and are <code>insmod</code>’d from the boot scripts.</p>
+      <table>
+        <tr><th>Block</th><th>Driver / compatible</th><th>Where it lives</th><th>Live nodes</th></tr>
+        <tr>
+          <td>MIPI sensor</td>
+          <td><code>smartsens,sc233hgs</code></td>
+          <td>In the boot FIT (kernel + DTB)</td>
+          <td>I2C <code>3-0030</code>, <code>6-0030</code> · chip id <code>0xcb61</code></td>
+        </tr>
+        <tr>
+          <td>MIPI CSI-2 D-PHY</td>
+          <td><code>csi2_dphy0</code> · <code>csi2_dphy1</code></td>
+          <td>DTB, 4 lanes each</td>
+          <td>PHY under CSI RX0 / RX1</td>
+        </tr>
+        <tr>
+          <td>MIPI CSI-2 host</td>
+          <td><code>mipi0_csi2</code> · <code>mipi1_csi2</code></td>
+          <td>DTB</td>
+          <td>Bridge into CIF</td>
+        </tr>
+        <tr>
+          <td>CIF</td>
+          <td><code>rkcif</code> · <code>rkcif_mipi_lvds</code> · <code>rkcif_mipi_lvds1</code></td>
+          <td>DTB + Rockchip CIF</td>
+          <td>Raw path into ISP</td>
+        </tr>
+        <tr>
+          <td>ISP / VPSS</td>
+          <td><code>rkisp</code> · <code>rkisp_vir0/1</code> · <code>rkvpss_vir0/1</code> · <code>rkdvbm</code></td>
+          <td>DTB + Rockchip ISP</td>
+          <td><code>/dev/video24</code> CAM0 · <code>/dev/video32</code> CAM1</td>
+        </tr>
+        <tr>
+          <td>3A / IQ</td>
+          <td><code>rkaiq_3A_server</code></td>
+          <td><code>/oem/usr/bin/</code> + IQ JSON in overlay</td>
+          <td>Exposure / AWB on both ISPs</td>
+        </tr>
+        <tr>
+          <td>IMU</td>
+          <td><code>st,lsm6dsv</code> (IIO)</td>
+          <td>In the boot FIT · SPI0 / SPI1</td>
+          <td><code>/sys/bus/iio/devices/iio:device1…4</code> (gyro/accel ×2)</td>
+        </tr>
+        <tr>
+          <td>Wi-Fi / BLE</td>
+          <td>SDIO <code>1FFE:6621</code> · <code>skw_sdio_lite</code> · <code>swt6621s_wifi</code> · <code>skwbt</code></td>
+          <td>Overlay <code>swt6621-rt52/</code> + FW <code>swt6621_fw/</code></td>
+          <td><code>mmc2</code> · <code>wlan0</code> · <code>hci0</code></td>
+        </tr>
+        <tr>
+          <td>Wi-Fi stack</td>
+          <td><code>cfg80211</code> · <code>mac80211</code> · AES / CCM helpers</td>
+          <td>Loaded by <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/camevision-wifi.sh"><code>camevision-wifi.sh</code></a></td>
+          <td>nl80211 + <code>wpa_camevision.conf</code></td>
+        </tr>
+        <tr>
+          <td>USB gadget</td>
+          <td>DWC3 <code>dr_mode=peripheral</code> · configfs gadget</td>
+          <td>DTB + rootfs</td>
+          <td>ADB <code>2207:0006</code> · UDC <code>21500000.usb</code></td>
+        </tr>
+        <tr>
+          <td>eMMC / SD / SDIO host</td>
+          <td><code>emmc</code> · <code>sdmmc0</code> · <code>sdmmc1</code></td>
+          <td>DTB</td>
+          <td><code>mmc0</code> eMMC · <code>mmc1</code> µSD · <code>mmc2</code> Wi-Fi</td>
+        </tr>
+        <tr>
+          <td>RTC / PMIC</td>
+          <td><code>rv3028</code> I2C2 0x52 · <code>rk801</code> I2C0 0x27</td>
+          <td>DTB</td>
+          <td><code>/dev/rtc0</code> · PMIC regulators</td>
+        </tr>
+        <tr>
+          <td>NPU / GPU / MPP</td>
+          <td>rknpu · mali · mpp</td>
+          <td>Kernel + <code>kmpp-rt52.ko</code> in overlay</td>
+          <td><code>/dev/rknpu</code> · <code>/dev/mali*</code> · <code>/dev/mpp_service</code></td>
+        </tr>
+      </table>
+      <p>Camera pipe in the DTB: sensor → D-PHY → CSI-2 → CIF → ISP → VPSS. Wi-Fi modules are built for this rt52 kernel; they load from <code>/userdata/swt6621-rt52</code>. Firmware blobs are <code>/userdata/swt6621_fw</code> (Seekwave / SWT6621S NV).</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Device tree</h2>
+      <p>Board source: <a href="https://github.com/Camemake/CameVision-Ego/blob/main/device-tree/rv1126b-camevision-ego.dts"><code>device-tree/rv1126b-camevision-ego.dts</code></a>. Includes <code>rv1126b.dtsi</code>. Model string <code>CameVision Ego</code>, compatible <code>camemake,camevision-ego</code>.</p>
+      <p>Boot FIT carries the compiled DTB. Source: <a href="https://github.com/Camemake/CameVision-Ego/blob/main/device-tree/rv1126b-camevision-ego.dts"><code>device-tree/rv1126b-camevision-ego.dts</code></a>. Rebuild and write the boot partition after a DTS change.</p>
+      <table>
+        <tr><th>Node</th><th>State</th></tr>
+        <tr><td><code>i2c3/sc233hgs@30</code> · <code>i2c-gpio-cam1/sc233hgs@30</code></td><td>Both cameras, 27 MHz XVCLK, 4-lane</td></tr>
+        <tr><td><code>i2c4</code></td><td>Disabled: CAM1 SCL/SDA are swapped, bit-bang instead</td></tr>
+        <tr><td><code>csi2_dphy0/1</code> · <code>mipi0/1_csi2</code> · <code>rkcif*</code> · <code>rkisp*</code> · <code>rkvpss*</code></td><td>Okay: dual pipe</td></tr>
+        <tr><td><code>spi0/imu@0</code> · <code>spi1/imu@0</code></td><td><code>st,lsm6dsv</code>, SPI mode 3, 1 MHz, <code>st,odr-triggered</code></td></tr>
+        <tr><td><code>sdmmc1</code> + <code>sdio-pwrseq</code> · <code>wireless-wlan</code> · UART2 BT</td><td>VS6621</td></tr>
+        <tr><td><code>emmc</code> 8-bit HS200 · <code>sdmmc0</code> 4-bit</td><td>Okay</td></tr>
+        <tr><td><code>usb@21500000</code></td><td><code>dr_mode = peripheral</code> (ADB)</td></tr>
+        <tr><td><code>usb_host_ehci</code> · <code>ohci</code> · <code>gmac</code> · <code>dsi</code> · <code>i2c1</code> · <code>i2c5</code></td><td>Disabled</td></tr>
+        <tr><td><code>uart0</code></td><td>Console 1.5 Mbaud</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Flash</h2>
+      <p>Maskrom. Empty board or a board that already has images.</p>
+      <h3>Partition map</h3>
+      <table>
+        <tr><th>LBA</th><th>Image</th><th>In this package</th></tr>
+        <tr><td>loader (db once)</td><td><code>rv1126b_spl_loader_k4a8g.bin</code></td><td><code>restore/known-good-20260819-camera-adb/</code> or <code>restore/updates/current/</code></td></tr>
+        <tr><td><code>0x0</code></td><td><code>env.img</code></td><td>same</td></tr>
+        <tr><td><code>0x40</code></td><td><code>idblock.img</code></td><td>same</td></tr>
+        <tr><td><code>0x440</code></td><td><code>uboot.img</code></td><td>same</td></tr>
+        <tr><td><code>0x2440</code></td><td><code>camevision_boot_ego.img</code></td><td>kernel + DTB FIT</td></tr>
+        <tr><td><code>0x7C40</code></td><td><code>userdata.img</code></td><td>then overlay on top</td></tr>
+        <tr><td><code>0x207C40</code></td><td><code>oem_noko.img</code></td><td>IQ binaries, rkaiq, oem libs</td></tr>
+        <tr><td><code>0x607C40</code></td><td><code>rootfs_bootstable.img</code></td><td>root filesystem</td></tr>
+      </table>
+      <h3>From the offline tool</h3>
+      <ol>
+        <li>Images (same names) in <code>restore/updates/current/</code>, or a zip via <strong>GitHub update</strong> / <strong>Package file</strong>.</li>
+        <li>USB / Maskrom: hold BOOT, tap RESET.</li>
+        <li>Select the package · <strong>Install</strong>.</li>
+        <li>Release BOOT when the write finishes. Overlay is pushed over ADB.</li>
+      </ol>
+      <h3>From the command line</h3>
+      <pre>python tools/cv_ego_flash.py --prebuilt</pre>
+      <p><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_flash.py"><code>tools/cv_ego_flash.py</code></a> → <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_wifi_full_flash.py"><code>tools/cv_ego_wifi_full_flash.py</code></a>. <code>upgrade_tool db</code> the 1 GB DDR loader once, then <code>wl</code> each LBA, <code>rd</code>, overlay over ADB.</p>
+      <pre>host/upgrade_tool.exe db restore/known-good-20260819-camera-adb/rv1126b_spl_loader_k4a8g.bin
+host/upgrade_tool.exe wl 0x0    env.img
+host/upgrade_tool.exe wl 0x40   idblock.img
+host/upgrade_tool.exe wl 0x440  uboot.img
+host/upgrade_tool.exe wl 0x2440 camevision_boot_ego.img
+host/upgrade_tool.exe wl 0x7C40 userdata.img
+host/upgrade_tool.exe wl 0x207C40 oem_noko.img
+host/upgrade_tool.exe wl 0x607C40 rootfs_bootstable.img
+host/upgrade_tool.exe rd
+python tools/cv_ego_overlay_deploy.py</pre>
+      <h3>Rebuild only the boot FIT</h3>
+      <p><code>python tools/cv_ego_flash.py --rebuild</code> runs the DTB patch and <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_pack_release02.py"><code>tools/cv_pack_release02.py</code></a>, then the same write. Boot image: <code>camevision_boot_ego.img</code> (FIT, 11 MiB / <code>0x5800</code> sectors).</p>
+      <h3>Userspace only</h3>
+      <p>Leave the partitions. Files under <code>tools/</code>, then <code>python tools/cv_ego_overlay_deploy.py</code>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Boot chain</h2>
+      <ol>
+        <li><a href="https://github.com/Camemake/CameVision-Ego/blob/main/restore/release-0.2-20260902/overlay/S11hwclock"><code>S11hwclock</code></a>: RV-3028 → system clock.</li>
+        <li><a href="https://github.com/Camemake/CameVision-Ego/blob/main/restore/release-0.2-20260902/overlay/S99ego-stereo"><code>S99ego-stereo</code></a>: waits, then starts the stereo script.</li>
+        <li><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/camevision-stereo.sh"><code>tools/camevision-stereo.sh</code></a>: kmpp, Wi-Fi, rkaiq 3A, IMU HUD, then <code>ego_stereo.py</code>.</li>
+        <li>PC <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_page.py"><code>tools/cv_ego_page.py</code></a>: <code>adb forward</code> 8081 and 8083, opens the browser.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>On the board</h2>
+      <table>
+        <tr><th>Block</th><th>File</th><th>On the board</th><th>Role</th></tr>
+        <tr>
+          <td>Live stereo</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_stereo.py"><code>tools/ego_stereo.py</code></a></td>
+          <td><code>/userdata/ego_stereo.py</code> · port 8081</td>
+          <td>Reads <code>/dev/video24</code> (CAM0) and <code>/dev/video32</code> (CAM1). JPEG live page, depth overlay, calibration routes, record control. Loads <code>libego_stereo.so</code>.</td>
+        </tr>
+        <tr>
+          <td>Matcher</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/stereo_native.c"><code>tools/stereo_native.c</code></a></td>
+          <td><code>/userdata/libego_stereo.so</code></td>
+          <td>C block matcher and NV12 overlay. Built as the shared library the live page loads.</td>
+        </tr>
+        <tr>
+          <td>FSYNC / EFSYNC</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_cam_sync.py"><code>tools/ego_cam_sync.py</code></a></td>
+          <td>imported by the live page</td>
+          <td>GPIO4_A1/A0 + GPIO6_C2/C3, both eyes on one tick. Sensor regs 0x3222 / 0x3282. Default 12.5 fps continuous trigger.</td>
+        </tr>
+        <tr>
+          <td>IMU HUD</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_imu_hud.py"><code>tools/ego_imu_hud.py</code></a></td>
+          <td><code>/userdata/ego_imu_hud.py</code> · port 8083</td>
+          <td>JSON of IMU0 (SPI0, CAM0) and IMU1 (SPI1, CAM1). The live page proxies <code>/imu</code> to this port.</td>
+        </tr>
+        <tr>
+          <td>Calibration UI</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_calib.html"><code>tools/ego_calib.html</code></a></td>
+          <td><code>/userdata/ego_calib.html</code> · <code>/cal</code></td>
+          <td>Browser UI. Writes <code>/userdata/ego_calib.json</code> through the live page (<code>/cal/start</code>, <code>/cal/sample</code>, <code>/cal/stop</code>).</td>
+        </tr>
+        <tr>
+          <td>Focus / MTF</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_mtf.py"><code>tools/ego_mtf.py</code></a></td>
+          <td>imported by the live page</td>
+          <td>ISO 12233 slanted-edge MTF50 on the 1920×1200 Y plane. <code>/focus/start</code>, <code>/focus/stop</code>.</td>
+        </tr>
+        <tr>
+          <td>Record (board)</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_record.py"><code>tools/ego_record.py</code></a></td>
+          <td>started from the live page</td>
+          <td>HEVC of the live NV12 to the PC on 8091. <code>/record/start</code>, <code>/record/stat</code>.</td>
+        </tr>
+        <tr>
+          <td>Wi-Fi STA</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/camevision-wifi.sh"><code>tools/camevision-wifi.sh</code></a></td>
+          <td><code>/userdata/camevision-wifi.sh</code></td>
+          <td>VS6621 modules + <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/wpa_camevision.conf"><code>wpa_camevision.conf</code></a>.</td>
+        </tr>
+        <tr>
+          <td>IQ</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/restore/release-0.2-20260902/overlay/iqfiles/sc233hgs_camevision-sc233hgs_default.json"><code>overlay/iqfiles/…default.json</code></a></td>
+          <td><code>/userdata/iqfiles/</code> → <code>/oem/usr/share/iqfiles/</code></td>
+          <td>SC233HGS 3A / ISP tuning consumed by <code>rkaiq_3A_server</code>.</td>
+        </tr>
+        <tr>
+          <td>Device tree</td>
+          <td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/device-tree/rv1126b-camevision-ego.dts"><code>device-tree/rv1126b-camevision-ego.dts</code></a></td>
+          <td>FIT / boot image</td>
+          <td>Cameras, IMU, Wi-Fi, SD, LEDs, USB gadget. Hardware page is the pin table for this file.</td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Live page routes · 8081</h2>
+      <p>Forwarded by the host as <code>http://127.0.0.1:8081/</code>.</p>
+      <table>
+        <tr><th>Path</th><th>Body</th></tr>
+        <tr><td><code>/</code></td><td>Live HTML: <code>/ov0</code> and <code>/ov1</code> MJPEG</td></tr>
+        <tr><td><code>/ov0</code> · <code>/ov1</code></td><td>MJPEG with depth overlay</td></tr>
+        <tr><td><code>/raw0</code> · <code>/raw1</code></td><td>MJPEG without overlay</td></tr>
+        <tr><td><code>/depth</code></td><td>Depth view</td></tr>
+        <tr><td><code>/snap0</code> · <code>/snap1</code> · <code>/snapx</code></td><td>Single JPEG</td></tr>
+        <tr><td><code>/stat</code></td><td>JSON status</td></tr>
+        <tr><td><code>/imu</code></td><td>JSON from :8083</td></tr>
+        <tr><td><code>/trig</code></td><td>FSYNC / EFSYNC status</td></tr>
+        <tr><td><code>/cal</code></td><td>Calibration UI</td></tr>
+        <tr><td><code>/cal/stat</code> · <code>/cal/start</code> · <code>/cal/sample</code> · <code>/cal/stop</code> · <code>/cal/reset</code></td><td>Calibration session</td></tr>
+        <tr><td><code>/focus/start</code> · <code>/focus/stop</code></td><td>MTF</td></tr>
+        <tr><td><code>/align</code></td><td>Stereo align</td></tr>
+        <tr><td><code>/record/start</code> · <code>/record/stat</code></td><td>Session record</td></tr>
+      </table>
+      <p>IMU JSON on its own socket: <code>http://127.0.0.1:8083/</code>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>On this PC</h2>
+      <table>
+        <tr><th>Block</th><th>File</th><th>Role</th></tr>
+        <tr><td>Offline tool</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_studio.py"><code>tools/cv_ego_studio.py</code></a></td><td>Local site :8765, jobs, this page’s file links</td></tr>
+        <tr><td>First-run host</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_host_setup.py"><code>tools/cv_ego_host_setup.py</code></a></td><td>Bundled Python, USB driver / udev</td></tr>
+        <tr><td>USB driver</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_driver.py"><code>tools/cv_ego_driver.py</code></a></td><td>Rockusb + ADB (Windows), udev 2207 (Linux)</td></tr>
+        <tr><td>Flash</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_flash.py"><code>tools/cv_ego_flash.py</code></a></td><td>Maskrom write of loader…rootfs, then overlay</td></tr>
+        <tr><td>Overlay push</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_overlay_deploy.py"><code>tools/cv_ego_overlay_deploy.py</code></a></td><td>ADB copy of the overlay into <code>/userdata</code></td></tr>
+        <tr><td>Open live</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_page.py"><code>tools/cv_ego_page.py</code></a></td><td>Forwards 8081 / 8083</td></tr>
+        <tr><td>Autostart</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_autostart.py"><code>tools/cv_ego_autostart.py</code></a></td><td>Host watcher: deploy + forwards + page</td></tr>
+        <tr><td>Diagnostics</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_diag.py"><code>tools/cv_ego_diag.py</code></a></td><td>ADB dump: identity, I2C, IMU, video, dmesg</td></tr>
+        <tr><td>Update</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_update.py"><code>tools/cv_ego_update.py</code></a></td><td>GitHub or zip → <code>restore/updates/current</code></td></tr>
+        <tr><td>Record (host)</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_record_host.py"><code>tools/cv_ego_record_host.py</code></a></td><td>Listens 8091, writes a session folder</td></tr>
+        <tr><td>Paths</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_paths.py"><code>tools/cv_ego_paths.py</code></a></td><td>ADB, upgrade_tool, images, overlay roots</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Swap a block</h2>
+      <p>File under <code>tools/</code>, then:</p>
+      <pre>python tools/cv_ego_overlay_deploy.py</pre>
+      <p>Live process: <code>python3 /userdata/ego_stereo.py</code>.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div>
+        <a href="https://github.com/Camemake/CameVision-Ego">github.com/Camemake/CameVision-Ego</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

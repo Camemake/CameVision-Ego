@@ -4,26 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hardware · CameVision EGO · Camemake</title>
-  <meta name="description" content="CameVision EGO V1.I1 hardware map — cameras, IMU, GPIO and sync.">
+  <meta name="description" content="CameVision Ego V1.I1 pinmux: cameras, IMU, Wi-Fi, storage, power.">
   <link rel="stylesheet" href="assets/style.css">
   <link rel="icon" href="assets/camemake-logo.png">
 </head>
 <body>
   <header class="top">
-    <div class="wrap top-inner">
-      <a class="brand" href="index.html">
-        <img src="assets/camemake-logo.png" alt="Camemake">
-        <span>CameVision EGO</span>
-      </a>
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake stereo &middot; NPU</span>
+      </div>
       <nav>
         <a href="index.html">Product</a>
         <a href="start.html">Get started</a>
+        <a href="tool.html">Offline tool</a>
+        <a href="flash.html">Flash</a>
         <a class="active" href="hardware.html">Hardware</a>
-        <a href="family.html">Robotic family</a>
-        <a href="about.html">About</a>
-        <a href="https://github.com/Camemake/CameVision-Ego">GitHub</a>
-        <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Buy EGO</a>
+        <a href="mechanical.html">Mechanical</a>
+        <a href="optics.html">Optics</a>
+        <a href="software.html">Software</a>
+        <a href="datasheet.html">Datasheet</a>
       </nav>
+      <a class="buy" href="http://127.0.0.1:8081/">Live page</a>
     </div>
   </header>
 
@@ -31,34 +35,125 @@
     <div class="wrap">
       <div class="kicker">CameVision Ego V1.I1</div>
       <h1>Hardware</h1>
-      <p class="lead">Two global-shutter imagers at 1920×1200, four MIPI lanes per eye, and one IMU beside each camera. Full board notes live in <a href="https://github.com/Camemake/CameVision-Ego/blob/main/EGO.md">EGO.md</a>.</p>
+      <p class="lead">RV1126B pinmux, CameVision Ego V1.I1. Source: <code>device-tree/rv1126b-camevision-ego.dts</code>.</p>
     </div>
   </div>
 
   <section>
     <div class="wrap">
-      <h2>Camera map</h2>
+      <h2>Fitted parts</h2>
       <table>
-        <tr><th>Eye</th><th>CSI</th><th>Control</th><th>Power-down</th><th>Sync</th><th>Trigger</th><th>IMU</th></tr>
-        <tr><td>CAM0</td><td>CSI RX0, 4-lane</td><td>I2C3 @0x30</td><td>GPIO4_A3</td><td>GPIO4_A1 → FSYNC</td><td>GPIO6_C2 → EFSYNC</td><td>SPI0</td></tr>
-        <tr><td>CAM1</td><td>CSI RX1, 4-lane</td><td>I2C-GPIO @0x30</td><td>GPIO4_A2</td><td>GPIO4_A0 → FSYNC</td><td>GPIO6_C3 → EFSYNC</td><td>SPI1</td></tr>
+        <tr><th>Block</th><th>Schematic label</th><th>On the board</th></tr>
+        <tr><td>SoC</td><td>RV1126B</td><td>RV1126B</td></tr>
+        <tr><td>DDR4 U3</td><td>K4A4G165WG (512 MB)</td><td>K4A8G165WG 16-bit 1 GB</td></tr>
+        <tr><td>eMMC U2A</td><td>BWCTAK611G16G</td><td>BWCTAK611G16G 16 GB</td></tr>
+        <tr><td>Cameras U7 / U10</td><td>SC233HGS / OG02C10 / AM220</td><td>×2, I2C 0x30 each. SKU OS-SC / OS-OV / OS-AM</td></tr>
+        <tr><td>IMU U9 / U12</td><td>LSM6DSV320XTR</td><td>LSM6DSVQTR ×2</td></tr>
+        <tr><td>PMIC</td><td>RK801-2</td><td>I2C0 0x27</td></tr>
+        <tr><td>RTC</td><td>RV-3028-C7</td><td>I2C2 0x52</td></tr>
+        <tr><td>Wi-Fi / BT</td><td>VS6621S80 U14</td><td>SDMMC1 + UART2</td></tr>
+        <tr><td>Charger</td><td>BQ24072RGTR U13</td><td>250 mA fast charge</td></tr>
+        <tr><td>microSD</td><td>U6 475710001</td><td>SDMMC0, 1.8 V VDD</td></tr>
       </table>
-      <p>CAM1 I2C SCL/SDA are swapped on the PCB versus the SoC I2C4 functions, so that eye is bit-banged. CSI RX1 uses the 4-lane PHY on that port.</p>
-      <p>Trigger mode is continuous on both sensors. Slave-mode HDR bits stay off so the 3A stack still owns exposure. Trigger rate is 12.5 fps; programmed VTS remains 15. Do not reuse CAM1 power-down or I2C pins as sync outputs.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <h2>Fitted parts</h2>
-      <ul>
-        <li>Memory: <strong>1 GB</strong> DDR (the schematic 512 MB label is wrong)</li>
-        <li>Both IMUs are the same part</li>
-        <li>eMMC: <code>BWCTAK611G16G</code></li>
-        <li>USB-C with battery pads and charger path</li>
-        <li>Wi-Fi 6 + BLE</li>
-      </ul>
-      <p>SKU <strong>CV-EGO01-OS</strong>. Shop: <a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">CameVision EGO listing</a>.</p>
+      <h2>Cameras</h2>
+      <table>
+        <tr><th>Net</th><th>Pad / GPIO</th><th>Function</th></tr>
+        <tr><td>CAM0 MIPI</td><td>CSI RX0, 4-lane + CLK</td><td>U7 → <code>/dev/video24</code></td></tr>
+        <tr><td>I2C3_SCL/SDA_CAM</td><td>I2C3M1 GPIO4_A4 / A5 @0x30</td><td>CAM0 control, 400 kHz</td></tr>
+        <tr><td>CAM0 XVCLK</td><td>CLK_CAM0_OUT 27 MHz</td><td>Sensor clock</td></tr>
+        <tr><td>CAM0_PWDN</td><td>GPIO4_A3 pad 1V21</td><td>XSHUTDN, active high</td></tr>
+        <tr><td>MIPI_RX0_SYNC</td><td>AG32 GPIO4_A1</td><td>FSYNC → U7.D3</td></tr>
+        <tr><td>MIPI_RX0_TRIGGER</td><td>U31 GPIO6_C2</td><td>EFSYNC → U7.B5</td></tr>
+        <tr><td>CAM1 MIPI</td><td>CSI RX1, 4-lane + CLK</td><td>U10 → <code>/dev/video32</code></td></tr>
+        <tr><td>I2C4_SCL/SDA_CAM</td><td>GPIO4_A6 SCL · GPIO4_A7 SDA @0x30</td><td>CAM1 bit-bang (pads swapped vs SoC I2C4_M2)</td></tr>
+        <tr><td>CAM1 XVCLK</td><td>CLK_CAM1_OUT 27 MHz</td><td>Sensor clock</td></tr>
+        <tr><td>CAM1_PWDN</td><td>GPIO4_A2 pad 1Y23</td><td>XSHUTDN</td></tr>
+        <tr><td>MIPI_RX1_SYNC</td><td>AG31 GPIO4_A0</td><td>FSYNC → U10.D3</td></tr>
+        <tr><td>MIPI_RX1_TRIGGER</td><td>V31 GPIO6_C3</td><td>EFSYNC → U10.B5</td></tr>
+        <tr><td>PWR_EN_2.8V</td><td>GPIO0_B0 pad 1AB4</td><td>U15 AVDD 2.8 V</td></tr>
+        <tr><td>PWR_EN_1.5V</td><td>GPIO0_B1 pad 1AA4</td><td>U16 1.5 V</td></tr>
+        <tr><td>PWR_EN_1.2V</td><td>GPIO0_B2 pad 1AC2</td><td>U18 DVDD 1.2 V</td></tr>
+      </table>
+      <p>Continuous trigger. Shared tick on FSYNC and EFSYNC. I2C4 disabled. GMAC off. SC233HGS chip id <code>0xcb61</code>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>IMU, I2C, SPI</h2>
+      <table>
+        <tr><th>Net</th><th>Pad / GPIO</th><th>Function</th></tr>
+        <tr><td>SPI0 CLK/CS0/MISO/MOSI</td><td>SPI0_M2 GPIO5_A3 / A4 / A5 / A6</td><td>IMU0 U9 (CAM0)</td></tr>
+        <tr><td>IMU0_INT1 / INT2</td><td>GPIO5_B1 · GPIO5_D4</td><td>IMU0 interrupts</td></tr>
+        <tr><td>SPI1 CLK/CS0/MISO/MOSI</td><td>SPI1_M0</td><td>IMU1 U12 (CAM1)</td></tr>
+        <tr><td>IMU1_INT1 / INT2</td><td>GPIO6_B5 · GPIO6_C1</td><td>IMU1 interrupts</td></tr>
+        <tr><td>I2C0_SCL/SDA_PMIC</td><td>I2C0M0 0x27</td><td>RK801-2</td></tr>
+        <tr><td>PMIC INT / PWRCTRL</td><td>GPIO0_C0 · GPIO0_C1</td><td>PMIC</td></tr>
+        <tr><td>I2C2</td><td>I2C2M0 0x52</td><td>RV-3028</td></tr>
+        <tr><td>RTC INT / EVI</td><td>GPIO0_C5 · GPIO0_C4</td><td>RTC</td></tr>
+        <tr><td>I2C1 / I2C5</td><td>-</td><td>Disabled on this PCB</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>IMU sample rates</h2>
+      <p>Fitted part is <strong>LSM6DSVQTR</strong> ×2, IIO <code>st,lsm6dsv</code>. SPI mode 3, <code>spi-max-frequency</code> 1 MHz, controller <code>max-freq</code> 10 MHz. DTB: <code>st,odr-triggered</code>, DRDY on INT1. HUD writes <code>sampling_frequency</code> (oneshot sysfs).</p>
+      <table>
+        <tr><th></th><th>Accel</th><th>Gyro</th></tr>
+        <tr><td>This package (HUD)</td><td>480 Hz</td><td>480 Hz</td></tr>
+        <tr><td>IIO nodes</td><td>CAM0 <code>iio:device2</code> · CAM1 <code>iio:device4</code></td><td>CAM0 <code>iio:device1</code> · CAM1 <code>iio:device3</code></td></tr>
+        <tr><td>ODR list (Hz)</td><td>1.875 · 7.5 · 15 · 30 · 60 · 120 · 240 · 480 · 960 · 1920 · 3840 · 7680</td><td>7.5 · 15 · 30 · 60 · 120 · 240 · 480 · 960 · 1920 · 3840 · 7680</td></tr>
+        <tr><td>Full-scale (typical)</td><td>±2 / 4 / 8 / 16 g</td><td>±125 / 250 / 500 / 1000 / 2000 / 4000 dps</td></tr>
+      </table>
+      <p><code>/sys/bus/iio/devices/iio:deviceN/sampling_frequency</code> · <code>sampling_frequency_available</code>. Default ODR in <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_imu_hud.py"><code>tools/ego_imu_hud.py</code></a> is <code>"480"</code>. JSON on :8083: <code>odr_hz</code>, <code>read_hz</code>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Wi-Fi, SD, USB, power, LED, boot</h2>
+      <table>
+        <tr><th>Net</th><th>Pad / GPIO</th><th>Function</th></tr>
+        <tr><td>eMMC</td><td>EMMC / FSPI</td><td>U2A, live <code>mmc0</code></td></tr>
+        <tr><td>SDMMC0 CLK/CMD/D0–D3</td><td>GPIO2_A0–A5</td><td>microSD (not the LED pad)</td></tr>
+        <tr><td>SDMMC0_DET</td><td>GPIO3_B3 pad 1B14</td><td>Card detect, active low, pull-up</td></tr>
+        <tr><td>SDMMC0_PWREN</td><td>GPIO3_B4 pad 1A14</td><td>SD rail enable (not dtsi GPIO0_A10)</td></tr>
+        <tr><td>SDMMC1 CLK/CMD/D0–D3</td><td>SDIO</td><td>VS6621 Wi-Fi</td></tr>
+        <tr><td>WIFI_RST / CHIP_EN</td><td>GPIO3_B2</td><td>pwrseq, low = rail on (BSS84 Q1)</td></tr>
+        <tr><td>WIFI_SOC_PWCTL</td><td>GPIO3_B6</td><td>HOST_WAKE_WL</td></tr>
+        <tr><td>WIFI_INT</td><td>GPIO3_B7 pad A16</td><td>WL_WAKE_HOST</td></tr>
+        <tr><td>UART2 TX/RX/CTS</td><td>UART2M0</td><td>BT</td></tr>
+        <tr><td>UART2 RTS</td><td>GPIO3_A6</td><td>BT RTS as GPIO</td></tr>
+        <tr><td>USB-C J3</td><td>USB2 + USB3 DRD</td><td>ADB gadget, <code>dr_mode</code> peripheral</td></tr>
+        <tr><td>BAT_CHG</td><td>GPIO0_A7 pad 1AC4</td><td>BQ24072 charge status, active low</td></tr>
+        <tr><td>STATUS_LED_R</td><td>GPIO0_A6 pad 1AA6</td><td>RGB common-anode, active low</td></tr>
+        <tr><td>STATUS_LED_G</td><td>GPIO0_A5 pad AL10</td><td>RGB common-anode, active low</td></tr>
+        <tr><td>STATUS_LED_B</td><td>GPIO0_A4 pad 1AB6</td><td>RGB common-anode, active low</td></tr>
+        <tr><td>UART0</td><td>UART0M2</td><td>Console 1.5 Mbaud</td></tr>
+        <tr><td>SARADC0_IN7</td><td>ADC</td><td>Maskrom / eMMC boot</td></tr>
+      </table>
+      <p>Card detect is GPIO3_B3. GPIO0_A5 is the green LED.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Schematic sheets not used on this PCB</h2>
+      <table>
+        <tr><th>Block</th><th>State in the device tree</th></tr>
+        <tr><td>GMAC</td><td>Off: frees GPIO6_C2 / C3 for camera EFSYNC</td></tr>
+        <tr><td>I2C1 · I2C5</td><td>Disabled</td></tr>
+        <tr><td>DSI / display</td><td>Unused</td></tr>
+        <tr><td>EPHY / Ethernet</td><td>Sheet present, not fitted</td></tr>
+        <tr><td>Audio / I2S</td><td>Sheet present, not fitted</td></tr>
+      </table>
     </div>
   </section>
 
