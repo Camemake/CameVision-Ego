@@ -34,9 +34,9 @@ LOGO = ROOT / "tools" / "camemake-logo.png"
 SO = ROOT / "build" / "libego_stereo.so"
 BOOT_SH = ROOT / "tools" / "camevision-stereo.sh"
 S99 = ROOT / "tools" / "S99ego-stereo"
-IQ_NAME = "sc233hgs_efference-sc233hgs_default.json"
+IQ_NAME = "sc233hgs_camevision-sc233hgs_default.json"
 IQ_CANDIDATES = (
-    ROOT / "tools" / "iqfiles" / "sc233hgs_efference-sc233hgs_flicker50.json",
+    ROOT / "tools" / "iqfiles" / "sc233hgs_camevision-sc233hgs_flicker50.json",
     ROOT / "restore" / "release-1-20260824" / "overlay" / "iqfiles" / IQ_NAME,
 )
 

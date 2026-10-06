@@ -19,10 +19,10 @@ LOGO = ROOT / "tools" / "camemake-logo.png"
 SO = ROOT / "build" / "libego_stereo.so"
 BOOT_SH = ROOT / "tools" / "camevision-stereo.sh"
 S99 = ROOT / "tools" / "S99ego-stereo"
-IQ_NAME = "sc233hgs_efference-sc233hgs_default.json"
+IQ_NAME = "sc233hgs_camevision-sc233hgs_default.json"
 IQ_CANDIDATES = (
-    ROOT / "tools" / "iqfiles" / "sc233hgs_efference-sc233hgs_flicker50.json",
-    ROOT / "build" / "live" / "sc233hgs_efference-sc233hgs_flicker50.json",
+    ROOT / "tools" / "iqfiles" / "sc233hgs_camevision-sc233hgs_flicker50.json",
+    ROOT / "build" / "live" / "sc233hgs_camevision-sc233hgs_flicker50.json",
     ROOT / "restore" / "release-1-20260824" / "overlay" / "iqfiles" / IQ_NAME,
 )
 
@@ -75,11 +75,11 @@ def main() -> int:
         "chmod 755 /etc/init.d/S99ego-stereo; "
         "mount -o remount,ro / 2>/dev/null; "
         "ls -l /etc/init.d/S99ego-stereo /userdata/camevision-stereo.sh; "
-        "if [ -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json ]; then "
-        "cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json "
-        "/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json 2>/dev/null || "
-        "(mount -o remount,rw /oem && cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json "
-        "/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json); fi; "
+        "if [ -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json ]; then "
+        "cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json "
+        "/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json 2>/dev/null || "
+        "(mount -o remount,rw /oem && cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json "
+        "/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json); fi; "
         "kill $(cat /tmp/ego-stereo.pid 2>/dev/null) 2>/dev/null; "
         "P=$(ps | grep ego_stereo | grep -v grep | awk '{print $1}'); "
         "[ -n \"$P\" ] && kill $P 2>/dev/null; "

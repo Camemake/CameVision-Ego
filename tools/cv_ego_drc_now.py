@@ -10,7 +10,7 @@ r = subprocess.run(
         "-s",
         S,
         "shell",
-        "python3 -c \"import json;d=json.load(open('/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json'));print('oem drc',d['main_scene'][0]['sub_scene'][0]['scene_isp35']['drc']['en'])\"; "
+        "python3 -c \"import json;d=json.load(open('/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json'));print('oem drc',d['main_scene'][0]['sub_scene'][0]['scene_isp35']['drc']['en'])\"; "
         "grep DRC /proc/rkisp-vir0; ps | grep rkaiq_3A | grep -v grep",
     ],
     capture_output=True,

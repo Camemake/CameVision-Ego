@@ -249,7 +249,7 @@ def patch_tree(root: Node) -> None:
     add_child(find(root, "/pinctrl"), sd_grp)
 
     set_cells(find(root, "/pinctrl/wireless-wlan/wifi-wake-host"), "rockchip,pins", [3, 15, 0, PCFG_PULL_UP])
-    set_cells(find(root, "/pinctrl/wireless-wlan/wifi-soc-pwctl"), "rockchip,pins", [3, 14, 0, PCFG_PULL_DOWN])
+    set_cells(find(root, "/pinctrl/wireless-wlan/wifi-soc-pwctl"), "rockchip,pins", [3, 14, 0, PCFG_OUT_HIGH])
 
     # --- camera LDOs: enable the three Ego GPIOs; DVDD is 1.2 V not 1.5 V ---
     avdd = find(root, "/sc233hgs-avdd")
@@ -331,7 +331,7 @@ def patch_tree(root: Node) -> None:
         ("pinctrl-1", u32(cam1_clk_ph)),
         ("rockchip,camera-module-index", u32(1)),
         ("rockchip,camera-module-facing", sprop("front")),
-        ("rockchip,camera-module-name", sprop("efference-sc233hgs")),
+        ("rockchip,camera-module-name", sprop("camevision-sc233hgs")),
         ("rockchip,camera-module-lens-name", sprop("default")),
     ]
     port = Node("port", cam1)
@@ -487,7 +487,17 @@ def patch_tree(root: Node) -> None:
     # --- Wi-Fi INT / PWCTL moved off GPIO2 (that bank is the SD card) ---
     wlan = find(root, "/wireless-wlan")
     set_cells(wlan, "WIFI,host_wake_irq", [GPIO3, 15, 0])
-    # Keep Single RST polarity. ACTIVE_LOW here sent the last flash to Maskrom.
+    # EGO GPIO3_B2 is the P-MOS gate (WIFI_RST / WIFI_POW_EN). Same ACTIVE_HIGH
+    # pwrseq as Single: deassert = low = 3.3 V on. Do not hold B2 high.
+    set_cells(find(root, "/sdio-pwrseq"), "reset-gpios", [GPIO3, 10, 0])
+    set_cells(find(root, "/pinctrl/sdio-pwrseq/wifi-enable-h"), "rockchip,pins", [3, 10, 0, PCFG_PULL_NONE])
+    set_cells(
+        find(root, "/pinctrl/wireless-wlan/wifi-soc-pwctl"),
+        "rockchip,pins",
+        [3, 14, 0, PCFG_OUT_HIGH],
+    )
+    set_cells(find(root, "/wireless-bluetooth"), "BT,power_gpio", [GPIO3, 9, 0])
+    set_cells(find(root, "/mmc@21f60000"), "vqmmc-supply", [VCC_1V8])
 
     charger = Node("gpio-charger")
     charger.props = [
@@ -545,6 +555,12 @@ def verify(dtb: bytes) -> None:
     wake = struct.unpack(">3I", find(tree, "/wireless-wlan").get("WIFI,host_wake_irq"))
     if wake[:2] != (GPIO3, 15):
         raise SystemExit(f"wifi wake still {wake}")
+    rst_wifi = struct.unpack(">3I", find(tree, "/sdio-pwrseq").get("reset-gpios"))
+    if rst_wifi != (GPIO3, 10, 0):
+        raise SystemExit(f"wifi reset-gpios still {rst_wifi}")
+    pwctl = struct.unpack(">4I", find(tree, "/pinctrl/wireless-wlan/wifi-soc-pwctl").get("rockchip,pins"))
+    if pwctl[:2] != (3, 14):
+        raise SystemExit(f"wifi-soc-pwctl still {pwctl}")
     find(tree, "/mipi2-csi2")
     find(tree, "/rkcif-mipi-lvds2-sditf")
     find(tree, "/rkisp-vir2-sditf")

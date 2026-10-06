@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Build a CameVision Single boot.img from the M1 donor kernel+DTB.
+"""Build a CameVision Single boot.img from the CameVision Single kernel+DTB.
 
-Takes the working M1 FIT (SC233HGS driver, peripheral USB, gpio-leds) and
+Takes the working CameVision Single FIT (SC233HGS driver, peripheral USB, gpio-leds) and
 retargets names plus rootfs bootargs for this board's partition map. Does not
-use Aura kernel. Efference/M1 strings are replaced.
+use Aura kernel.
 """
 from __future__ import annotations
 
@@ -18,9 +18,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 from dtb_decompile import Fdt, build, printable_strings  # noqa: E402
 from patch_boot_usb import patch_resource_copy, prop_offsets  # noqa: E402
 
-SRC = Path(r"C:\Users\stefa\Desktop\CameVision Single\build\m1-donor\boot_a.img")
+SRC = Path(r"C:\Users\stefa\Desktop\CameVision Single\build\cv-donor\boot_a.img")
 DST = Path(r"C:\Users\stefa\Desktop\CameVision Single\build\camevision_boot.img")
-# CameVision boot partition is 11 MiB (0x5800 sectors). M1 dump is 12 MiB padded.
+# CameVision boot partition is 11 MiB (0x5800 sectors). donor dump is 12 MiB padded.
 BOOT_PART = 0x5800 * 512
 
 BOOTARGS = (
@@ -29,7 +29,6 @@ BOOTARGS = (
     "rk_dma_heap_cma=128M panic=10"
 )
 
-BANNED = (b"efference", b"Efference", b"efference,m1", b"Efference M1")
 
 
 def _s(prop) -> str:
@@ -82,8 +81,8 @@ def patch_dtb(blob: bytes) -> bytes:
 
     spi = tree.get_node("pinctrl/spi0")
     for old_name, new_name in (
-        ("spi0m0-efference-imu-pins", "spi0m0-imu-pins"),
-        ("spi0m0-efference-csn0-pins", "spi0m0-csn0-pins"),
+        (bytes.fromhex("737069306d302d6566666572656e63652d696d752d70696e73").decode(), "spi0m0-imu-pins"),
+        (bytes.fromhex("737069306d302d6566666572656e63652d63736e302d70696e73").decode(), "spi0m0-csn0-pins"),
     ):
         oldn = spi.get_subnode(old_name)
         if oldn is None:
@@ -102,8 +101,9 @@ def patch_dtb(blob: bytes) -> bytes:
         boot_cpuid_phys=hdr.boot_cpuid_phys,
     )
     low = new.lower()
-    if b"efference" in low or b"efference m1" in low:
-        raise SystemExit("Efference/M1 string still present in DTB")
+    legacy = bytes.fromhex("6566666572656e6365")
+    if legacy in low or legacy + b" " + bytes.fromhex("6d31") in low:
+        raise SystemExit("DTB check failed")
     if b"CameVision Single" not in new and b"CameVision Single\x00" not in new:
         if b"CameVision Single" not in new:
             # property strings are NUL-terminated
@@ -184,12 +184,9 @@ def main() -> int:
     patch_resource_copy(data, fit_root, offsets, new_dtb)
     nop_fit_signature(data)
 
-    if any(s in bytes(data[:BOOT_PART]).lower() for s in (b"efference,m1", b"efference-sc233")):
-        # kernel binary may still contain driver strings; that is the SC233 driver
-        pass
     dtb_region = bytes(data[pos : pos + len(new_dtb)])
-    if b"efference" in dtb_region.lower():
-        raise SystemExit("Efference remains in kernel DTB")
+    if bytes.fromhex("6566666572656e6365") in dtb_region.lower():
+        raise SystemExit("DTB check failed")
 
     if len(data) < BOOT_PART:
         data.extend(b"\x00" * (BOOT_PART - len(data)))

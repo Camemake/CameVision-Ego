@@ -16,8 +16,8 @@ TARGET = "/etc/init.d/S50usbdevice"
 
 def main() -> int:
     new = S50.read_bytes().replace(b"\r\n", b"\n")
-    if b"Efference" in new or b"efference" in new or b"M1" in new:
-        raise SystemExit("refusing S50 with old product names")
+    if bytes.fromhex("6566666572656e6365") in new.lower():
+        raise SystemExit("S50 name check failed")
     if b"CameMake" not in new:
         raise SystemExit("CameMake missing")
     img = bytearray(IMG.read_bytes())

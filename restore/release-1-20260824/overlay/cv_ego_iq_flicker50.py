@@ -16,17 +16,17 @@ ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_win
 SRC = Path(
     r"C:\Users\stefa\Desktop\CameVision Ego"
     r"\restore\recovery-5-20260823-imaging-adb"
-    r"\overlay\iqfiles\sc233hgs_efference-sc233hgs_default.json"
+    r"\overlay\iqfiles\sc233hgs_camevision-sc233hgs_default.json"
 )
 OUT = Path(
     r"C:\Users\stefa\Desktop\CameVision Ego"
-    r"\tools\iqfiles\sc233hgs_efference-sc233hgs_flicker50.json"
+    r"\tools\iqfiles\sc233hgs_camevision-sc233hgs_flicker50.json"
 )
 LIVE = Path(
     r"C:\Users\stefa\Desktop\CameVision Ego"
-    r"\build\live\sc233hgs_efference-sc233hgs_flicker50.json"
+    r"\build\live\sc233hgs_camevision-sc233hgs_flicker50.json"
 )
-NAME = "sc233hgs_efference-sc233hgs_default.json"
+NAME = "sc233hgs_camevision-sc233hgs_default.json"
 
 
 def serial() -> str:

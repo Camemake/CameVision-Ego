@@ -14,8 +14,8 @@ from cv_telnet import run
 
 ROOT = Path(r"C:\Users\stefa\Desktop\CameVision Single")
 OVERLAY = ROOT / r"restore\recovery-2-20260821-adb-stream\overlay"
-IQ_SRC = ROOT / r"restore\known-good-20260819-camera-adb\overlay\sc233hgs_efference-sc233hgs_default.json"
-IQ_NAME = "sc233hgs_efference-sc233hgs_default.json"
+IQ_SRC = ROOT / r"restore\known-good-20260819-camera-adb\overlay\sc233hgs_camevision-sc233hgs_default.json"
+IQ_NAME = "sc233hgs_camevision-sc233hgs_default.json"
 HOST = "192.168.1.23"
 HTTP_PORT = 8765
 

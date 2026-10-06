@@ -1,12 +1,12 @@
 #!/bin/sh
 # RKAIQ / RKISP35 full 3A. No rockit. Does not grab /dev/video13.
 # IQ name must match live DT: sensor_module-lens_scene
-#   sc233hgs + efference-sc233hgs + default
+#   sc233hgs + camevision-sc233hgs + default
 export PATH=/oem/usr/bin:/usr/bin:/bin:$PATH
 export LD_LIBRARY_PATH=/oem/usr/lib:/oem/lib:$LD_LIBRARY_PATH
 
 IQDIR=/oem/usr/share/iqfiles
-IQNAME=sc233hgs_efference-sc233hgs_default.json
+IQNAME=sc233hgs_camevision-sc233hgs_default.json
 SRC=
 for d in /userdata/iqfiles /oem/usr/share/iqfiles; do
 	if [ -f "$d/$IQNAME" ]; then

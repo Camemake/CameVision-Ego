@@ -64,8 +64,8 @@ def main() -> int:
     copy(ROOT / "tools" / "ego_mjpeg.py", REC5 / "overlay" / "ego_mjpeg.py")
     copy(ROOT / "tools" / "cv_ego_start_live.py", REC5 / "overlay" / "cv_ego_start_live.py")
     copy(
-        BUILD / "live" / "sc233hgs_efference-sc233hgs_backlight.json",
-        REC5 / "overlay" / "iqfiles" / "sc233hgs_efference-sc233hgs_default.json",
+        BUILD / "live" / "sc233hgs_camevision-sc233hgs_backlight.json",
+        REC5 / "overlay" / "iqfiles" / "sc233hgs_camevision-sc233hgs_default.json",
     )
     copy(REC3 / "overlay" / "camevision-aiq.sh", REC5 / "overlay" / "camevision-aiq.sh")
 

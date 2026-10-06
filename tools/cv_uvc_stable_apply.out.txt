@@ -35,7 +35,7 @@ uvc [Errno 19] No such device
 uvc [Errno 19] No such device
 uvc [Errno 19] No such device
 === 3A ===
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_init success. iq:/etc/iqfiles//sc233hgs_efference-sc233hgs_default.json
+XCORE:K:cid[0] rk_aiq_uapi2_sysctl_init success. iq:/etc/iqfiles//sc233hgs_camevision-sc233hgs_default.json
 XCORE:K:cid[0] rk_aiq_uapi2_sysctl_prepare success. mode:0 
 XCORE:K:cid[0] rk_aiq_uapi2_sysctl_start success.
 sh-5.2# sleep 3
@@ -87,7 +87,7 @@ Format Video Output:
 sh-5.2# echo --- 3A ---
 --- 3A ---
 sh-5.2# grep sysctl /userdata/rkaiq.log | tail -6
-XCORE:K:cid[0] rk_aiq_uapi2_sysctl_init success. iq:/etc/iqfiles//sc233hgs_efference-sc233hgs_default.json
+XCORE:K:cid[0] rk_aiq_uapi2_sysctl_init success. iq:/etc/iqfiles//sc233hgs_camevision-sc233hgs_default.json
 XCORE:K:cid[0] rk_aiq_uapi2_sysctl_prepare success. mode:0 
 XCORE:K:cid[0] rk_aiq_uapi2_sysctl_start success.
 XCORE:K:cid[0] rk_aiq_uapi2_sysctl_stop success.

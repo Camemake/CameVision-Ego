@@ -51,9 +51,9 @@ PushUnix (Join-Path $ov 'insmod_wifi.sh') /oem/usr/ko/insmod_wifi.sh
 PushUnix (Join-Path $ov 'hw_rtsp.py') /userdata/hw_rtsp.py
 
 & $adb shell 'mkdir -p /userdata/iqfiles /userdata/swt6621_fw /userdata/swt6621-rt52'
-$iq = Join-Path $ov 'iqfiles\sc233hgs_efference-sc233hgs_default.json'
+$iq = Join-Path $ov 'iqfiles\sc233hgs_camevision-sc233hgs_default.json'
 if (Test-Path $iq) {
-  PushUnix $iq /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json
+  PushUnix $iq /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json
 }
 
 & $adb push (Join-Path $ov 'kmpp-rt52.ko') /userdata/kmpp-rt52.ko

@@ -73,7 +73,7 @@ def main():
 
     print("\n=== imu pinctrl ===")
     for n in tree.walk():
-        if "imu" in n.path().lower() or n.name.endswith("imu-pins") or "efference" in n.name:
+        if "imu" in n.path().lower() or n.name.endswith("imu-pins") or "camevision" in n.name:
             dump(n)
             print()
 

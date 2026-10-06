@@ -7,9 +7,9 @@ from pathlib import Path
 
 ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_window\bin\adb.exe"
 ROOT = Path(r"C:\Users\stefa\Desktop\CameVision Ego")
-IQ = ROOT / "build" / "live" / "sc233hgs_efference-sc233hgs_drc.json"
+IQ = ROOT / "build" / "live" / "sc233hgs_camevision-sc233hgs_drc.json"
 HDR = ROOT / "tools" / "ego_hdr_on.py"
-IQNAME = "sc233hgs_efference-sc233hgs_default.json"
+IQNAME = "sc233hgs_camevision-sc233hgs_default.json"
 
 
 def serial() -> str:

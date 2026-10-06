@@ -7,9 +7,9 @@ from pathlib import Path
 ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_window\bin\adb.exe"
 IQ = Path(
     r"C:\Users\stefa\Desktop\CameVision Ego\restore\recovery-3-20260822-uvc-wifi-rkaiq"
-    r"\overlay\iqfiles\sc233hgs_efference-sc233hgs_default.json"
+    r"\overlay\iqfiles\sc233hgs_camevision-sc233hgs_default.json"
 )
-NAME = "sc233hgs_efference-sc233hgs_default.json"
+NAME = "sc233hgs_camevision-sc233hgs_default.json"
 
 
 def serial() -> str:

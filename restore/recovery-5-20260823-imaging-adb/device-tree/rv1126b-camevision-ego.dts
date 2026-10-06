@@ -222,19 +222,17 @@
 		pinctrl-0 = <&wifi_reg_on>;
 		post-power-on-delay-ms = <200>;
 		/*
-		 * "WIFI_RST" GPIO3_B2, pad 1B16. On Ego this net is also
-		 * CHIP_EN and WIFI_POW_EN (3.3 V switch). Active-low so
-		 * deassert keeps the module powered. Do not copy Single's
-		 * active-high RST — that leaves CHIP_EN low after pwrseq.
+		 * GPIO3_B2 is Q1 gate + CHIP_EN. Same polarity as the working
+		 * Single FIT: ACTIVE_HIGH so deassert is low (FET on / run).
 		 */
-		reset-gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_HIGH>;
 	};
 
 	wireless_wlan: wireless-wlan {
 		compatible = "wlan-platdata";
 		wifi_chip_type = "vs6621";
 		pinctrl-names = "default";
-		pinctrl-0 = <&wifi_wake_host>;
+		pinctrl-0 = <&wifi_wake_host &wifi_pwctl_en>;
 		/* "WIFI_INT" GPIO3_B7, pad A16. On Single this was GPIO2_A5. */
 		WIFI,host_wake_irq = <&gpio3 RK_PB7 GPIO_ACTIVE_HIGH>;
 		status = "okay";
@@ -415,6 +413,10 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&rtc_int_pins>;
 		wakeup-source;
+		/* C99 11 mF on U5.V_BKUP (+VBAT_RTC). Without trickle the
+		 * clock returns to 1970 after a power cut. */
+		trickle-resistor-ohms = <3000>;
+		backup-switchover-mode = <1>; /* direct switching */
 		status = "okay";
 	};
 };
@@ -501,7 +503,7 @@
 		dvdd-supply = <&vcc1v2_cam>;
 		rockchip,camera-module-index = <0>;
 		rockchip,camera-module-facing = "back";
-		rockchip,camera-module-name = "efference-sc233hgs";
+		rockchip,camera-module-name = "camevision-sc233hgs";
 		rockchip,camera-module-lens-name = "default";
 		status = "okay";
 
@@ -549,7 +551,7 @@ i2c_cam1: i2c-gpio-cam1 {
 		dvdd-supply = <&vcc1v2_cam>;
 		rockchip,camera-module-index = <1>;
 		rockchip,camera-module-facing = "front";
-		rockchip,camera-module-name = "efference-sc233hgs";
+		rockchip,camera-module-name = "camevision-sc233hgs";
 		rockchip,camera-module-lens-name = "default";
 		status = "okay";
 
@@ -1017,11 +1019,12 @@ i2c_cam1: i2c-gpio-cam1 {
 		};
 
 		wifi_pwctl_en: wifi-pwctl-en {
-			rockchip,pins = <3 RK_PB6 RK_FUNC_GPIO &pcfg_output_low>;
+			rockchip,pins = <3 RK_PB6 RK_FUNC_GPIO &pcfg_output_high>;
 		};
 
+		/* U14.13 WL_WAKE_HOST → A16 GPIO3_B7. Input, idle-high (same as Single FIT). */
 		wifi_wake_host: wifi-wake-host {
-			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_down>;
+			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 

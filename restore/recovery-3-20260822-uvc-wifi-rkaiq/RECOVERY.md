@@ -19,7 +19,7 @@ Do not flash a non-CameVision image. Do not wipe userdata unless you also re-app
 - Kernel: `6.1.141-rt52` `#24 SMP PREEMPT_RT`
 - Sensor: SC233HGS i2c `3-0030`, ISP35 `rkisp0` `/dev/media2`
 - RKISP mainpath `/dev/video13` NV12 1920×1080 (scaler) while 3A runs
-- IQ: `sc233hgs_efference-sc233hgs_default.json` (live DT module `efference-sc233hgs`)
+- IQ: `sc233hgs_camevision-sc233hgs_default.json` (live DT module `camevision-sc233hgs`)
 - Wi-Fi/BT: VS6621S80 / SWT6621-S, SDIO `1FFE:6621`
 - IMU: LSM6DSVQTR on SPI1
 
@@ -56,7 +56,7 @@ installs UVC S50. Wi-Fi/IMU DTB: `flash-boot-wifi-imu.ps1` after ADB is up.
 - `camevision-aiq.sh` — IQ install + `rkaiq_3A_server` + tool server
 - `camevision-wifi.sh` + `swt6621-rt52/*.ko` + `swt6621_fw/*` F26.26.3.1
 - `kmpp-rt52.ko` — JPEG/H.264 (`mpi_enc_test`)
-- `iqfiles/sc233hgs_efference-sc233hgs_default.json`
+- `iqfiles/sc233hgs_camevision-sc233hgs_default.json`
 
 ## Boot init
 - S50: telnetd immediately; after ~6s bind UVC (background so S99 starts)

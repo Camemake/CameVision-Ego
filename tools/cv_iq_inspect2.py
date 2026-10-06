@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json
 from pathlib import Path
-p = Path(r"C:\Users\stefa\Desktop\CameVision Single\restore\known-good-20260819-camera-adb\overlay\sc233hgs_efference-sc233hgs_default.json")
+p = Path(r"C:\Users\stefa\Desktop\CameVision Single\restore\known-good-20260819-camera-adb\overlay\sc233hgs_camevision-sc233hgs_default.json")
 d = json.load(p.open(encoding="utf-8"))
 print("resolution", d["sensor_calib"]["resolution"])
 print("CISMinFps", d["sensor_calib"].get("CISMinFps"))

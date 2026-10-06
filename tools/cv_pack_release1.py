@@ -9,9 +9,9 @@ from pathlib import Path
 ROOT = Path(r"C:\Users\stefa\Desktop\CameVision Ego")
 REL = ROOT / "restore" / "release-1-20260824"
 OV = REL / "overlay"
-IQ_SRC = ROOT / "tools" / "iqfiles" / "sc233hgs_efference-sc233hgs_flicker50.json"
+IQ_SRC = ROOT / "tools" / "iqfiles" / "sc233hgs_camevision-sc233hgs_flicker50.json"
 if not IQ_SRC.is_file():
-    IQ_SRC = ROOT / "build" / "live" / "sc233hgs_efference-sc233hgs_flicker50.json"
+    IQ_SRC = ROOT / "build" / "live" / "sc233hgs_camevision-sc233hgs_flicker50.json"
 
 FILES = [
     ("tools/ego_stereo.py", "overlay/ego_stereo.py"),
@@ -24,7 +24,10 @@ FILES = [
     ("tools/cv_ego_stereo_start.py", "overlay/cv_ego_stereo_start.py"),
     ("tools/cv_ego_iq_flicker50.py", "overlay/cv_ego_iq_flicker50.py"),
     ("tools/camevision-stereo.sh", "overlay/camevision-stereo.sh"),
+    ("tools/camevision-wifi.sh", "overlay/camevision-wifi.sh"),
+    ("tools/wpa_camevision.conf", "overlay/wpa_camevision.conf"),
     ("tools/S99ego-stereo", "overlay/S99ego-stereo"),
+    ("tools/S11hwclock", "overlay/S11hwclock"),
     ("tools/cv_ego_autostart.py", "overlay/cv_ego_autostart.py"),
     ("tools/cv_ego_page.py", "overlay/cv_ego_page.py"),
     ("tools/cv_ego_page.cmd", "overlay/cv_ego_page.cmd"),
@@ -71,8 +74,8 @@ def main() -> int:
         copy(src, REL / rel_dst)
     if not IQ_SRC.is_file():
         raise SystemExit(f"missing IQ {IQ_SRC}")
-    copy(IQ_SRC, OV / "iqfiles" / "sc233hgs_efference-sc233hgs_default.json")
-    tracked = ROOT / "tools" / "iqfiles" / "sc233hgs_efference-sc233hgs_flicker50.json"
+    copy(IQ_SRC, OV / "iqfiles" / "sc233hgs_camevision-sc233hgs_default.json")
+    tracked = ROOT / "tools" / "iqfiles" / "sc233hgs_camevision-sc233hgs_flicker50.json"
     if IQ_SRC.resolve() != tracked.resolve():
         copy(IQ_SRC, tracked)
 

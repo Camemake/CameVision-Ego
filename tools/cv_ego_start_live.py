@@ -15,7 +15,7 @@ ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_win
 ROOT = Path(r"C:\Users\stefa\Desktop\CameVision Ego")
 PY = ROOT / "tools" / "ego_mjpeg.py"
 AIQ = ROOT / "restore" / "recovery-3-20260822-uvc-wifi-rkaiq" / "overlay" / "camevision-aiq.sh"
-IQ = ROOT / "build" / "live" / "sc233hgs_efference-sc233hgs_backlight.json"
+IQ = ROOT / "build" / "live" / "sc233hgs_camevision-sc233hgs_backlight.json"
 HTML_PORT = 8765
 CAM0, CAM1 = "/dev/video24", "/dev/video32"
 PAGE = (ROOT / "tools" / "ego_preview.html").read_bytes()
@@ -59,16 +59,16 @@ def isp_ok(s: str) -> bool:
 def start_aiq(s: str) -> None:
     adb(s, "push", str(AIQ), "/userdata/camevision-aiq.sh", timeout=20)
     adb(s, "shell", "mkdir -p /userdata/iqfiles")
-    adb(s, "push", str(IQ), "/userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json", timeout=20)
+    adb(s, "push", str(IQ), "/userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json", timeout=20)
     print("start RKAIQ 3A", flush=True)
     r = adb(
         s,
         "shell",
         "mkdir -p /userdata/iqfiles; "
-        "cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json "
-        "/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json || "
-        "(mount -o remount,rw /oem && cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json "
-        "/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json); "
+        "cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json "
+        "/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json || "
+        "(mount -o remount,rw /oem && cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json "
+        "/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json); "
         "killall rkaiq_3A_server rkaiq_tool_server 2>/dev/null; "
         "export PATH=/oem/usr/bin:/usr/bin:/bin:$PATH; "
         "export LD_LIBRARY_PATH=/oem/usr/lib:/oem/lib:$LD_LIBRARY_PATH; "

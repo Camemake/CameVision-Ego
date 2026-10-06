@@ -14,9 +14,10 @@ Do not flash a non-CameVision image. Do not switch this board to a webcam gadget
 - Calibrate: http://127.0.0.1:8081/cal
 - IMU HUD: http://127.0.0.1:8083/ (also `/imu` on 8081)
 
-The stereo web service starts on the **board** at boot (`S99ego-stereo` →
-`/userdata/camevision-stereo.sh`). USB stays ADB, so the **host** must restore
-port forwards after every plug. Install once on the PC:
+The stereo web service **and Wi-Fi STA** start on the **board** at boot
+(`S99ego-stereo` → `/userdata/camevision-stereo.sh` → `camevision-wifi.sh`).
+USB stays ADB, so the **host** must restore port forwards after every plug.
+Install once on the PC:
 
 ```
 python tools/cv_ego_autostart.py --install
@@ -26,12 +27,13 @@ That watcher deploys the overlay, starts the service if it is down, forwards
 8081/8083, and opens the page whenever an Ego appears.
 
 ## Proven in this release
-- Dual ISP colour (AWB / CCM / gamma on). 3A reattaches if a grab restart drops it.
+- Dual ISP colour (AWB / CCM / gamma on both pipes). 3A reattaches if a grab restart drops it.
 - Hardware FSYNC/EFSYNC: both eyes triggered together at **12.5 fps** (50 Hz aligned).
 - AE anti-flicker **50 Hz normal**, exposure locked on 20 ms steps.
 - On-board SGBM depth, 640×400 grid, jet heatmap. Depth CSS `scale(-1,-1)` is the correct view.
 - Display: left pane `/ov1` LEFT CAM1 IMU1, right pane `/ov0` RIGHT CAM0 IMU0. Do not swap eyes.
 - Checkerboard calibration at `/cal`. IMU HUD left running.
+- Wi-Fi STA on boot (`camevision-wifi.sh`) after BSS84 Q1. Verified on `762177b8194fb1b0`.
 
 ## Overlay
 
@@ -43,8 +45,9 @@ That watcher deploys the overlay, starts the service if it is down, forwards
 | IMU HUD | `overlay/ego_imu_hud.py` |
 | Native matcher | `overlay/libego_stereo.so` |
 | Matcher source | `overlay/stereo_native.c` |
-| 50 Hz IQ | `overlay/iqfiles/sc233hgs_efference-sc233hgs_default.json` |
+| 50 Hz IQ | `overlay/iqfiles/sc233hgs_camevision-sc233hgs_default.json` |
 | Boot start | `overlay/camevision-stereo.sh`, `overlay/S99ego-stereo` |
+| Wi-Fi STA | `overlay/camevision-wifi.sh`, `overlay/wpa_camevision.conf` |
 | Deploy from host | `overlay/cv_ego_stereo_start.py` |
 | Auto page on plug | `overlay/cv_ego_autostart.py` (`--install` at Windows logon) |
 | Manual forwards | `overlay/cv_ego_page.py` |
@@ -61,6 +64,8 @@ python tools/cv_ego_autostart.py --install
 ```
 
 or `restore-release1.ps1` in this folder. After `--install`, plugging USB is enough.
+
+Empty board (Maskrom): `python tools/cv_ego_flash.py` — **V0.2**, Wi-Fi DTB, overlay, pylib. USB stays ADB.
 
 ## Do not
 - Flash a non-CameVision `boot.img` / `rootfs.img` / `oem.img`

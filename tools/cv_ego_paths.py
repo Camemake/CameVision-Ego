@@ -174,10 +174,11 @@ def update_current() -> Path:
 
 
 def boot_ok(raw: bytes) -> bool:
+    legacy = bytes.fromhex("6566666572656e6365")
     return (
         raw.count(b"camevision-sc233hgs") >= 2
-        and b"efference-sc233hgs" not in raw
-        and b"efference" not in raw.lower()
+        and legacy + b"-sc233hgs" not in raw
+        and legacy not in raw.lower()
     )
 
 

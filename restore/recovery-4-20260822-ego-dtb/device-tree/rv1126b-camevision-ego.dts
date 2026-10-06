@@ -495,7 +495,7 @@
 		dvdd-supply = <&vcc1v2_cam>;
 		rockchip,camera-module-index = <0>;
 		rockchip,camera-module-facing = "back";
-		rockchip,camera-module-name = "efference-sc233hgs";
+		rockchip,camera-module-name = "camevision-sc233hgs";
 		rockchip,camera-module-lens-name = "default";
 		status = "okay";
 
@@ -536,7 +536,7 @@
 		dvdd-supply = <&vcc1v2_cam>;
 		rockchip,camera-module-index = <1>;
 		rockchip,camera-module-facing = "front";
-		rockchip,camera-module-name = "efference-sc233hgs";
+		rockchip,camera-module-name = "camevision-sc233hgs";
 		rockchip,camera-module-lens-name = "default";
 		status = "okay";
 

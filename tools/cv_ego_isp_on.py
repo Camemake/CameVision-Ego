@@ -9,7 +9,7 @@ from pathlib import Path
 ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_window\bin\adb.exe"
 ROOT = Path(r"C:\Users\stefa\Desktop\CameVision Ego")
 AIQ = ROOT / r"restore\recovery-3-20260822-uvc-wifi-rkaiq\overlay\camevision-aiq.sh"
-IQ = ROOT / r"restore\recovery-3-20260822-uvc-wifi-rkaiq\overlay\iqfiles\sc233hgs_efference-sc233hgs_default.json"
+IQ = ROOT / r"restore\recovery-3-20260822-uvc-wifi-rkaiq\overlay\iqfiles\sc233hgs_camevision-sc233hgs_default.json"
 
 
 def serial() -> str:
@@ -71,7 +71,7 @@ def main() -> int:
 
     push(s, AIQ, "/userdata/camevision-aiq.sh")
     sh(s, "mkdir -p /userdata/iqfiles; sed -i 's/\\r$//' /userdata/camevision-aiq.sh")
-    push(s, IQ, "/userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json")
+    push(s, IQ, "/userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json")
 
     print("start 3A", flush=True)
     sh(s, "sh /userdata/camevision-aiq.sh", timeout=30)

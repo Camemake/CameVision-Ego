@@ -13,11 +13,11 @@ sleep 1
 
 [ -e /dev/mpp_service ] || insmod /userdata/kmpp-rt52.ko
 
-IQJSON=/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json
-if [ ! -f "$IQJSON" ] && [ -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json ]; then
+IQJSON=/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json
+if [ ! -f "$IQJSON" ] && [ -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json ]; then
 	mount -o remount,rw /oem 2>/dev/null
-	cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json "$IQJSON"
-	ln -sf sc233hgs_efference-sc233hgs_default.json /oem/usr/share/iqfiles/sc233hgs_default_default.json
+	cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json "$IQJSON"
+	ln -sf sc233hgs_camevision-sc233hgs_default.json /oem/usr/share/iqfiles/sc233hgs_default_default.json
 	sync
 fi
 

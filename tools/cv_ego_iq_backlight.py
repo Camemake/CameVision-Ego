@@ -5,9 +5,9 @@ from pathlib import Path
 
 src = Path(
     r"C:\Users\stefa\Desktop\CameVision Ego\restore\recovery-3-20260822-uvc-wifi-rkaiq"
-    r"\overlay\iqfiles\sc233hgs_efference-sc233hgs_default.json"
+    r"\overlay\iqfiles\sc233hgs_camevision-sc233hgs_default.json"
 )
-dst = Path(r"C:\Users\stefa\Desktop\CameVision Ego\build\live\sc233hgs_efference-sc233hgs_backlight.json")
+dst = Path(r"C:\Users\stefa\Desktop\CameVision Ego\build\live\sc233hgs_camevision-sc233hgs_backlight.json")
 d = json.loads(src.read_text(encoding="utf-8"))
 d["sensor_calib"]["CISHdrSet"]["hdr_en"] = 0
 lin = d["main_scene"][0]["sub_scene"][0]["scene_isp35"]["ae_calib"]["linAeCtrl"]

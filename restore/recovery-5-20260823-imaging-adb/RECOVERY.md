@@ -37,7 +37,7 @@ Not in this restore: consumer microSD (1.8 V VDD rail), Wi-Fi STA join.
 | Board source | `device-tree/rv1126b-camevision-ego.dts` |
 | ADB gadget (keep as S50) | `overlay/S50usbdevice.adb` |
 | Live preview | `overlay/ego_mjpeg.py`, `overlay/cv_ego_start_live.py` |
-| IQ | `overlay/iqfiles/sc233hgs_efference-sc233hgs_default.json` |
+| IQ | `overlay/iqfiles/sc233hgs_camevision-sc233hgs_default.json` |
 
 Full eMMC rebuild (Maskrom, loader **once**):
 

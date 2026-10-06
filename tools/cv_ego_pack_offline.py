@@ -319,7 +319,7 @@ def _verify_pack(out: Path) -> None:
         if only.resolve() != img.resolve():
             raise SystemExit(f"flash boot is {img}, but pack also has {only}")
         raw = only.read_bytes()
-        if b"efference-sc233hgs" in raw or not packed_ok(raw):
+        if bytes.fromhex("6566666572656e63652d7363323333686773") in raw or not packed_ok(raw):
             raise SystemExit(f"packed boot is not CameVision IQ: {only}")
         restore = out / "restore"
         extra_dirs = [

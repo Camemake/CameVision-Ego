@@ -6,12 +6,25 @@ export LD_LIBRARY_PATH=/oem/usr/lib:/oem/lib:$LD_LIBRARY_PATH
 export PYTHONPATH=/userdata/pylib
 export TZ=UTC-2
 
-if [ -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json ]; then
-	cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json \
-		/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json 2>/dev/null \
+# RV-3028 is rtc0. Load it so logs are not 1970.
+[ -e /dev/rtc0 ] && hwclock -s -f /dev/rtc0 2>/dev/null || true
+
+# VS6621 STA. Background so the live page does not wait on WPA.
+if [ -x /userdata/camevision-wifi.sh ]; then
+	if ! ip -4 addr show wlan0 2>/dev/null | grep -q 'inet '; then
+		if ! ps | grep -q '[c]amevision-wifi'; then
+			setsid /bin/sh /userdata/camevision-wifi.sh \
+				</dev/null >/userdata/wifi-boot.log 2>&1 &
+		fi
+	fi
+fi
+
+if [ -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json ]; then
+	cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json \
+		/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json 2>/dev/null \
 		|| (mount -o remount,rw /oem 2>/dev/null \
-		    && cp -f /userdata/iqfiles/sc233hgs_efference-sc233hgs_default.json \
-			/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json)
+		    && cp -f /userdata/iqfiles/sc233hgs_camevision-sc233hgs_default.json \
+			/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json)
 fi
 
 if ! ps | grep -q '[r]kaiq_3A_server'; then

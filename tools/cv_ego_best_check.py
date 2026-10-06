@@ -17,7 +17,7 @@ print("=== oem flags ===")
 sh(
     "python3 -c \""
     "import json;"
-    "d=json.load(open('/oem/usr/share/iqfiles/sc233hgs_efference-sc233hgs_default.json'));"
+    "d=json.load(open('/oem/usr/share/iqfiles/sc233hgs_camevision-sc233hgs_default.json'));"
     "isp=d['main_scene'][0]['sub_scene'][0]['scene_isp35'];"
     "print('ynr',isp['ynr']['en'],'cnr',isp['cnr']['en'],'sharp',isp['sharp']['en'],"
     "'enh',isp['enh']['en'],'gic',isp['gic']['en'],'cac',isp['cac']['en'],'drc',isp['drc']['en'])"

@@ -48,7 +48,7 @@ for name, src in TEXT.items():
         continue
     shutil.copy2(src, OV3 / name)
 
-iq = OV2 / "iqfiles" / "sc233hgs_efference-sc233hgs_default.json"
+iq = OV2 / "iqfiles" / "sc233hgs_camevision-sc233hgs_default.json"
 if iq.exists():
     shutil.copy2(iq, OV3 / "iqfiles" / iq.name)
 

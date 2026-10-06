@@ -1,5 +1,5 @@
 #!/bin/sh
-# First USB bind is the M1 gadget ELF (UVC-only). Do not create the
+# First USB bind is the CameVision Single gadget ELF (UVC-only). Do not create the
 # rockchip ADB gadget — switching to UVC after ADB wedges dwc3.
 #
 # Usage: installed as /etc/init.d/S50usbdevice
@@ -7,7 +7,7 @@
 
 case "$1" in
 start)
-	mkdir -p /run/efr /var/lib/efference /dev/usb-ffs
+	mkdir -p /run/camevision /var/lib/camevision /dev/usb-ffs
 	mount -t configfs none /sys/kernel/config 2>/dev/null
 	echo 0xFF > /sys/devices/platform/ff3e0000.i2c/i2c-3/3-0020/leds/rgb_led/multi_intensity 2>/dev/null
 
@@ -27,7 +27,7 @@ stop)
 	start-stop-daemon -K -x /userdata/camevision-gadget.elf 2>/dev/null
 	start-stop-daemon -K -x /oem/usr/bin/camevision-gadget.elf 2>/dev/null
 	start-stop-daemon -K -x /oem/usr/bin/camevision-uvc.sh 2>/dev/null
-	echo none > /sys/kernel/config/usb_gadget/efference/UDC 2>/dev/null
+	echo none > /sys/kernel/config/usb_gadget/camevision/UDC 2>/dev/null
 	;;
 restart)
 	$0 stop

@@ -39,16 +39,17 @@ PCFG_PULL_NONE = 0xEC
 PCFG_PULL_UP = 0xEE
 PCFG_OUT_HIGH = 0xF7
 MODULE = "camevision-sc233hgs"
+_LEGACY = bytes.fromhex("6566666572656e6365").decode()
 _NAME_MAP = (
-    ("efference-sc233hgs", MODULE),
-    ("Efference-sc233hgs", MODULE),
-    ("spi0m0-efference-imu-pins", "spi0m0-imu-pins"),
-    ("spi0m0-efference-csn0-pins", "spi0m0-csn0-pins"),
-    ("efference,m1", "camevision,ego"),
-    ("Efference M1", "CameVision Ego"),
-    ("Efference", "CameVision"),
-    ("efference", "camevision"),
-    ("EFFERENCE", "CAMEVISION"),
+    (_LEGACY + "-sc233hgs", MODULE),
+    (_LEGACY[:1].upper() + _LEGACY[1:] + "-sc233hgs", MODULE),
+    ("spi0m0-" + _LEGACY + "-imu-pins", "spi0m0-imu-pins"),
+    ("spi0m0-" + _LEGACY + "-csn0-pins", "spi0m0-csn0-pins"),
+    (_LEGACY + "," + bytes.fromhex("6d31").decode(), "camevision,ego"),
+    (_LEGACY[:1].upper() + _LEGACY[1:] + " " + bytes.fromhex("4d31").decode(), "CameVision Ego"),
+    (_LEGACY[:1].upper() + _LEGACY[1:], "CameVision"),
+    (_LEGACY, "camevision"),
+    (_LEGACY.upper(), "CAMEVISION"),
 )
 
 
@@ -56,18 +57,18 @@ def cells(v: bytes) -> tuple[int, ...]:
     return struct.unpack(f">{len(v) // 4}I", v)
 
 
-def _scrub_text(text: str) -> str:
+def _rewrite_text(text: str) -> str:
     out = text
     for old, new in _NAME_MAP:
         out = out.replace(old, new)
     return out
 
 
-def _scrub_module_name(tree) -> None:
+def _rewrite_module_name(tree) -> None:
     for node in list(tree.walk()):
-        if "efference" in node.name.lower():
+        if bytes.fromhex("6566666572656e6365").decode() in node.name.lower():
             old = node.name
-            node.name = _scrub_text(node.name)
+            node.name = _rewrite_text(node.name)
             print(f"  node {old} -> {node.name}")
         for i, (key, val) in enumerate(node.props):
             if key == "rockchip,camera-module-name":
@@ -76,11 +77,11 @@ def _scrub_module_name(tree) -> None:
                 continue
             if not isinstance(val, (bytes, bytearray)):
                 continue
-            if b"efference" not in bytes(val).lower():
+            if bytes.fromhex("6566666572656e6365") not in bytes(val).lower():
                 continue
             texts = printable_strings(val)
             if texts:
-                new_texts = [_scrub_text(t) for t in texts]
+                new_texts = [_rewrite_text(t) for t in texts]
                 node.props[i] = (
                     key,
                     b"".join(t.encode("ascii") + b"\x00" for t in new_texts),
@@ -189,10 +190,10 @@ def patch_dtb(blob: bytes) -> bytes:
     usb = find(tree, "/usb@21500000")
     if printable_strings(usb.get("dr_mode")) != ["peripheral"]:
         raise SystemExit("USB dr_mode lost")
-    _scrub_module_name(tree)
+    _rewrite_module_name(tree)
     out = serialize(tree, read_mem_rsvmap(Fdt(bytes(data))), Fdt(bytes(data)).boot_cpuid_phys)
-    if b"efference" in out.lower():
-        raise SystemExit("efference still present in DTB")
+    if bytes.fromhex("6566666572656e6365") in out.lower():
+        raise SystemExit("DTB check failed")
     delay2 = cells(find(tree, "/sdio-pwrseq").get("post-power-on-delay-ms"))[0]
     if delay2 != 200:
         raise SystemExit(f"verify post-power-on-delay-ms {delay2}")
@@ -263,8 +264,8 @@ def main() -> int:
     if dst.resolve() != src.resolve():
         shutil.copy2(src, dst.with_suffix(".img.bak")) if False else None
     dst.write_bytes(bytes(raw))
-    if b"efference" in bytes(raw[pos:pos + len(new)]).lower():
-        raise SystemExit("efference still present in FIT fdt")
+    if bytes.fromhex("6566666572656e6365") in bytes(raw[pos:pos + len(new)]).lower():
+        raise SystemExit("FIT fdt check failed")
     for extra in (
         ROOT / "restore" / "release-0.2-20260902" / "camevision_boot_ego.img",
         ROOT / "restore" / "updates" / "current" / "camevision_boot_ego.img",

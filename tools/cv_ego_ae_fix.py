@@ -4,8 +4,8 @@ import time
 from pathlib import Path
 
 ADB = r"C:\Users\stefa\Downloads\RKDevTool_Release_v3.37\RKDevTool_v3.37_for_window\bin\adb.exe"
-IQ = Path(r"C:\Users\stefa\Desktop\CameVision Ego\build\live\sc233hgs_efference-sc233hgs_backlight.json")
-NAME = "sc233hgs_efference-sc233hgs_default.json"
+IQ = Path(r"C:\Users\stefa\Desktop\CameVision Ego\build\live\sc233hgs_camevision-sc233hgs_backlight.json")
+NAME = "sc233hgs_camevision-sc233hgs_default.json"
 
 
 def serial() -> str:

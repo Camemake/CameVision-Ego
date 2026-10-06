@@ -4,7 +4,7 @@ from pypdf import PdfReader
 
 src = next(
     p
-    for p in Path(r"c:\Users\stefa\Desktop\Project Efference\M1").iterdir()
+    for p in Path(r"c:\Users\stefa\Desktop\CameVision Archive\CameVision Single donor").iterdir()
     if "VS6621S80_datasheet" in p.name and p.suffix.lower() == ".pdf"
 )
 out = Path(r"C:\Users\stefa\Desktop\CameVision Single\build\live\swt6621-docs\vs6621s80-datasheet.txt")

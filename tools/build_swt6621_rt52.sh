@@ -13,7 +13,7 @@
 # from the same kernel tree.
 
 set -e
-SKW=${SKW:-/mnt/c/Users/stefa/Desktop/Project Efference/M1/SWT6621S_H26.27.6.1_F26.26.3.1/SWT6621S_H26.27.6.1_F26.26.3.1/seekwave}
+SKW=${SKW:-/mnt/c/Users/stefa/Desktop/CameVision Archive/CameVision Single donor/SWT6621S_H26.27.6.1_F26.26.3.1/SWT6621S_H26.27.6.1_F26.26.3.1/seekwave}
 KSRC=${KSRC:?set KSRC to the 6.1.141-rt52 kernel tree}
 CROSS=${CROSS:-aarch64-linux-gnu-}
 OUT=${OUT:-/mnt/c/Users/stefa/Desktop/CameVision Single/build/live/swt6621-rt52}

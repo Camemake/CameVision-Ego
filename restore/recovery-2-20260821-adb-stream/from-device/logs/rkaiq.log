@@ -39,6 +39,6 @@ ERR: Bad media topology for: /dev/media12
 ERR: Bad media topology for: /dev/media13
 ERR: Bad media topology for: /dev/media14
 ERR: Bad media topology for: /dev/media15
-XCORE:E:access /etc/iqfiles//sc233hgs_efference-sc233hgs_default.json && /etc/iqfiles//sc233hgs_efference-sc233hgs_default.bin failed!
+XCORE:E:access /etc/iqfiles//sc233hgs_camevision-sc233hgs_default.json && /etc/iqfiles//sc233hgs_camevision-sc233hgs_default.bin failed!
 XCORE:E:_rkAiqManager init error!
 XCORE:K:cid[0] rk_aiq_uapi2_sysctl_deinit_locked success.
