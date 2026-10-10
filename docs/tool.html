@@ -61,9 +61,10 @@
       <article class="step">
         <div class="step-num">Package</div>
         <h2>Install</h2>
-        <p>Writes loader, env, idblock, U-Boot, boot, userdata, oem, rootfs, and the overlay.</p>
-        <label class="pkg-label" for="pkg">Package</label>
+        <p>Writes loader, env, idblock, U-Boot, the selected model's boot FIT, userdata, oem, rootfs, and that overlay. Pick the sensor on the board.</p>
+        <label class="pkg-label" for="pkg">Board / sensor</label>
         <select id="pkg"></select>
+        <p id="pkg-note" class="muted"></p>
         <div class="file-row">
           <button type="button" id="btn-github">GitHub update</button>
           <label class="file-btn" for="pkg-file">Package file</label>
@@ -116,6 +117,7 @@
       stop: document.getElementById("btn-stop"),
     };
     let lastPkg = "";
+    let pkgList = [];
 
     async function post(path, body) {
       await fetch(path, {
@@ -126,6 +128,7 @@
     }
     buttons.driver.onclick = () => post("/api/driver");
     buttons.install.onclick = () => post("/api/install", { package: pkgEl.value || "camevision-ego" });
+    pkgEl.onchange = () => showPkg();
     buttons.page.onclick = () => post("/api/page");
     buttons.github.onclick = () => post("/api/update-github");
     buttons.diag.onclick = () => post("/api/diag");
@@ -141,19 +144,41 @@
       return `<span class="pill ${ok ? "ok" : "bad"}">${label}</span>`;
     }
 
+    function showPkg() {
+      const note = document.getElementById("pkg-note");
+      const p = pkgList.find((x) => x.id === pkgEl.value);
+      if (!p) {
+        note.textContent = "";
+        return;
+      }
+      const miss = (p.missing || []).join(", ");
+      note.textContent = p.ready
+        ? p.sensor + " · " + p.board + " · flash " + p.version + " · Maskrom writes this model's boot + overlay"
+        : p.name + " images missing: " + miss;
+    }
+
     function fillPackages(list) {
-      const ids = (list || []).map((p) => p.id).join("|");
-      if (ids === lastPkg) return;
+      pkgList = list || [];
+      const ids = pkgList.map((p) => p.id + ":" + (p.ready ? "1" : "0")).join("|");
+      if (ids === lastPkg) {
+        showPkg();
+        return;
+      }
       lastPkg = ids;
       const keep = pkgEl.value;
       pkgEl.innerHTML = "";
-      (list || []).forEach((p) => {
+      pkgList.forEach((p) => {
         const opt = document.createElement("option");
         opt.value = p.id;
-        opt.textContent = p.name;
+        opt.textContent = p.ready ? p.name : p.name + " (images missing)";
         pkgEl.appendChild(opt);
       });
       if (keep && [...pkgEl.options].some((o) => o.value === keep)) pkgEl.value = keep;
+      else {
+        const firstReady = pkgList.find((p) => p.ready);
+        if (firstReady) pkgEl.value = firstReady.id;
+      }
+      showPkg();
     }
 
     async function tick() {
@@ -179,8 +204,9 @@
             : "The udev rule for USB vendor 2207 is inside this package. Linux may ask for a password.");
         buttons.stop.hidden = !busy;
         buttons.stop.disabled = false;
+        const sel = pkgList.find((p) => p.id === pkgEl.value);
         ["driver", "install", "page", "github", "diag"].forEach((k) => {
-          buttons[k].disabled = busy;
+          buttons[k].disabled = busy || (k === "install" && sel && !sel.ready);
         });
         if (s.log && s.log.length) {
           logEl.textContent = s.log.join("\n");

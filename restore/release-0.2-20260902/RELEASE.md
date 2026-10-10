@@ -1,6 +1,8 @@
-# CameVision EGO · flash V0.2 — 2 September 2026
+# CameVision EGO · flash V0.2 SC233HGS — 2 September 2026
 
-Working **empty-board Maskrom flash**. USB stays **ADB**. Product:
+This folder is the **SC233HGS** Maskrom kit. Keep it as the working flash
+for that sensor. Do not mix it with the AM / MIRA220 kit
+(`restore/release-2.0-am-mira220-20261009`). USB stays **ADB**. Product:
 [CameVision EGO · CV-EGO01-OS](https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414).
 
 Hardware: CameVision Ego V1.I1 with **BSS84LT1G** in Q1 (`WIFI.md`).

@@ -1,0 +1,47 @@
+#!/bin/sh
+# CameVision Ego AM / MIRA220 CSI bring-up. Installed as /etc/init.d/S10mira220.
+mount -t debugfs none /sys/kernel/debug 2>/dev/null || true
+echo cam-clk0-pins cam_clk0 > /sys/kernel/debug/pinctrl/pinctrl-rockchip-pinctrl/pinmux-select 2>/dev/null || true
+echo cam-clk1-pins cam_clk1 > /sys/kernel/debug/pinctrl/pinctrl-rockchip-pinctrl/pinmux-select 2>/dev/null || true
+if [ -x /sbin/devmem ]; then
+	/sbin/devmem 0x2000083C 32 0x00180000
+	/sbin/devmem 0x21C68004 32 0x00FF0033
+fi
+for n in clk_mipi0_out2io clk_mipi1_out2io clk_cam0_out clk_cam1_out; do
+	echo 38400000 > /sys/kernel/debug/clk/$n/clk_rate 2>/dev/null || true
+done
+if [ -f /lib/mira220.ko ]; then
+	insmod /lib/mira220.ko 2>/dev/null || true
+fi
+if [ ! -e /sys/bus/platform/drivers/rockchip-csi2-dphy ]; then
+	DPHY=$(awk '$3=="rockchip_csi2_dphy_init"{print "0x"$1; exit}' /proc/kallsyms)
+	if [ -f /lib/ciflate.ko ] && [ -n "$DPHY" ]; then
+		insmod /lib/ciflate.ko dphy_init=$DPHY 2>/dev/null || true
+		sleep 1
+	fi
+fi
+if [ -f /lib/clkgo.ko ]; then
+	L=$(awk '$3=="__clk_lookup"{print "0x"$1; exit}' /proc/kallsyms)
+	SR=$(awk '$3=="clk_set_rate"{print "0x"$1; exit}' /proc/kallsyms)
+	E=$(awk '$3=="clk_prepare_enable"{print "0x"$1; exit}' /proc/kallsyms)
+	insmod /lib/clkgo.ko lookup_fn=$L set_fn=$SR en_fn=$E 2>/dev/null || true
+fi
+if [ -f /lib/miralink.ko ]; then
+	insmod /lib/miralink.ko 2>/dev/null || true
+fi
+for ko in /lib/mfix4.ko /userdata/mfix4.ko; do
+	[ -f "$ko" ] && insmod "$ko" 2>/dev/null && break
+done
+B=$(awk '$3=="rockchip_csi2_dphy_notifier_bound"{print "0x"$1; exit}' /proc/kallsyms)
+for ko in /lib/mstart.ko /userdata/mstart.ko; do
+	[ -f "$ko" ] && [ -n "$B" ] && insmod "$ko" bound_fn=$B 2>/dev/null && break
+done
+media-ctl -d /dev/media1 -l '"rockchip-csi2-dphy0":1->"rockchip-mipi-csi2":0[0]' 2>/dev/null || true
+media-ctl -d /dev/media1 -l '"rockchip-csi2-dphy0":1->"rockchip-mipi-csi2":0[1]' 2>/dev/null || true
+media-ctl -d /dev/media2 -l '"rockchip-csi2-dphy3":1->"rockchip-mipi-csi2":0[0]' 2>/dev/null || true
+media-ctl -d /dev/media2 -l '"rockchip-csi2-dphy3":1->"rockchip-mipi-csi2":0[1]' 2>/dev/null || true
+v4l2-ctl -d /dev/video1 --set-fmt-video=width=1600,height=1400,pixelformat=BG10 2>/dev/null || true
+v4l2-ctl -d /dev/video12 --set-fmt-video=width=1600,height=1400,pixelformat=BG10 2>/dev/null || true
+v4l2-ctl -d /dev/v4l-subdev7 --set-ctrl=exposure=4000,vertical_blanking=2810 2>/dev/null || true
+v4l2-ctl -d /dev/v4l-subdev8 --set-ctrl=exposure=4000,vertical_blanking=2810 2>/dev/null || true
+# CIF path only. Do not load isplink / VICAP here.

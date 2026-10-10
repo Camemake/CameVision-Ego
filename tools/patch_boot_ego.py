@@ -40,6 +40,7 @@ GPIO4 = 0x9C
 GPIO2 = 0xFC
 VCC_3V3 = 0xBB
 VCC_1V8 = 0xBC
+VCC_3V3_SYS = 0x99  # RK801 DCDC_REG2 vcc3v3_sys
 AVDD = 0x9D
 DOVDD = 0x9E
 DVDD = 0x9F
@@ -279,15 +280,17 @@ def patch_tree(root: Node) -> None:
     vcc18sd = Node("vcc1v8-sd")
     vcc18sd.props = [
         ("compatible", sprop("regulator-fixed")),
-        ("regulator-name", sprop("vcc1v8_sd")),
-        ("regulator-min-microvolt", u32(1_800_000)),
-        ("regulator-max-microvolt", u32(1_800_000)),
+        ("regulator-name", sprop("vcc3v3_sd")),
+        ("regulator-min-microvolt", u32(3_300_000)),
+        ("regulator-max-microvolt", u32(3_300_000)),
+        ("regulator-always-on", empty()),
+        ("regulator-boot-on", empty()),
         ("gpio", u32(GPIO3, 12, 0)),  # GPIO3_B4 PWREN
         ("enable-active-high", empty()),
-        ("startup-delay-us", u32(20_000)),
+        ("startup-delay-us", u32(100_000)),
         ("pinctrl-names", sprop("default")),
         ("pinctrl-0", u32(sd_pwr_ph)),
-        ("vin-supply", u32(VCC_1V8)),
+        ("vin-supply", u32(VCC_3V3_SYS)),
         ("phandle", u32(vcc18sd_ph)),
     ]
     add_child(root, vcc18sd, after="vcc1v5-cam")
@@ -478,7 +481,7 @@ def patch_tree(root: Node) -> None:
     set_cells(sd, "bus-width", [4])
     set_cells(sd, "cd-gpios", [GPIO3, 11, 1])  # GPIO3_B3, ACTIVE_LOW
     set_cells(sd, "vmmc-supply", [vcc18sd_ph])
-    set_cells(sd, "vqmmc-supply", [VCC_1V8])
+    set_cells(sd, "vqmmc-supply", [VCC_3V3_SYS])
     ensure_empty(sd, "cap-sd-highspeed")
     ensure_empty(sd, "disable-wp")
     ensure_empty(sd, "no-sdio")
@@ -552,6 +555,15 @@ def verify(dtb: bytes) -> None:
     p0 = struct.unpack(f">{len(sd.get('pinctrl-0'))//4}I", sd.get("pinctrl-0"))
     if SDMMC0_DETN in p0:
         raise SystemExit("sdmmc0 still claims stock detn (GPIO0_A5 LED)")
+    sd_name = printable_strings(find(tree, "/vcc1v8-sd").get("regulator-name"))
+    if sd_name != ["vcc3v3_sd"]:
+        raise SystemExit(f"sd regulator-name {sd_name}")
+    sd_min = struct.unpack(">I", find(tree, "/vcc1v8-sd").get("regulator-min-microvolt"))[0]
+    if sd_min != 3_300_000:
+        raise SystemExit(f"sd min {sd_min}")
+    vqmmc = struct.unpack(">I", sd.get("vqmmc-supply"))[0]
+    if vqmmc != VCC_3V3_SYS:
+        raise SystemExit(f"sdmmc0 vqmmc {vqmmc:#x}")
     wake = struct.unpack(">3I", find(tree, "/wireless-wlan").get("WIFI,host_wake_irq"))
     if wake[:2] != (GPIO3, 15):
         raise SystemExit(f"wifi wake still {wake}")

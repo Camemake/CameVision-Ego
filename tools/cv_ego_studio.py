@@ -40,6 +40,7 @@ SRC_TREES = (
     ("tools/", ROOT / "tools"),
     ("device-tree/", ROOT / "device-tree"),
     ("overlay/", ROOT / "restore" / "release-0.2-20260902" / "overlay"),
+    ("overlay-am/", ROOT / "restore" / "release-2.0-am-mira220-20261009" / "overlay"),
 )
 SRC_TYPES = {
     ".py": "text/plain; charset=utf-8",

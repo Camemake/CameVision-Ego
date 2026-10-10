@@ -8,7 +8,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-ROOT = Path(r"C:\Users\stefa\Desktop\CameVision Ego")
+ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "tools" / "stereo_native.c"
 OUT = ROOT / "build" / "libego_stereo.so"
 ZIG_DIR = ROOT / "build" / "zig"

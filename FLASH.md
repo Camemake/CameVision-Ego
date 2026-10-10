@@ -7,7 +7,7 @@ Shop: https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutte
 
 ## What you need
 
-- CameVision EGO V1.I1 (`CV-EGO01-OS-SC` / `-OV` / `-AM`)
+- CameVision EGO. Two Maskrom kits: **SC233HGS** (`restore/release-0.2-20260902`) and **AM / MIRA220** (`restore/release-2.0-am-mira220-20261009`)
 - USB-C cable that carries data
 - A PC with Python 3.10+ (or the offline folder, which ships its own Python)
 - Rockchip USB access: Windows driver in `host/DriverAssitant_v5.14`, Linux udev in `host/linux/99-camevision-rockusb.rules`
@@ -22,7 +22,7 @@ The offline tool at `http://127.0.0.1:8765/tool.html` is USB → Package → ADB
 | Step | Offline tool | Command line |
 |---|---|---|
 | USB | Install USB driver. Hold **BOOT**, tap **RESET**, keep BOOT held. | Same buttons on the board. Device is Maskrom (`2207:110c`) or Loader. |
-| Package | Select **CameVision Ego**. Click **Install**. | `python tools/cv_ego_flash.py --prebuilt` |
+| Package | Select **SC233HGS** or **AM / MIRA220**. Click **Install**. | `python tools/cv_ego_flash.py --prebuilt --package camevision-ego` or `--package camevision-ego-am` |
 | ADB | Click **Open**. | `python tools/cv_ego_page.py` |
 
 Release BOOT when the write finishes and the board starts.
@@ -55,7 +55,7 @@ If nothing enumerates: try another cable, another USB port (avoid unpowered hubs
 | `0x0` | `env.img` | U-Boot env |
 | `0x40` | `idblock.img` | idblock |
 | `0x440` | `uboot.img` | U-Boot |
-| `0x2440` | `camevision_boot_ego.img` | Kernel + DTB FIT (`6.1.141-rt52`, Ego tree) |
+| `0x2440` | `camevision_boot_ego.img` or `camevision_boot_ego_am.img` | Kernel + DTB FIT (`6.1.141-rt52`) — pick the sensor kit |
 | `0x7C40` | `userdata.img` | Skeleton, then overlay |
 | `0x207C40` | `oem_noko.img` | rkaiq, IQ binaries, oem libs |
 | `0x607C40` | `rootfs_bootstable.img` | Root filesystem |
@@ -65,10 +65,11 @@ Same addresses are printed by `tools/cv_ego_flash.py` and `tools/cv_ego_wifi_ful
 Command-line equivalent of **Install**:
 
 ```
-python tools/cv_ego_flash.py --prebuilt
+python tools/cv_ego_flash.py --prebuilt --package camevision-ego
+python tools/cv_ego_flash.py --prebuilt --package camevision-ego-am
 ```
 
-Rebuild the Ego boot FIT (Wi-Fi + RV-3028 DTB) then write:
+Rebuild the SC233HGS Ego boot FIT (Wi-Fi + RV-3028 DTB) then write:
 
 ```
 python tools/cv_ego_flash.py --rebuild
@@ -87,6 +88,7 @@ host/upgrade_tool.exe wl 0x207C40  restore/release-0.2-20260902/oem_noko.img
 host/upgrade_tool.exe wl 0x607C40  restore/release-0.2-20260902/rootfs_bootstable.img
 host/upgrade_tool.exe rd
 python tools/cv_ego_overlay_deploy.py
+python tools/cv_ego_overlay_deploy_am.py
 ```
 
 Do **not** write Aura boot / oem / rootfs. Those images are a different product.
@@ -136,6 +138,7 @@ The write leaves a skeleton `/userdata`. The overlay is the product:
 
 ```
 python tools/cv_ego_overlay_deploy.py
+python tools/cv_ego_overlay_deploy_am.py
 ```
 
 Board already running Recovery 5 / V0.2, no Maskrom: overlay only is enough.

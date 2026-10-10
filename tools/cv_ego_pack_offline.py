@@ -25,6 +25,7 @@ from cv_ego_paths import (  # noqa: E402
     repo_root,
     userdata_img,
 )
+from cv_ego_paths_am import AM_RELEASE, BOOT_NAME, boot_ok_am, release_am  # noqa: E402
 
 ROOT = repo_root()
 OUT = ROOT / "build" / "CameVision-Ego-Offline"
@@ -40,6 +41,12 @@ TOOL_FILES = (
     "cv_ego_diag.py",
     "cv_ego_update.py",
     "cv_ego_flash.py",
+    "cv_ego_flash_am.py",
+    "cv_ego_overlay_deploy_am.py",
+    "cv_ego_paths_am.py",
+    "cv_ego_pack_am.py",
+    "cv_ego_make_ext2.py",
+    "camevision-stereo-am.sh",
     "cv_ego_wifi_full_flash.py",
     "cv_ego_overlay_deploy.py",
     "cv_ego_page.py",
@@ -78,9 +85,9 @@ USB / Maskrom
   Install USB driver. Hold BOOT, tap RESET, keep BOOT held.
 
 Package
-  Select CameVision Ego, or load a GitHub update / a zip.
-  Install. Writes loader, env, idblock, U-Boot, boot,
-  userdata, oem, rootfs, and the overlay.
+  Select SC233HGS or AM / MIRA220, or load a GitHub update / a zip.
+  Install. Writes loader, env, idblock, U-Boot, that model's boot,
+  userdata, oem, rootfs, and that overlay.
   Release BOOT when the board starts.
 
 ADB
@@ -133,6 +140,7 @@ def main() -> int:
     for iq_name in (
         "sc233hgs_camevision-sc233hgs_default.json",
         "sc233hgs_camevision-sc233hgs_flicker50.json",
+        "mira220_camevision-mira220_default.json",
     ):
         iq = ROOT / "tools" / "iqfiles" / iq_name
         if iq.is_file():
@@ -189,6 +197,18 @@ def main() -> int:
             break
     else:
         print("WARN kmpp-rt52.ko not found — record encode may be missing")
+
+    am_src = release_am()
+    if not (am_src / BOOT_NAME).is_file():
+        raise SystemExit("missing AM / MIRA220 kit — run python tools/cv_ego_pack_am.py")
+    am_raw = (am_src / BOOT_NAME).read_bytes()
+    if not boot_ok_am(am_raw):
+        raise SystemExit(f"{am_src / BOOT_NAME} is not a MIRA220 AM FIT")
+    am_out = OUT / "restore" / AM_RELEASE
+    if am_out.exists():
+        shutil.rmtree(am_out)
+    shutil.copytree(am_src, am_out)
+    print(f"  {am_src} -> {am_out.relative_to(OUT)}", flush=True)
 
     host = OUT / "host"
     host.mkdir(parents=True)
@@ -252,7 +272,7 @@ def main() -> int:
     if inst.is_file():
         copy_file(inst, OUT / "tools" / "installer" / "CameVisionEgoSetup.cs")
     (OUT / "README.txt").write_text(README, encoding="utf-8")
-    (OUT / "VERSION").write_text("CameVision-Ego-Offline 0.2\n", encoding="ascii")
+    (OUT / "VERSION").write_text("CameVision-Ego-Offline 0.2+am-2.0\n", encoding="ascii")
 
     if ZIP.exists():
         ZIP.unlink()
@@ -268,12 +288,17 @@ def main() -> int:
 
 ALLOWED_IMGS = {
     "camevision_boot_ego.img",
+    "camevision_boot_ego_am.img",
     "env.img",
     "idblock.img",
     "uboot.img",
     "oem_noko.img",
     "rootfs_bootstable.img",
     "userdata.img",
+}
+ALLOWED_RESTORE = {
+    "release-0.2-20260902",
+    AM_RELEASE,
 }
 FORBIDDEN_DIR_BITS = (
     "known-good",
@@ -289,16 +314,24 @@ def _verify_pack(out: Path) -> None:
     os.environ["CAMEVISION_EGO_ROOT"] = str(out)
     try:
         from cv_ego_paths import boot_img as packed_boot, boot_ok as packed_ok, partition_img as packed_part
-        from cv_ego_packages import packages
+        from cv_ego_packages import PKG_AM, PKG_SC233HGS, packages
+        from cv_ego_paths_am import boot_img_am as packed_boot_am, boot_ok_am as packed_ok_am
 
         img = packed_boot()
         if img is None or not packed_ok(img.read_bytes()):
             raise SystemExit("packed tree has no CameVision IQ boot")
+        am_boot = packed_boot_am()
+        if am_boot is None or not packed_ok_am(am_boot.read_bytes()):
+            raise SystemExit("packed tree has no MIRA220 AM boot")
         aiq = out / "tools" / "camevision-aiq.sh"
         ov = out / "tools" / "cv_ego_overlay_deploy.py"
         stereo = out / "tools" / "camevision-stereo.sh"
         if not aiq.is_file() or not ov.is_file() or not stereo.is_file():
             raise SystemExit("packed tree missing IQ/stereo overlay scripts")
+        if not (out / "tools" / "cv_ego_flash_am.py").is_file():
+            raise SystemExit("packed tree missing AM Maskrom flash")
+        if not (out / "tools" / "cv_ego_overlay_deploy_am.py").is_file():
+            raise SystemExit("packed tree missing AM overlay deploy")
         text = ov.read_text(encoding="utf-8")
         if "start IQ / 3A" not in text or "cv_ego_extract_pylib.py" not in text:
             raise SystemExit("packed overlay is not the pylib-before-stereo deploy")
@@ -310,22 +343,20 @@ def _verify_pack(out: Path) -> None:
         if len(wheels) < 2:
             raise SystemExit("packed tree missing numpy/opencv wheels")
         boots = [p for p in out.rglob("camevision_boot*.img") if p.is_file()]
-        if len(boots) != 1:
+        names = sorted(p.name for p in boots)
+        if names != ["camevision_boot_ego.img", "camevision_boot_ego_am.img"]:
             raise SystemExit(
-                "pack must contain exactly one camevision_boot*.img, got "
+                "pack must contain SC233HGS and AM boots, got "
                 + ", ".join(str(p.relative_to(out)) for p in boots)
             )
-        only = boots[0]
-        if only.resolve() != img.resolve():
-            raise SystemExit(f"flash boot is {img}, but pack also has {only}")
-        raw = only.read_bytes()
+        raw = img.read_bytes()
         if bytes.fromhex("6566666572656e63652d7363323333686773") in raw or not packed_ok(raw):
-            raise SystemExit(f"packed boot is not CameVision IQ: {only}")
+            raise SystemExit(f"packed SC233HGS boot is not CameVision IQ: {img}")
         restore = out / "restore"
         extra_dirs = [
             p.name
             for p in restore.iterdir()
-            if p.is_dir() and p.name != "release-0.2-20260902"
+            if p.is_dir() and p.name not in ALLOWED_RESTORE
         ]
         if extra_dirs:
             raise SystemExit("pack has leftover restore trees: " + ", ".join(extra_dirs))
@@ -348,14 +379,20 @@ def _verify_pack(out: Path) -> None:
                 raise SystemExit(f"packed tree cannot resolve {key}")
         if userdata_img() is None:
             raise SystemExit("packed tree cannot resolve userdata")
-        pkgs = packages()
-        if len(pkgs) != 1 or pkgs[0]["id"] != "camevision-ego":
-            raise SystemExit("pack must expose only CameVision Ego")
-        if not pkgs[0]["ready"]:
-            raise SystemExit("CameVision Ego package is not ready: " + ", ".join(pkgs[0]["missing"]))
+        pkgs = {p["id"]: p for p in packages()}
+        if set(pkgs) != {PKG_SC233HGS, PKG_AM}:
+            raise SystemExit("pack must expose SC233HGS and AM packages, got " + ", ".join(pkgs))
+        for pid, p in pkgs.items():
+            if not p["ready"]:
+                raise SystemExit(f"{pid} is not ready: " + ", ".join(p["missing"]))
         ud = (out / "restore" / "release-0.2-20260902" / "userdata.img").read_bytes()
         if b"camevision-aiq.sh" not in ud or b"sc233hgs_camevision-sc233hgs_default.json" not in ud:
             raise SystemExit("userdata.img is missing IQ/3A — bake failed")
+        am_ud = (out / "restore" / AM_RELEASE / "userdata.img").read_bytes()
+        if b"mira220_camevision-mira220_default.json" not in am_ud:
+            raise SystemExit("AM userdata.img is missing MIRA220 IQ")
+        if b"sc233hgs_camevision-sc233hgs_default.json" in am_ud:
+            raise SystemExit("AM userdata.img still has SC233HGS IQ")
         rf = (out / "restore" / "release-0.2-20260902" / "rootfs_bootstable.img").read_bytes()
         if b"/userdata/camevision-stereo.sh" not in rf:
             raise SystemExit("rootfs does not start CameVision 3A/stereo on boot")
@@ -364,7 +401,7 @@ def _verify_pack(out: Path) -> None:
             raise SystemExit("host installer still auto-flashes")
         print(
             f"PACK_OK boot={img} sha={hashlib.sha256(raw).hexdigest()[:16]} "
-            f"wheels={len(wheels)} imgs={len(imgs)}",
+            f"am={am_boot.name} wheels={len(wheels)} imgs={len(imgs)}",
             flush=True,
         )
     finally:

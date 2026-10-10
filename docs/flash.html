@@ -54,11 +54,12 @@
       <article class="step">
         <div class="step-num">Package</div>
         <h2>Install</h2>
-        <p>Writes loader, env, idblock, U-Boot, boot FIT, userdata, oem, rootfs, then the overlay over ADB.</p>
-        <pre>python tools/cv_ego_flash.py --prebuilt</pre>
-        <p>Rebuild the Ego boot FIT first (Wi-Fi + RV-3028 DTB):</p>
-        <pre>python tools/cv_ego_flash.py --rebuild</pre>
-        <p>Offline tool: select <strong>CameVision Ego</strong>, click <strong>Install</strong>. Release BOOT when the board starts.</p>
+        <p>Writes loader, env, idblock, U-Boot, the selected model's boot FIT, userdata, oem, rootfs, then that overlay over ADB.</p>
+        <pre>python tools/cv_ego_flash.py --prebuilt --package camevision-ego
+python tools/cv_ego_flash.py --prebuilt --package camevision-ego-am</pre>
+        <p>SC233HGS rebuild (Wi-Fi + RV-3028 DTB):</p>
+        <pre>python tools/cv_ego_flash.py --rebuild --package camevision-ego</pre>
+        <p>Offline tool: select <strong>CameVision Ego · SC233HGS</strong> or <strong>CameVision Ego AM · MIRA220</strong>, click <strong>Install</strong>. Release BOOT when the board starts.</p>
       </article>
       <article class="step">
         <div class="step-num">ADB</div>
@@ -81,7 +82,7 @@ python tools/cv_ego_diag.py</pre>
         <tr><td><code>0x0</code></td><td><code>env.img</code></td><td>U-Boot env</td></tr>
         <tr><td><code>0x40</code></td><td><code>idblock.img</code></td><td>idblock</td></tr>
         <tr><td><code>0x440</code></td><td><code>uboot.img</code></td><td>U-Boot</td></tr>
-        <tr><td><code>0x2440</code></td><td><code>camevision_boot_ego.img</code></td><td>Kernel + DTB FIT, <code>6.1.141-rt52</code></td></tr>
+        <tr><td><code>0x2440</code></td><td><code>camevision_boot_ego.img</code> or <code>camevision_boot_ego_am.img</code></td><td>Kernel + DTB FIT, <code>6.1.141-rt52</code> — SC233HGS or AM / MIRA220</td></tr>
         <tr><td><code>0x7C40</code></td><td><code>userdata.img</code></td><td>Skeleton, then overlay</td></tr>
         <tr><td><code>0x207C40</code></td><td><code>oem_noko.img</code></td><td>rkaiq, IQ binaries, oem libs</td></tr>
         <tr><td><code>0x607C40</code></td><td><code>rootfs_bootstable.img</code></td><td>Root filesystem</td></tr>
@@ -102,7 +103,7 @@ python tools/cv_ego_overlay_deploy.py</pre>
   <section>
     <div class="wrap">
       <h2>Where the images live</h2>
-      <p>The full Maskrom set is in <code>restore/release-0.2-20260902/</code> on this repository: loader, env, idblock, U-Boot, boot FIT, userdata, oem, and rootfs. Clone with Git LFS so the large images download. The offline tool <strong>GitHub update</strong> and <strong>Package file</strong> buttons land in <code>restore/updates/current/</code>.</p>
+      <p>Two Maskrom kits stay separate. <strong>SC233HGS</strong> is <code>restore/release-0.2-20260902/</code> (<code>SENSOR=SC233HGS</code>, boot <code>camevision_boot_ego.img</code>). <strong>AM / MIRA220</strong> is <code>restore/release-2.0-am-mira220-20261009/</code> (<code>SENSOR=MIRA220</code>, boot <code>camevision_boot_ego_am.img</code>). Clone with Git LFS so the large images download. Frozen SC233HGS tree: <code>device-tree/rv1126b-camevision-ego-sc233hgs.dts</code>. AM DTS: <code>device-tree/rv1126b-camevision-ego.dts</code>. The offline tool <strong>GitHub update</strong> and <strong>Package file</strong> buttons land in <code>restore/updates/current/</code>.</p>
       <p>Boot FIT source: <a href="https://github.com/Camemake/CameVision-Ego/blob/main/device-tree/rv1126b-camevision-ego.dts"><code>device-tree/rv1126b-camevision-ego.dts</code></a>. Overlay source: <a href="https://github.com/Camemake/CameVision-Ego/tree/main/restore/release-0.2-20260902/overlay"><code>restore/release-0.2-20260902/overlay/</code></a> and the copies under <code>tools/</code>.</p>
     </div>
   </section>
@@ -110,8 +111,9 @@ python tools/cv_ego_overlay_deploy.py</pre>
   <section>
     <div class="wrap">
       <h2>Overlay</h2>
-      <p>After ADB is up, the product is the overlay. Board already on V0.2: skip Maskrom, run only the deploy.</p>
-      <pre>python tools/cv_ego_overlay_deploy.py</pre>
+      <p>After ADB is up, the product is the overlay. Board already flashed: skip Maskrom, run the deploy for that sensor.</p>
+      <pre>python tools/cv_ego_overlay_deploy.py
+python tools/cv_ego_overlay_deploy_am.py</pre>
       <table>
         <tr><th>On the board</th><th>Source</th></tr>
         <tr><td><code>/userdata/ego_stereo.py</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_stereo.py"><code>tools/ego_stereo.py</code></a></td></tr>

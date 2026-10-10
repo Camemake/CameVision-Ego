@@ -1,0 +1,20 @@
+#!/bin/sh
+# RV-3028 is rtc0. Load it into the system clock before NTP/Wi-Fi.
+# $1 is "start" from rcS.
+[ "$1" = "start" ] || [ -z "$1" ] || exit 0
+if [ -e /dev/rtc0 ]; then
+	hwclock -s -f /dev/rtc0 2>/dev/null || true
+fi
+# Once ntpd has a real year, store it so the next power-on is not 1970.
+(
+	n=0
+	while [ $n -lt 90 ]; do
+		y=$(date +%Y 2>/dev/null)
+		if [ -n "$y" ] && [ "$y" -gt 2024 ] 2>/dev/null; then
+			hwclock -w -f /dev/rtc0 2>/dev/null && exit 0
+		fi
+		sleep 2
+		n=$((n + 1))
+	done
+) >/userdata/rtc-sync.log 2>&1 &
+exit 0

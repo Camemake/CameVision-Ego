@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import ctypes
+import fcntl
 import json
+import mmap
 import os
 import socket
+import struct
 import subprocess
 import sys
 import threading
@@ -26,17 +29,22 @@ from ctypes import (
     string_at,
 )
 
-CAM_W, CAM_H = 1920, 1200
+CAM_W, CAM_H = 1600, 1400
+LIVE_H = CAM_H
 CAM_FRAME = CAM_W * CAM_H * 3 // 2
+RAW_STRIDE = 2048
+RAW_FRAME = RAW_STRIDE * CAM_H
 W, H = 640, 400
 FRAME = W * H * 3 // 2
 YSIZE = W * H
-VIEW_W, VIEW_H = 960, 600
+# Full 1600×1400, then 90° CCW → 1400×1600 on the page.
+DEM_W, DEM_H = CAM_W, CAM_H
+VIEW_W, VIEW_H = CAM_H, CAM_W
 VIEW_FRAME = VIEW_W * VIEW_H * 3 // 2
 PORT = 8081
 CAM0, CAM1 = "/dev/video24", "/dev/video32"
-# Physical left eye is CAM0 / video24 / IMU0. Right eye is CAM1 / video32 / IMU1.
-LEFT_KEY, RIGHT_KEY = "cam0", "cam1"
+# Page is LEFT=CAM1 / RIGHT=CAM0 (90° mount). Match stereo to that view.
+LEFT_KEY, RIGHT_KEY = "cam1", "cam0"
 LIB = "/userdata/libego_stereo.so"
 TJ = "/oem/usr/lib/libturbojpeg.so"
 CALIB_PATH = "/userdata/ego_calib.json"
@@ -51,10 +59,11 @@ DISTANCE_MM = 1000.0
 # SGBM stays on 160x100; two refine stages recover the rest.
 CAP_FPS = 60
 COLOR_PERIOD = 0.0
-BW_FAST, BH_FAST, ND_FAST, TH_FAST = 640, 400, 96, 40
-BW_SLOW, BH_SLOW, ND_SLOW, TH_SLOW = 320, 200, 32, 40
-XW, XH = CAM_W, CAM_H
-XFRAME = CAM_FRAME
+BW_FAST, BH_FAST, ND_FAST, TH_FAST = 350, 400, 64, 40
+BW_SLOW, BH_SLOW, ND_SLOW, TH_SLOW = 175, 200, 32, 40
+# Same 1400:1600 portrait as the eyes (16-aligned for JPEG).
+XW, XH = 700, 800
+XFRAME = XW * XH * 3 // 2
 MID_W, MID_H = 640, 400
 
 NATIVE = None
@@ -113,6 +122,14 @@ def _load_native():
         ]
     except AttributeError:
         pass
+    try:
+        lib.ego_raw10_color_nv12.argtypes = [
+            POINTER(c_ubyte), c_int, c_int, c_int, POINTER(c_ubyte),
+            POINTER(c_ubyte), POINTER(c_ubyte), POINTER(c_ubyte),
+        ]
+        lib.ego_raw10_color_nv12.restype = None
+    except AttributeError:
+        pass
     NATIVE = lib
 
 
@@ -141,20 +158,22 @@ PAGE = b"""<!doctype html>
  .brand button.rec{margin-left:10px;color:#fff;background:var(--came);border:0;
   padding:10px 18px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
  .brand button.rec.on{background:#c0392b}
- .stage{height:calc(100% - 72px);padding:10px 12px 12px;box-sizing:border-box}
- .top{display:flex;height:58%;gap:10px}
- .pane{flex:1;position:relative;min-width:0;background:#111;border-radius:10px;overflow:hidden}
- .pane img.v{width:100%;height:100%;object-fit:contain;object-position:center;
-  display:block;background:#111;transform:scale(-1,-1)}
- .bot{height:calc(42% - 10px);margin-top:10px;position:relative;background:#111;border-radius:10px;overflow:hidden}
- .bot img.v{width:100%;height:100%;object-fit:contain;object-position:center;
-  display:block;background:#111;transform:scale(-1,-1)}
+ .stage{height:calc(100% - 72px);padding:10px 12px 12px;box-sizing:border-box;
+  display:flex;flex-direction:column;gap:10px;background:#111}
+ .top{display:flex;flex:1 1 70%;gap:10px;justify-content:center;align-items:center;min-height:0}
+ .pane{height:100%;aspect-ratio:1400/1600;flex:0 1 auto;max-width:calc(50% - 5px);
+  position:relative;background:#000;border-radius:10px;overflow:hidden}
+ .pane img.v{width:100%;height:100%;object-fit:fill;display:block;background:#000}
+ .bot{flex:0 1 28%;min-height:0;display:flex;justify-content:center;align-items:center}
+ .bot .depth{height:100%;aspect-ratio:1400/1600;position:relative;background:#000;
+  border-radius:10px;overflow:hidden}
+ .bot img.v{width:100%;height:100%;object-fit:fill;display:block;background:#000}
  .hud{position:absolute;left:10px;top:10px;background:rgba(255,255,255,.88);color:#222;padding:8px 10px;
       border-radius:8px;font:12px Consolas,monospace;white-space:pre;box-shadow:0 1px 4px rgba(0,0,0,.12)}
 </style></head><body>
 <div class="brand">
  <div class="plate"><img src="/brand.png" alt="Camemake"></div>
- <div class="titles"><b>CameVision Ego</b><span>Camemake stereo &middot; NPU</span></div>
+ <div class="titles"><b>CameVision Ego</b><span>MIRA220 RGB &middot; ColorChecker AWB</span></div>
  <a href="/cal">Calibrate</a>
  <button class="rec" id="rec" type="button" title="Saves to this PC">Record</button>
 </div>
@@ -163,16 +182,16 @@ PAGE = b"""<!doctype html>
  <div class="pane"><img class="v" src="/ov1"><div class="hud" id="h0">LEFT CAM1 IMU1</div></div>
  <div class="pane"><img class="v" src="/ov0"><div class="hud" id="h1">RIGHT CAM0 IMU0</div></div>
 </div>
-<div class="bot"><img class="v" src="/xyz"><div class="hud" id="hz">3D depth</div></div>
+<div class="bot"><div class="depth"><img class="v" src="/xyz"><div class="hud" id="hz">3D depth</div></div></div>
 </div>
 <script>
 function n(v,d){return (v===undefined||Number.isNaN(+v))?"-":Number(v).toFixed(d)}
 function blk(l,i,d,s){
  if(!i) return l+"\\nno imu";
  return l+"  "+(i.bus||"")+"\\n"+(i.t_iso||d.t_iso||"")+
-  "\\nIMU "+n(i.read_hz||d.read_hz,0)+" Hz   "+n((s&&(s.cif0_fps||s.cam0_fps)),0)+"/"+n((s&&(s.cif1_fps||s.cam1_fps)),0)+" fps"+
+  "\\nIMU "+n(i.read_hz||d.read_hz,0)+" Hz   "+n((s&&(s.cam0_fps||s.color_fps)),0)+" fps  cif "+n((s&&s.cif0_fps),0)+"/"+n((s&&s.cif1_fps),0)+
   "\\n|a| "+n(i.a_g,3)+" g   w "+n(i.gx,1)+" "+n(i.gy,1)+" "+n(i.gz,1)+
-  "\\nbaseline 75.000 mm  "+((s&&s.w)||1920)+"x"+((s&&s.h)||1200);
+  "\\nbaseline 75.000 mm  "+((s&&s.w)||1400)+"x"+((s&&s.h)||1600);
 }
 async function recToggle(){
  try{
@@ -561,8 +580,8 @@ ZONE_HINT = {
 
 
 def display_xy(x: float, y: float):
-    """Map full-res sensor pixels to the 180-rotated preview the user sees."""
-    return (CAM_W - 1 - x, CAM_H - 1 - y)
+    """Map sensor pixels to the 90° CCW preview the user sees."""
+    return (y, CAM_W - 1 - x)
 
 
 def zone_of(corners) -> str:
@@ -863,8 +882,9 @@ def focus_loop() -> None:
 
 
 class TurboEnc:
-    def __init__(self, w: int, h: int, q: int = 70) -> None:
+    def __init__(self, w: int, h: int, q: int = 70, i420: bool = False) -> None:
         self.w, self.h, self.q = w, h, q
+        self.i420 = i420
         lib = CDLL(TJ)
         lib.tjInitCompress.restype = c_void_p
         lib.tjCompressFromYUVPlanes.restype = c_int
@@ -903,21 +923,26 @@ class TurboEnc:
         else:
             src = bytearray(nv12)
         y = (c_ubyte * ysz).from_buffer(src)
-        uv_len = ysz // 2
-        try:
-            import numpy as np
+        uvn = ysz // 4
+        if self.i420:
+            u = (c_ubyte * uvn).from_buffer(src, ysz)
+            v = (c_ubyte * uvn).from_buffer(src, ysz + uvn)
+        else:
+            uv_len = ysz // 2
+            try:
+                import numpy as np
 
-            uv = np.frombuffer(src, dtype=np.uint8, count=uv_len, offset=ysz)
-            np.frombuffer(self._u, dtype=np.uint8)[:] = uv[0::2]
-            np.frombuffer(self._v, dtype=np.uint8)[:] = uv[1::2]
-            u = self._u_c
-            v = self._v_c
-        except Exception:
-            uv = src[ysz : ysz + uv_len]
-            self._u[:] = uv[0::2]
-            self._v[:] = uv[1::2]
-            u = self._u_c
-            v = self._v_c
+                uv = np.frombuffer(src, dtype=np.uint8, count=uv_len, offset=ysz)
+                np.frombuffer(self._u, dtype=np.uint8)[:] = uv[0::2]
+                np.frombuffer(self._v, dtype=np.uint8)[:] = uv[1::2]
+                u = self._u_c
+                v = self._v_c
+            except Exception:
+                uv = src[ysz : ysz + uv_len]
+                self._u[:] = uv[0::2]
+                self._v[:] = uv[1::2]
+                u = self._u_c
+                v = self._v_c
         planes = (POINTER(c_ubyte) * 3)(
             cast(y, POINTER(c_ubyte)),
             cast(u, POINTER(c_ubyte)),
@@ -1017,11 +1042,255 @@ class FfmpegEnc:
             return self.jpg
 
 
-def make_enc(w: int, h: int, q: int = 70):
+class MppJpegEnc:
+    """Rockchip MPP JPEG. Software turbojpeg cannot do 1400×1600 at 30 fps."""
+
+    def __init__(self, w: int, h: int, q: int = 70) -> None:
+        self.w, self.h, self.q = w, h, q
+        self.lk = threading.Lock()
+        tag = "%dx%d_%d" % (w, h, id(self) & 0xFFFF)
+        self.inf = "/tmp/ego_jpg_%s.in" % tag
+        self.outf = "/tmp/ego_jpg_%s.out" % tag
+        for p in (self.inf, self.outf):
+            try:
+                os.remove(p)
+            except OSError:
+                pass
+        os.mkfifo(self.inf)
+        os.mkfifo(self.outf)
+        env = os.environ.copy()
+        env["PATH"] = "/oem/usr/bin:" + env.get("PATH", "")
+        env["LD_LIBRARY_PATH"] = "/oem/usr/lib:/oem/lib:" + env.get("LD_LIBRARY_PATH", "")
+        logf = open("/tmp/ego_jpg_%s.log" % tag, "wb")
+        self.proc = subprocess.Popen(
+            [
+                "/oem/usr/bin/mpi_enc_test",
+                "-i", self.inf, "-o", self.outf,
+                "-w", str(w), "-h", str(h),
+                "-hstride", str(w), "-vstride", str(h),
+                "-f", "0", "-t", "8", "-n", "1000000", "-v", "q",
+            ],
+            stdin=subprocess.DEVNULL,
+            stdout=logf,
+            stderr=subprocess.STDOUT,
+            env=env,
+        )
+        t0 = time.monotonic()
+        self.infd = -1
+        while time.monotonic() - t0 < 4.0:
+            if self.proc.poll() is not None:
+                raise OSError("mpi_enc_test jpeg died")
+            try:
+                self.infd = os.open(self.inf, os.O_WRONLY | os.O_NONBLOCK)
+                break
+            except OSError:
+                time.sleep(0.05)
+        if self.infd < 0:
+            raise OSError("mpi_enc_test jpeg in")
+        t0 = time.monotonic()
+        self.out = None
+        while time.monotonic() - t0 < 3.0:
+            if self.proc.poll() is not None:
+                raise OSError("mpi_enc_test jpeg exited")
+            try:
+                self.out = open(self.outf, "rb")
+                break
+            except OSError:
+                time.sleep(0.05)
+        if self.out is None:
+            raise OSError("mpi_enc_test jpeg out")
+        fl = fcntl.fcntl(self.infd, fcntl.F_GETFL)
+        fcntl.fcntl(self.infd, fcntl.F_SETFL, fl & ~os.O_NONBLOCK)
+        try:
+            fcntl.fcntl(self.infd, 1031, 4 * 1024 * 1024)
+        except OSError:
+            pass
+        self._buf = bytearray()
+        print("enc: mpp jpeg %dx%d" % (w, h), flush=True)
+
+    def encode(self, nv12) -> bytes:
+        payload = nv12 if isinstance(nv12, (bytes, bytearray, memoryview)) else bytes(nv12)
+        need = self.w * self.h * 3 // 2
+        if len(payload) < need:
+            return b""
+        with self.lk:
+            mv = memoryview(payload)[:need]
+            off = 0
+            while off < need:
+                n = os.write(self.infd, mv[off:])
+                if not n:
+                    return b""
+                off += n
+            data = self._buf
+            t0 = time.monotonic()
+            while time.monotonic() - t0 < 0.2:
+                chunk = self.out.read(65536)
+                if chunk:
+                    data.extend(chunk)
+                soi = data.find(b"\xff\xd8")
+                if soi >= 0:
+                    eoi = data.find(b"\xff\xd9", soi + 2)
+                    if eoi >= 0:
+                        jpg = bytes(data[soi : eoi + 2])
+                        del data[: eoi + 2]
+                        return jpg
+                if not chunk:
+                    time.sleep(0.002)
+            return b""
+
+
+def make_enc(w: int, h: int, q: int = 70, i420: bool = False):
     try:
-        return TurboEnc(w, h, q)
+        return TurboEnc(w, h, q, i420=i420)
     except Exception:
         return FfmpegEnc(w, h)
+
+
+# Rockchip CIF compact RAW10 is 40-bit little-endian (not CSI-2 MSB bytes).
+# libcamera vc4 mira220.json 3200 K CCM, blended with identity so lights stay white.
+_MIRA_CCM_BGR = None
+_tls = threading.local()
+
+
+def _mira_ccm_bgr():
+    global _MIRA_CCM_BGR
+    if _MIRA_CCM_BGR is None:
+        import numpy as np
+
+        rgb = np.array(
+            [
+                [1.58652, 0.12247, -0.70899],
+                [-0.88406, 2.29465, -0.41059],
+                [-0.56176, 0.41247, 1.14928],
+            ],
+            dtype=np.float32,
+        )
+        ident = np.eye(3, dtype=np.float32)
+        rgb = 0.28 * rgb + 0.72 * ident
+        _MIRA_CCM_BGR = np.array(
+            [
+                [rgb[2, 2], rgb[2, 1], rgb[2, 0]],
+                [rgb[1, 2], rgb[1, 1], rgb[1, 0]],
+                [rgb[0, 2], rgb[0, 1], rgb[0, 0]],
+            ],
+            dtype=np.float32,
+        )
+    return _MIRA_CCM_BGR
+
+
+_LUT_R_C = _LUT_G_C = _LUT_B_C = None
+
+
+def _awb_lut_c():
+    global _LUT_R_C, _LUT_G_C, _LUT_B_C
+    if _LUT_R_C is None:
+        import numpy as np
+
+        x = np.arange(1024, dtype=np.int16)
+        u8 = np.clip((x >> 2) - 10, 0, 255).astype(np.int16)
+        r = np.ascontiguousarray(np.clip(u8 * 1.90, 0, 255).astype(np.uint8))
+        g = np.ascontiguousarray(np.clip(u8 * 1.38, 0, 255).astype(np.uint8))
+        b = np.ascontiguousarray(np.clip(u8 * 3.06, 0, 255).astype(np.uint8))
+        _LUT_R_C = (c_ubyte * 1024).from_buffer(r)
+        _LUT_G_C = (c_ubyte * 1024).from_buffer(g)
+        _LUT_B_C = (c_ubyte * 1024).from_buffer(b)
+        shared["_awb_keep"] = (r, g, b)
+    return _LUT_R_C, _LUT_G_C, _LUT_B_C
+
+
+def _raw_scratch():
+    import numpy as np
+
+    s = _tls
+    if getattr(s, "src", None) is None:
+        s.src = np.empty((DEM_H, DEM_W, 3), dtype=np.uint8)
+        s.bgr = np.empty((VIEW_H, VIEW_W, 3), dtype=np.uint8)
+        s.view = np.empty((VIEW_H * 3 // 2, VIEW_W), dtype=np.uint8)
+        x = np.arange(1024, dtype=np.int16)
+        u8 = np.clip((x >> 2) - 10, 0, 255).astype(np.int16)
+        s.lut_b = np.clip(u8 * 3.06, 0, 255).astype(np.uint8)
+        s.lut_g = np.clip(u8 * 1.38, 0, 255).astype(np.uint8)
+        s.lut_r = np.clip(u8 * 1.90, 0, 255).astype(np.uint8)
+        s.awb = True
+        s.b16 = True
+    return s
+
+
+def raw10_to_nv12(raw, dst=None, view=None):
+    """CIF compact RAW10 (LE 40-bit) → 1400×1600 RGB NV12 (90° CCW)."""
+    packed = memoryview(raw)[:RAW_FRAME]
+    out = view if view is not None and len(view) >= VIEW_FRAME else dst
+    if out is None or len(out) < VIEW_FRAME:
+        out = bytearray(VIEW_FRAME)
+    native = NATIVE is not None and hasattr(NATIVE, "ego_raw10_color_nv12")
+    if native:
+        lr, lg, lb = _awb_lut_c()
+        src_p = (c_ubyte * RAW_FRAME).from_buffer(packed)
+        dst_p = (c_ubyte * VIEW_FRAME).from_buffer(out)
+        NATIVE.ego_raw10_color_nv12(
+            src_p, RAW_STRIDE, CAM_W, CAM_H, dst_p, lr, lg, lb
+        )
+        return dst if dst is not None else out
+    if dst is None:
+        dst = bytearray(CAM_FRAME)
+    if _cv_ok() and _np_ok():
+        import cv2
+        import numpy as np
+
+        scr = _raw_scratch()
+        rows = np.frombuffer(packed, dtype=np.uint8, count=RAW_STRIDE * LIVE_H).reshape(LIVE_H, RAW_STRIDE)
+        grp = rows[:, : (CAM_W * 10) // 8].reshape(LIVE_H, CAM_W // 4, 5)
+        ev, od = grp[0::2], grp[1::2]
+        e0, e1, e2, e3, e4 = [ev[:, :, i].astype(np.uint16) for i in range(5)]
+        o0, o1, o2, o3, o4 = [od[:, :, i].astype(np.uint16) for i in range(5)]
+        g1 = e0 | ((e1 & 3) << 8)
+        rr = (e1 >> 2) | ((e2 & 15) << 6)
+        bb = o0 | ((o1 & 3) << 8)
+        g2 = (o1 >> 2) | ((o2 & 15) << 6)
+        g1b = (e2 >> 4) | ((e3 & 63) << 4)
+        rrb = (e3 >> 6) | (e4 << 2)
+        bbb = (o2 >> 4) | ((o3 & 63) << 4)
+        g2b = (o3 >> 6) | (o4 << 2)
+        src = scr.src
+        src[:, 0::2, 2] = scr.lut_r[rr]
+        src[:, 0::2, 1] = scr.lut_g[(g1 + g2) >> 1]
+        src[:, 0::2, 0] = scr.lut_b[bb]
+        src[:, 1::2, 2] = scr.lut_r[rrb]
+        src[:, 1::2, 1] = scr.lut_g[(g1b + g2b) >> 1]
+        src[:, 1::2, 0] = scr.lut_b[bbb]
+        cv2.rotate(src, cv2.ROTATE_90_COUNTERCLOCKWISE, dst=scr.bgr)
+        yuv = cv2.cvtColor(scr.bgr, cv2.COLOR_BGR2YUV)
+        vw = scr.view
+        vw[:VIEW_H] = yuv[:, :, 0]
+        vw[VIEW_H:, 0::2] = yuv[0::2, 0::2, 1]
+        vw[VIEW_H:, 1::2] = yuv[0::2, 0::2, 2]
+        packed_nv = vw.reshape(-1)
+        if view is not None:
+            np.frombuffer(view, dtype=np.uint8)[: packed_nv.size] = packed_nv
+        elif dst is not None:
+            np.frombuffer(dst, dtype=np.uint8)[: packed_nv.size] = packed_nv
+        return dst
+    y = memoryview(dst)[: CAM_W * CAM_H]
+    uv = memoryview(dst)[CAM_W * CAM_H :]
+    for j in range(LIVE_H):
+        row = packed[j * RAW_STRIDE : j * RAW_STRIDE + (CAM_W * 10) // 8]
+        dst_y = j * CAM_W
+        x = 0
+        i = 0
+        while x + 3 < CAM_W and i + 4 < len(row):
+            val = row[i] | (row[i + 1] << 8) | (row[i + 2] << 16) | (row[i + 3] << 24) | (row[i + 4] << 32)
+            y[dst_y + x] = min(255, max(0, ((val & 0x3FF) - 39) * 255 // 984))
+            y[dst_y + x + 1] = min(255, max(0, (((val >> 10) & 0x3FF) - 39) * 255 // 984))
+            y[dst_y + x + 2] = min(255, max(0, (((val >> 20) & 0x3FF) - 39) * 255 // 984))
+            y[dst_y + x + 3] = min(255, max(0, (((val >> 30) & 0x3FF) - 39) * 255 // 984))
+            x += 4
+            i += 5
+    for i in range(CAM_W * LIVE_H, CAM_W * CAM_H):
+        y[i] = 0
+    for i in range(0, len(uv), 2):
+        uv[i] = 128
+        uv[i + 1] = 128
+    return dst
 
 
 def preview_nv12(src):
@@ -1029,12 +1298,12 @@ def preview_nv12(src):
         import cv2
         import numpy as np
 
-        y = np.frombuffer(src, dtype=np.uint8, count=CAM_W * CAM_H).reshape(CAM_H, CAM_W)
+        y = np.frombuffer(src, dtype=np.uint8, count=CAM_W * CAM_H).reshape(CAM_H, CAM_W)[:LIVE_H]
         uv = np.frombuffer(src, dtype=np.uint8, count=CAM_W * CAM_H // 2, offset=CAM_W * CAM_H).reshape(
             CAM_H // 2, CAM_W // 2, 2
-        )
-        y2 = cv2.resize(y, (VIEW_W, VIEW_H), interpolation=cv2.INTER_AREA)
-        uv2 = cv2.resize(uv, (VIEW_W // 2, VIEW_H // 2), interpolation=cv2.INTER_LINEAR)
+        )[: LIVE_H // 2]
+        y2 = cv2.rotate(y[:CAM_H, :CAM_W], cv2.ROTATE_90_COUNTERCLOCKWISE)
+        uv2 = cv2.rotate(uv[: CAM_H // 2, : CAM_W // 2], cv2.ROTATE_90_COUNTERCLOCKWISE)
         return y2.tobytes() + uv2.tobytes()
     return scale_nv12(src, CAM_W, CAM_H, VIEW_W, VIEW_H)
 
@@ -1083,13 +1352,20 @@ def _ps_has(name: str) -> bool:
 
 
 def _isp_blocks_on() -> bool:
+    now = time.monotonic()
+    prev = shared.get("_isp_chk")
+    if prev and now - float(prev[0]) < 0.5:
+        return bool(prev[1])
+
     def awb(path: str) -> bool:
         try:
             return "AWBGAIN    ON" in open(path, "r").read()
         except Exception:
             return False
 
-    return awb("/proc/rkisp-vir0") and awb("/proc/rkisp-vir2")
+    on = awb("/proc/rkisp-vir0") and awb("/proc/rkisp-vir2")
+    shared["_isp_chk"] = (now, on)
+    return on
 
 
 def _start_3a(env: dict) -> None:
@@ -1110,34 +1386,18 @@ def ensure_companions() -> None:
     env = os.environ.copy()
     env["PATH"] = "/oem/usr/bin:/usr/sbin:/sbin:/usr/bin:/bin:" + env.get("PATH", "")
     env["LD_LIBRARY_PATH"] = "/oem/usr/lib:/oem/lib:" + env.get("LD_LIBRARY_PATH", "")
-    if not _ps_has("rkaiq_3A_server"):
-        try:
-            _start_3a(env)
-            print("isp: started rkaiq_3A_server", flush=True)
-        except Exception as exc:
-            print("isp start", exc, flush=True)
-    elif (
-        not shared.get("rec_on")
-        and shared.get("cam0")
-        and shared.get("cam1")
-        and not _isp_blocks_on()
-        and time.monotonic() - float(shared.get("_isp_started_t") or 0) > 5.0
-        and int(shared.get("_isp_kick") or 0) < 2
-    ):
-        try:
-            subprocess.call(
-                ["killall", "rkaiq_3A_server"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-            time.sleep(0.5)
-            _start_3a(env)
-            shared["_isp_kick"] = int(shared.get("_isp_kick") or 0) + 1
-            print("isp: reattached rkaiq_3A_server", flush=True)
-        except Exception as exc:
-            print("isp reattach", exc, flush=True)
-    elif _isp_blocks_on():
-        shared["_isp_kick"] = 0
+    # 3A rewrites exposure/vblank and pinned CIF at ~10 fps. ISP blocks are
+    # not producing color frames, so keep it off on the CIF path.
+    if _isp_blocks_on():
+        if not _ps_has("rkaiq_3A_server"):
+            try:
+                _start_3a(env)
+                print("isp: started rkaiq_3A_server", flush=True)
+            except Exception as exc:
+                print("isp start", exc, flush=True)
+    elif _ps_has("rkaiq_3A_server"):
+        os.system("killall rkaiq_3A_server")
+    set_live_30fps()
     if not _ps_has("ego_imu_hud"):
         try:
             env["TZ"] = "UTC-2"
@@ -1169,6 +1429,157 @@ def _grab_dest(key: str, live: str) -> str:
     return dest if dest else live
 
 
+CIF_DEV = {"cam0": "/dev/video1", "cam1": "/dev/video12"}
+I2C_SLAVE_FORCE = 0x0706
+# 0x1012=11088 was ~10 fps. ~2695 blanking + 3600 exp is ~30 fps at the
+# same line rate without crushing brightness.
+LIVE_VBLANK = 2695
+LIVE_EXPOSURE = 3600
+
+
+def _i2c_wr16(bus: int, reg: int, val: int) -> None:
+    fd = os.open("/dev/i2c-%d" % bus, os.O_RDWR)
+    try:
+        fcntl.ioctl(fd, I2C_SLAVE_FORCE, 0x54)
+        os.write(fd, bytes([reg >> 8, reg & 0xFF, val & 0xFF, val >> 8]))
+    finally:
+        os.close(fd)
+
+
+def _i2c_rd16(bus: int, reg: int) -> int:
+    fd = os.open("/dev/i2c-%d" % bus, os.O_RDWR)
+    try:
+        fcntl.ioctl(fd, I2C_SLAVE_FORCE, 0x54)
+        os.write(fd, bytes([reg >> 8, reg & 0xFF]))
+        b = os.read(fd, 2)
+        return b[0] | (b[1] << 8)
+    finally:
+        os.close(fd)
+
+
+def set_live_30fps() -> None:
+    try:
+        for bus in (3, 6):
+            # Full 1600×1400 active array. VSTART≠0 slides 64 dummy rows
+            # into the frame; after 90° CCW that is a white right band.
+            _i2c_wr16(bus, 0x107D, 0)
+            _i2c_wr16(bus, 0x200A, 0)
+            _i2c_wr16(bus, 0x1087, CAM_H)
+            _i2c_wr16(bus, 0x2008, CAM_W // 2)
+            _i2c_wr16(bus, 0x207D, CAM_W)
+            _i2c_wr16(bus, 0x100C, LIVE_EXPOSURE)
+            _i2c_wr16(bus, 0x1012, LIVE_VBLANK)
+            _i2c_wr16(bus, 0x1103, LIVE_VBLANK)
+        if not shared.get("_fps30"):
+            print(
+                "mira220: exp %d vblank %d vstart %d/%d vsize %d/%d"
+                % (
+                    LIVE_EXPOSURE,
+                    LIVE_VBLANK,
+                    _i2c_rd16(3, 0x107D),
+                    _i2c_rd16(6, 0x107D),
+                    _i2c_rd16(3, 0x1087),
+                    _i2c_rd16(6, 0x1087),
+                ),
+                flush=True,
+            )
+        shared["_fps30"] = True
+    except Exception as exc:
+        print("mira220 fps", exc, flush=True)
+
+
+class CifMmap:
+    """rkcif multiplanar BG10. Avoids the v4l2-ctl FIFO copy."""
+
+    TYPE = 9
+    MEM = 1
+    FMT_SIZE = 208
+    REQ_SIZE = 20
+    BUF_SIZE = 88
+    PLANE_SIZE = 64
+    NBUF = 4
+
+    def __init__(self, dev: str) -> None:
+        self.fd = os.open(dev, os.O_RDWR)
+        self.maps = []
+        self._held = None
+        self._planes = [bytearray(self.PLANE_SIZE) for _ in range(self.NBUF + 1)]
+        fmt = bytearray(self.FMT_SIZE)
+        struct.pack_into("<I", fmt, 0, self.TYPE)
+        struct.pack_into("<III", fmt, 8, CAM_W, CAM_H, 0x30314742)
+        fcntl.ioctl(self.fd, self._ioc(3, 5, self.FMT_SIZE), fmt)
+        req = bytearray(self.REQ_SIZE)
+        struct.pack_into("<III", req, 0, self.NBUF, self.TYPE, self.MEM)
+        fcntl.ioctl(self.fd, self._ioc(3, 8, self.REQ_SIZE), req)
+        nbuf = struct.unpack_from("<I", req, 0)[0]
+        for i in range(nbuf):
+            planes = self._planes[i]
+            buf = self._buf(i, planes)
+            fcntl.ioctl(self.fd, self._ioc(3, 9, self.BUF_SIZE), buf)
+            length = struct.unpack_from("<I", planes, 4)[0]
+            offset = struct.unpack_from("<I", planes, 8)[0]
+            mm = mmap.mmap(
+                self.fd,
+                length,
+                mmap.MAP_SHARED,
+                mmap.PROT_READ | mmap.PROT_WRITE,
+                offset=offset,
+            )
+            self.maps.append(mm)
+            fcntl.ioctl(self.fd, self._ioc(3, 15, self.BUF_SIZE), buf)
+        typ = bytearray(4)
+        struct.pack_into("<I", typ, 0, self.TYPE)
+        fcntl.ioctl(self.fd, self._ioc(1, 18, 4), typ)
+        self._typ = typ
+
+    @staticmethod
+    def _ioc(dir_, nr, size):
+        return (dir_ << 30) | (size << 16) | (ord("V") << 8) | nr
+
+    def _ptr(self, ba):
+        return ctypes.addressof((ctypes.c_char * len(ba)).from_buffer(ba))
+
+    def _buf(self, index, planes):
+        buf = bytearray(self.BUF_SIZE)
+        struct.pack_into("<I", buf, 0, index)
+        struct.pack_into("<I", buf, 4, self.TYPE)
+        struct.pack_into("<I", buf, 60, self.MEM)
+        struct.pack_into("<Q", buf, 64, self._ptr(planes))
+        struct.pack_into("<I", buf, 72, 1)
+        return buf
+
+    def grab_raw(self):
+        planes = self._planes[-1]
+        buf = self._buf(0, planes)
+        struct.pack_into("<I", buf, 0, 0)
+        fcntl.ioctl(self.fd, self._ioc(3, 17, self.BUF_SIZE), buf)
+        idx = struct.unpack_from("<I", buf, 0)[0]
+        self._held = buf
+        return self.maps[idx]
+
+    def release(self) -> None:
+        buf = getattr(self, "_held", None)
+        if buf is None:
+            return
+        fcntl.ioctl(self.fd, self._ioc(3, 15, self.BUF_SIZE), buf)
+        self._held = None
+
+    def close(self) -> None:
+        try:
+            fcntl.ioctl(self.fd, self._ioc(1, 19, 4), self._typ)
+        except Exception:
+            pass
+        for mm in self.maps:
+            try:
+                mm.close()
+            except Exception:
+                pass
+        try:
+            os.close(self.fd)
+        except Exception:
+            pass
+
+
 def grab(dev: str, key: str) -> None:
     live = f"/tmp/{key}.nv12"
     try:
@@ -1176,14 +1587,113 @@ def grab(dev: str, key: str) -> None:
     except OSError:
         pass
     os.mkfifo(live)
-    ring = [bytearray(CAM_FRAME) for _ in range(5)]
+    ring = [bytearray(CAM_FRAME) for _ in range(3)]
+    view_ring = [bytearray(VIEW_FRAME) for _ in range(3)]
+    raw_ring = [bytearray(RAW_FRAME) for _ in range(2)]
     slot = 0
+    set_live_30fps()
     while True:
         dest = _grab_dest(key, live)
         direct = dest != live
+        use_cif = (not _isp_blocks_on()) and key in CIF_DEV
+        src = CIF_DEV[key] if use_cif else dev
+        if use_cif and dest == live:
+            cap = None
+            try:
+                cap = CifMmap(src)
+                print("grab %s: cif mmap %s" % (key, src), flush=True)
+                while not _isp_blocks_on() and _grab_dest(key, live) == live:
+                    raw = cap.grab_raw()
+                    raw10_to_nv12(raw, dst=ring[slot], view=view_ring[slot])
+                    cap.release()
+                    shared[key] = view_ring[slot]
+                    shared[key + "_view"] = view_ring[slot]
+                    now = time.monotonic()
+                    shared[key + "_t"] = now
+                    t0 = shared.get(key + "_fps_t")
+                    nfr = int(shared.get(key + "_n") or 0) + 1
+                    if t0 is None:
+                        shared[key + "_fps_t"] = now
+                        shared[key + "_n"] = 1
+                    elif now - float(t0) >= 1.0:
+                        shared[key + "_fps"] = nfr / (now - float(t0))
+                        shared[key + "_n"] = 0
+                        shared[key + "_fps_t"] = now
+                    else:
+                        shared[key + "_n"] = nfr
+                    slot = (slot + 1) % 3
+            except Exception as exc:
+                print("grab %s mmap" % key, type(exc).__name__, exc, flush=True)
+                time.sleep(0.2)
+            finally:
+                if cap is not None:
+                    cap.close()
+            time.sleep(0.05)
+            continue
+        if use_cif:
+            cmd = (
+                f"v4l2-ctl -d {src} --set-fmt-video=width={CAM_W},height={CAM_H},pixelformat=BG10 "
+                f"--stream-mmap=2 --stream-to={dest}.bg10 --stream-poll"
+            )
+            if dest == live:
+                try:
+                    os.remove(dest + ".bg10")
+                except OSError:
+                    pass
+                os.mkfifo(dest + ".bg10")
+                dest_raw = dest + ".bg10"
+                cmd = (
+                    f"v4l2-ctl -d {src} --set-fmt-video=width={CAM_W},height={CAM_H},pixelformat=BG10 "
+                    f"--stream-mmap=2 --stream-to={dest_raw} --stream-poll"
+                )
+                proc = subprocess.Popen(["sh", "-c", cmd], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                time.sleep(0.15)
+                try:
+                    if proc.poll() is not None:
+                        time.sleep(0.2)
+                        continue
+                    with open(dest_raw, "rb") as fh:
+                        while proc.poll() is None:
+                            if _isp_blocks_on() or _grab_dest(key, live) != live:
+                                break
+                            mv = memoryview(raw_ring[slot % 2])
+                            got = 0
+                            while got < RAW_FRAME:
+                                n = fh.readinto(mv[got:])
+                                if not n:
+                                    got = 0
+                                    break
+                                got += n
+                            if got != RAW_FRAME:
+                                break
+                            raw10_to_nv12(mv, dst=ring[slot], view=view_ring[slot])
+                            shared[key] = view_ring[slot]
+                            shared[key + "_view"] = view_ring[slot]
+                            now = time.monotonic()
+                            shared[key + "_t"] = now
+                            t0 = shared.get(key + "_fps_t")
+                            nfr = int(shared.get(key + "_n") or 0) + 1
+                            if t0 is None:
+                                shared[key + "_fps_t"] = now
+                                shared[key + "_n"] = 1
+                            elif now - float(t0) >= 1.0:
+                                shared[key + "_fps"] = nfr / (now - float(t0))
+                                shared[key + "_n"] = 0
+                                shared[key + "_fps_t"] = now
+                            else:
+                                shared[key + "_n"] = nfr
+                            slot = (slot + 1) % 3
+                finally:
+                    proc.kill()
+                    try:
+                        proc.wait(timeout=1)
+                    except Exception:
+                        pass
+                time.sleep(0.05)
+                continue
         cmd = (
             f"v4l2-ctl -d {dev} --set-fmt-video=width={CAM_W},height={CAM_H},pixelformat=NV12 "
-            f"--set-parm=60 --stream-mmap=8 --stream-to={dest} --stream-poll"
+            f"--set-parm=30 --stream-mmap=2 --stream-to={dest} --stream-poll"
         )
         proc = subprocess.Popen(["sh", "-c", cmd], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(0.15)
@@ -1236,7 +1746,7 @@ def grab(dev: str, key: str) -> None:
                             trig = int(getattr(sync, "pulses", 0) or 0)
                             t_ns = int(getattr(sync, "last_t_ns", 0) or t_ns)
                         rec.on_frame(key, ring[slot], trig, t_ns, {})
-                    slot = (slot + 1) % 5
+                    slot = (slot + 1) % 3
         finally:
             proc.kill()
             try:
@@ -1287,17 +1797,20 @@ def y_down(y, src_w: int = 0, src_h: int = 0) -> bytearray:
 
 
 def grid_y(nv12) -> bytearray:
-    """1920x1200 NV12 → BWxBH luma for matching. Decimate then box-average."""
+    """NV12 or 800×500 luma → BWxBH luma for matching."""
     if not _cv_ok():
         return y_down(nv12[: CAM_W * CAM_H], CAM_W, CAM_H)
     import cv2
     import numpy as np
 
-    img = np.frombuffer(nv12, dtype=np.uint8, count=CAM_W * CAM_H).reshape(CAM_H, CAM_W)
+    n = len(nv12)
+    if n >= VIEW_W * VIEW_H and n <= VIEW_FRAME:
+        img = np.frombuffer(nv12, dtype=np.uint8, count=VIEW_W * VIEW_H).reshape(VIEW_H, VIEW_W)
+    else:
+        img = np.frombuffer(nv12, dtype=np.uint8, count=CAM_W * CAM_H).reshape(CAM_H, CAM_W)[:LIVE_H]
     small = cv2.resize(img, (BW, BH), interpolation=cv2.INTER_AREA)
-    # The sensors read out upside down; matching needs upright rows and a
-    # left-to-right disparity axis.
-    small = np.ascontiguousarray(small[::-1, ::-1])
+    # Live frames are already 90° CCW; match in that same upright view.
+    small = np.ascontiguousarray(small)
     # Flat walls and blown highlights carry no matchable detail without this.
     clahe = shared.get("_clahe")
     if clahe is None:
@@ -1450,9 +1963,9 @@ def _cv_matcher(nd: int):
             P1=8 * bs * bs,
             P2=32 * bs * bs,
             disp12MaxDiff=2,
-            uniquenessRatio=4,
-            speckleWindowSize=0,
-            speckleRange=0,
+            uniquenessRatio=10,
+            speckleWindowSize=80,
+            speckleRange=2,
             preFilterCap=31,
             mode=cv2.STEREO_SGBM_MODE_SGBM_3WAY,
         )
@@ -1622,51 +2135,35 @@ def stereo_bm(L, R) -> bytearray:
         if _cv_ok():
             import cv2
 
-            cw, chh = max(80, BW // 4), max(50, BH // 4)
-            ndc = max(16, ((ND // 4) + 15) // 16 * 16)
+            cw, chh = 176, 200
+            ndc = 32
             lc = cv2.resize(left, (cw, chh), interpolation=cv2.INTER_AREA)
             rc = cv2.resize(right, (cw, chh), interpolation=cv2.INTER_AREA)
-            swap = shared.get("swap")
-            if swap is None:
-                a = _disp16(lc, rc, ndc)
-                b = _disp16(rc, lc, ndc)
-                fa = float(np.count_nonzero(a >= 16)) / float(a.size)
-                fb = float(np.count_nonzero(b >= 16)) / float(b.size)
-                swap = fb > fa * 1.25
-                shared["swap"] = swap
-                shared["orient_win"] = "%.2f/%.2f" % (fa, fb)
-                raw = b if swap else a
-            elif swap:
-                raw = _disp16(rc, lc, ndc)
-            else:
-                raw = _disp16(lc, rc, ndc)
+            raw = _disp16(lc, rc, ndc)
             dc = np.clip(raw >> 4, 0, ndc - 1).astype(np.uint8)
             dc[raw < 16] = 0
             shared["pts"] = int(np.count_nonzero(dc)) * (BW * BH // max(1, cw * chh))
+            shared["orient_win"] = "cam0-ref"
+            shared["swap"] = 0
             t_f = time.monotonic()
-            dc = _densify(dc, ndc)
-            mw, mh = max(160, BW // 2), max(100, BH // 2)
-            lm = cv2.resize(left, (mw, mh), interpolation=cv2.INTER_AREA)
-            rm = cv2.resize(right, (mw, mh), interpolation=cv2.INTER_AREA)
-            d1 = cv2.resize(dc, (mw, mh), interpolation=cv2.INTER_LINEAR).astype(np.int16)
-            d1 = (d1 * (mw // max(1, cw))).astype(np.int16)
-            d1 = _refine(lm, rm, d1, max(ND // 2, 16), span=2, win=3)
-            d0 = cv2.resize(d1, (BW, BH), interpolation=cv2.INTER_LINEAR).astype(np.int16)
-            d0 = (d0 * (BW // max(1, mw))).astype(np.int16)
-            d = _refine(left, right, d0, ND, span=1, win=3)
+            hit = dc >= 1
+            d = cv2.resize(dc, (BW, BH), interpolation=cv2.INTER_NEAREST)
+            ok = cv2.resize(hit.astype(np.uint8), (BW, BH), interpolation=cv2.INTER_NEAREST)
+            scale = float(BW) / float(cw)
+            d = np.clip(np.rint(d.astype(np.float32) * scale), 0, ND - 1).astype(np.uint8)
+            d[ok == 0] = 0
             shared["ref_ms"] = (time.monotonic() - t_f) * 1000
             shared["hit"] = int(np.count_nonzero(d))
             t_f = time.monotonic()
+            d = _densify(d, ND)
             d = _fill_small(d, ND)
-            # Blend only still surfaces. A moving hand must keep its outline.
+            d = cv2.medianBlur(d, 5)
             prev = shared.get("_prev_d")
             if prev is not None and prev.shape == d.shape:
-                calm = cv2.absdiff(d, prev) < 2
+                calm = (cv2.absdiff(d, prev) < 2) & (d >= 1) & (prev >= 1)
                 d = np.where(calm, ((d.astype(np.uint16) + prev) >> 1).astype(np.uint8), d)
             shared["_prev_d"] = d
             shared["dens_ms"] = (time.monotonic() - t_f) * 1000
-            # Back to sensor orientation; the page flips both views for display.
-            d = np.ascontiguousarray(d[::-1, ::-1])
             shared["bm_kind"] = shared.get("algo") or "sgbm"
             return bytearray(d.tobytes())
         if NATIVE is not None:
@@ -1820,27 +2317,29 @@ def _up_to(src, dw: int, dh: int):
 
 
 def render_xyz(disp, left=None) -> bytearray:
-    """1920x1200 jet depth map. Disparity is upscaled smoothly, no camera mix."""
+    """Jet depth map, same 1400×1600 portrait as the eyes. No camera mix."""
     try:
         import numpy as np
 
         d = np.frombuffer(disp, dtype=np.uint8, count=BW * BH).reshape(BH, BW)
-        # Spread the palette over the depth actually present, so the map keeps
-        # its full colour range instead of saturating in one band.
-        sub = d[::3, ::3]
-        lo, hi = (float(x) for x in np.percentile(sub, (2, 98)))
+        valid = d >= 1
+        hit = d[valid]
+        if hit.size:
+            lo, hi = (float(x) for x in np.percentile(hit, (5, 95)))
+        else:
+            lo, hi = 0.0, 6.0
         prev = shared.get("_span")
         if prev:
-            lo = prev[0] * 0.8 + lo * 0.2
-            hi = prev[1] * 0.8 + hi * 0.2
+            lo = prev[0] * 0.7 + lo * 0.3
+            hi = prev[1] * 0.7 + hi * 0.3
         shared["_span"] = (lo, hi)
-        idx_s = np.clip(
-            (d.astype(np.float32) - lo) * (255.0 / max(6.0, hi - lo)), 0, 255
-        ).astype(np.uint8)
+        idx_s = np.zeros_like(d)
+        if hit.size:
+            idx_s[valid] = np.clip(
+                (d[valid].astype(np.float32) - lo) * (255.0 / max(6.0, hi - lo)), 0, 255
+            ).astype(np.uint8)
         cache = shared.get("_heat_lut")
         if cache is None:
-            # Disparity already crowds distant detail into a narrow band, so
-            # bend the ramp to give the far field usable colour separation.
             g = [min(255, int(round(255.0 * (i / 255.0) ** 0.7))) for i in range(256)]
             lut_y = np.array([[LUT[g[i]][0]] for i in range(256)], dtype=np.uint8)
             lut_u = np.array([[LUT[g[i]][1]] for i in range(256)], dtype=np.uint8)
@@ -1935,12 +2434,19 @@ def bm_loop(ex) -> None:
             )
             time.sleep(0.2)
             continue
-        a, b = eyes()
+        a = shared.get("cam0_view") or shared.get("cam0")
+        b = shared.get("cam1_view") or shared.get("cam1")
         if not a or not b or (a is seen[0] and b is seen[1]):
             time.sleep(0.003)
             continue
         seen = (a, b)
-        t_a = time.monotonic()
+        now = time.monotonic()
+        if now - float(shared.get("_bm_t") or 0.0) < 0.15:
+            time.sleep(0.004)
+            continue
+        shared["_bm_t"] = now
+        shared["depth_ref"] = a
+        t_a = now
         res = cal.get("result") or {}
         L = grid_y(a)
         R = grid_y(b)
@@ -2101,14 +2607,22 @@ def color_loop(e0, e1, er0, er1) -> None:
         if shared.get("rec_on"):
             time.sleep(0.05)
             continue
+        va, vb = shared.get("cam0_view"), shared.get("cam1_view")
         a, b = eyes()
-        if not a or not b or (a is seen[0] and b is seen[1]):
-            time.sleep(0.002)
-            continue
-        seen = (a, b)
+        if va and vb:
+            if va is seen[0] and vb is seen[1]:
+                time.sleep(0.002)
+                continue
+            seen = (va, vb)
+            pa, pb = va, vb
+        else:
+            if not a or not b or (a is seen[0] and b is seen[1]):
+                time.sleep(0.002)
+                continue
+            seen = (a, b)
+            pa = a if VIEW_W == CAM_W and VIEW_H == CAM_H else preview_nv12(a)
+            pb = b if VIEW_W == CAM_W and VIEW_H == CAM_H else preview_nv12(b)
         t_a = time.monotonic()
-        pa = a if VIEW_W == CAM_W and VIEW_H == CAM_H else preview_nv12(a)
-        pb = b if VIEW_W == CAM_W and VIEW_H == CAM_H else preview_nv12(b)
         if w0 and w1:
             w0.submit(pa)
             w1.submit(pb)
@@ -2448,24 +2962,18 @@ def main() -> int:
     LOGO = load_logo()
     CHART = load_chart()
     if _cv_ok():
-        BW, BH, ND, TH = 640, 400, 96, 40
+        BW, BH, ND, TH = BW_FAST, BH_FAST, ND_FAST, TH_FAST
     else:
-        BW, BH, ND, TH = 320, 200, 32, 420
+        BW, BH, ND, TH = 160, 256, 32, 420
     SCALE = max(1, 255 // ND)
     LUT_Y = (c_ubyte * ND)(*[LUT[min(255, d * SCALE)][0] for d in range(ND)])
     LUT_U = (c_ubyte * ND)(*[LUT[min(255, d * SCALE)][1] for d in range(ND)])
     LUT_V = (c_ubyte * ND)(*[LUT[min(255, d * SCALE)][2] for d in range(ND)])
     shared["disp"] = bytearray(BW * BH)
     ensure_companions()
-    e0, e1, ex = make_enc(VIEW_W, VIEW_H, 48), make_enc(VIEW_W, VIEW_H, 48), make_enc(XW, XH, 50)
+    e0, e1, ex = make_enc(VIEW_W, VIEW_H, 18), make_enc(VIEW_W, VIEW_H, 18), make_enc(XW, XH, 28)
     er0, er1 = make_enc(CAM_W, CAM_H, 55), make_enc(CAM_W, CAM_H, 55)
     threading.Thread(target=companion_loop, daemon=True).start()
-    if start_cam_sync is not None:
-        trig_fps = 60.0
-        shared["cam_sync"] = start_cam_sync(shared, "trig_on", trig_fps)
-        if CAM_SYNC is not None:
-            CAM_SYNC.apply_vts(trig_fps)
-        print("cam sync armed continuous-trigger fps=%.2f" % trig_fps, flush=True)
     threading.Thread(target=grab, args=(CAM0, "cam0"), daemon=True).start()
     threading.Thread(target=grab, args=(CAM1, "cam1"), daemon=True).start()
     threading.Thread(target=bm_loop, args=(ex,), daemon=True).start()

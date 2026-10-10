@@ -98,7 +98,10 @@ tools/                          Host deploy and on-board sources
   ego_imu_hud.py                IMU HUD
   stereo_native.c               Native matcher
 device-tree/                    CameVision Ego board tree (no PCB schematic)
-restore/release-0.2-20260902/   Full Maskrom kit: loader, env, idblock, U-Boot, boot, userdata, oem, rootfs + overlay
+restore/release-0.2-20260902/   SC233HGS Maskrom kit: loader, env, idblock, U-Boot, boot, userdata, oem, rootfs + overlay
+device-tree/rv1126b-camevision-ego-sc233hgs.dts
+                                Frozen SC233HGS board tree
+restore/mira220-bringup/        MIRA220 on RV1126B (starts from the SC233HGS flash)
 FLASH.md                        Maskrom from the command line
 WIFI.md                         VS6621 / BSS84 / STA
 ```
@@ -107,7 +110,7 @@ PCB schematics, netlists and the schematic PDF are not in this repository.
 
 ## Hardware notes (this board)
 
-CameVision Ego V1.I1 carries two global-shutter imagers at 1920×1200, four MIPI lanes per eye, and one IMU beside each camera.
+CameVision Ego V1.I1. The shipped flash in this tree is **SC233HGS**: two global-shutter imagers at 1920×1200, four MIPI lanes per eye, and one IMU beside each camera. That kit is frozen as `restore/release-0.2-20260902` (`SENSOR=SC233HGS`) and `device-tree/rv1126b-camevision-ego-sc233hgs.dts`. A second Ego with **MIRA220** uses the same board flash first, then camera-node changes (see `restore/mira220-bringup/`).
 
 | Eye | CSI | Control | Power-down | Sync | Trigger | IMU |
 |---|---|---|---|---|---|---|

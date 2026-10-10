@@ -29,10 +29,6 @@ fi
 
 if [ -x /userdata/camevision-aiq.sh ]; then
 	/bin/sh /userdata/camevision-aiq.sh >>/userdata/aiq-boot.log 2>&1 || true
-elif ! ps | grep -q '[r]kaiq_3A_server'; then
-	setsid /oem/usr/bin/rkaiq_3A_server --silent \
-		</dev/null >/userdata/rkaiq.log 2>&1 &
-	echo $! >/userdata/rkaiq.pid
 fi
 
 if [ -f /userdata/ego_imu_hud.py ] && ! ps | grep -q '[e]go_imu_hud'; then

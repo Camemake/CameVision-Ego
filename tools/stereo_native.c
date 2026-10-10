@@ -225,3 +225,87 @@ void ego_render_xyz(uint8_t *out, int xw, int xh, const uint8_t *disp,
         }
     }
 }
+
+/* CIF compact RAW10 (LE 40-bit) GRBG → 90° CCW NV12 (1400×1600 from 1600×1400). */
+void ego_raw10_color_nv12(const uint8_t *raw, int stride, int sw, int sh,
+                          uint8_t *nv12, const uint8_t *lut_r,
+                          const uint8_t *lut_g, const uint8_t *lut_b) {
+    const int dw = sh;
+    uint8_t *y = nv12;
+    uint8_t *uv = nv12 + (size_t)dw * (size_t)sw;
+    const int uw = dw / 2;
+
+    for (int sy = 0; sy + 1 < sh; sy += 2) {
+        const uint8_t *row0 = raw + (size_t)sy * (size_t)stride;
+        const uint8_t *row1 = raw + (size_t)(sy + 1) * (size_t)stride;
+        for (int sx = 0; sx + 3 < sw; sx += 4) {
+            const uint8_t *p = row0 + (sx >> 2) * 5;
+            const uint8_t *q = row1 + (sx >> 2) * 5;
+            const int g1 = lut_g[p[0] | ((p[1] & 3) << 8)];
+            const int r0 = lut_r[(p[1] >> 2) | ((p[2] & 15) << 6)];
+            const int g3 = lut_g[(p[2] >> 4) | ((p[3] & 63) << 4)];
+            const int r1 = lut_r[(p[3] >> 6) | (p[4] << 2)];
+            const int b0 = lut_b[q[0] | ((q[1] & 3) << 8)];
+            const int g2 = lut_g[(q[1] >> 2) | ((q[2] & 15) << 6)];
+            const int b1 = lut_b[(q[2] >> 4) | ((q[3] & 63) << 4)];
+            const int g4 = lut_g[(q[3] >> 6) | (q[4] << 2)];
+            const int ga = (g1 + g2) >> 1;
+            const int gb = (g3 + g4) >> 1;
+            /* dest[sw-1-x][y] = src[y][x]  (90° CCW) */
+            y[(size_t)(sw - 1 - sx) * (size_t)dw + (size_t)sy] =
+                (uint8_t)((r0 + g1 + g1 + b0) >> 2);
+            y[(size_t)(sw - 2 - sx) * (size_t)dw + (size_t)sy] =
+                (uint8_t)((r0 + ga + ga + b0) >> 2);
+            y[(size_t)(sw - 1 - sx) * (size_t)dw + (size_t)(sy + 1)] =
+                (uint8_t)((r0 + ga + ga + b0) >> 2);
+            y[(size_t)(sw - 2 - sx) * (size_t)dw + (size_t)(sy + 1)] =
+                (uint8_t)((r0 + g2 + g2 + b0) >> 2);
+            y[(size_t)(sw - 3 - sx) * (size_t)dw + (size_t)sy] =
+                (uint8_t)((r1 + g3 + g3 + b1) >> 2);
+            y[(size_t)(sw - 4 - sx) * (size_t)dw + (size_t)sy] =
+                (uint8_t)((r1 + gb + gb + b1) >> 2);
+            y[(size_t)(sw - 3 - sx) * (size_t)dw + (size_t)(sy + 1)] =
+                (uint8_t)((r1 + gb + gb + b1) >> 2);
+            y[(size_t)(sw - 4 - sx) * (size_t)dw + (size_t)(sy + 1)] =
+                (uint8_t)((r1 + g4 + g4 + b1) >> 2);
+            const int u0 = 128 + ((b0 - ga) >> 1);
+            const int v0 = 128 + ((r0 - ga) >> 1);
+            const int u1 = 128 + ((b1 - gb) >> 1);
+            const int v1 = 128 + ((r1 - gb) >> 1);
+            const int p0 = (((sw - 2 - sx) >> 1) * uw + (sy >> 1)) * 2;
+            const int p1 = (((sw - 4 - sx) >> 1) * uw + (sy >> 1)) * 2;
+            uv[p0] = (uint8_t)(u0 < 0 ? 0 : u0 > 255 ? 255 : u0);
+            uv[p0 + 1] = (uint8_t)(v0 < 0 ? 0 : v0 > 255 ? 255 : v0);
+            uv[p1] = (uint8_t)(u1 < 0 ? 0 : u1 > 255 ? 255 : u1);
+            uv[p1 + 1] = (uint8_t)(v1 < 0 ? 0 : v1 > 255 ? 255 : v1);
+        }
+    }
+    /* Dummy / buffer rows after 90° CCW become a solid white right band. */
+    int good = dw - 1;
+    while (good >= 0) {
+        int sat = 0, n = 0;
+        for (int r = 0; r < sw; r += 16) {
+            sat += y[(size_t)r * (size_t)dw + (size_t)good] > 248;
+            n++;
+        }
+        if (sat < n - 1)
+            break;
+        good--;
+    }
+    if (good >= 0 && good < dw - 1) {
+        for (int c = good + 1; c < dw; c++) {
+            for (int r = 0; r < sw; r++)
+                y[(size_t)r * (size_t)dw + (size_t)c] =
+                    y[(size_t)r * (size_t)dw + (size_t)good];
+        }
+        const int gc = good & ~1;
+        for (int r = 0; r < sw; r += 2) {
+            const int src = ((r >> 1) * uw + (gc >> 1)) * 2;
+            for (int c = gc + 2; c < dw; c += 2) {
+                const int dst = ((r >> 1) * uw + (c >> 1)) * 2;
+                uv[dst] = uv[src];
+                uv[dst + 1] = uv[src + 1];
+            }
+        }
+    }
+}

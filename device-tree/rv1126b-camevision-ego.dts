@@ -11,7 +11,10 @@
  *   eMMC U2A    BWCTAK611G16G     (same MPN on Single)
  *
  * Ego-only vs Single:
- *   two SC233HGS (CSI0+I2C3, CSI1+I2C4), two SPI IMUs, microSD on SDMMC0,
+ *   two imagers (CSI0+I2C3, CSI1+I2C4). V0.2 flash is SC233HGS; keep
+ *   rv1126b-camevision-ego-sc233hgs.dts as that snapshot. MIRA220 bring-up
+ *   starts from the same board map.
+ *   two SPI IMUs, microSD on SDMMC0,
  *   Wi-Fi GPIOs moved off GPIO2 (that bank is the SD card), BQ24072 CHG,
  *   camera LDO enables on GPIO0_B0/B1/B2.
  *   FSYNC/EFSYNC are GPIO4_A1/A0 + GPIO6_C2/C3 — not Single's GPIO4_A2/A7
@@ -171,21 +174,23 @@
 	};
 
 	/*
-	 * microSD U6 is switched 1.8 V ("+1.8V_SDC_PWR").
+	 * microSD U6 rail is 3.3 V now (was "+1.8V_SDC_PWR").
 	 * "SDMMC0_PWREN" GPIO3_B4, pad 1A14. Do not use dtsi sdmmc0_pwren
 	 * (that group is GPIO0_A10).
 	 */
-	vcc1v8_sd: vcc1v8-sd {
+	vcc3v3_sd: vcc3v3-sd {
 		compatible = "regulator-fixed";
-		regulator-name = "vcc1v8_sd";
-		regulator-min-microvolt = <1800000>;
-		regulator-max-microvolt = <1800000>;
+		regulator-name = "vcc3v3_sd";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+		regulator-boot-on;
 		gpio = <&gpio3 RK_PB4 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
-		startup-delay-us = <20000>;
+		startup-delay-us = <100000>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&sd_pwren>;
-		vin-supply = <&vcc_1v8>;
+		vin-supply = <&vcc3v3_sys>;
 	};
 
 	/*
@@ -511,42 +516,39 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c3m1_pins>;	/* GPIO4_A4/A5, I2C3_SCL/SDA_CAM */
 
-	sc233hgs_0: sc233hgs@30 {
-		compatible = "smartsens,sc233hgs";
-		reg = <0x30>;
+	mira220_0: mira220@54 {
+		compatible = "ams,mira220", "camevision,mira220";
+		reg = <0x54>;
 		clocks = <&cru CLK_CAM0_OUT>;
 		clock-names = "xvclk";
 		assigned-clocks = <&cru CLK_CAM0_OUT>;
 		assigned-clock-rates = <27000000>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&cam_clk0_pins &cam0_pwdn_pins>;
-		/* "CAM0_PWDN" GPIO4_A3, pad 1V21. Single used GPIO4_A6. */
-		/* FSYNC GPIO4_A1 / EFSYNC GPIO6_C2 — see /cam-fsync, disabled. */
+		/* "CAM0_PWDN" GPIO4_A3, pad 1V21. High = run. */
 		pwdn-gpios = <&gpio4 RK_PA3 GPIO_ACTIVE_HIGH>;
 		avdd-supply = <&vcc2v8_cam>;
 		dovdd-supply = <&vcc1v8_cam>;
 		dvdd-supply = <&vcc1v2_cam>;
 		rockchip,camera-module-index = <0>;
 		rockchip,camera-module-facing = "back";
-		rockchip,camera-module-name = "camevision-sc233hgs";
+		rockchip,camera-module-name = "camevision-mira220";
 		rockchip,camera-module-lens-name = "default";
 		status = "okay";
 
 		port {
-			sc233hgs0_out: endpoint {
+			mira2200_out: endpoint {
 				remote-endpoint = <&csi_dphy0_input>;
-				data-lanes = <1 2 3 4>;
+				data-lanes = <1 2>;
+				link-frequencies = /bits/ 64 <750000000>;
 			};
 		};
 	};
 };
 
 /*
- * Cam 1 I2C is swapped on the PCB vs I2C4_M2 (schematic page 9 netlist):
- *   I2C4_SCL_CAM → U1.1T21 GPIO4_A6 (SoC function I2C4_SDA_M2) → U10.A3 SCL
- *   I2C4_SDA_CAM → U1.1T22 GPIO4_A7 (SoC function I2C4_SCL_M2) → U10.B3 SDA
- * Hardware I2C4 cannot swap those functions. Bit-bang the net names.
- * Live: ACK at 0x30 with SCL=A6 SDA=A7 and CAM1_PWDN raw high.
+ * Cam 1 I2C on this MIRA220 board ACKs at 0x54 with SDA=GPIO4_A6, SCL=GPIO4_A7.
+ * Hardware I2C4_M2 functions are still crossed vs those pads, so keep bit-bang.
  */
 &i2c4 {
 	status = "disabled";
@@ -554,15 +556,15 @@
 
 i2c_cam1: i2c-gpio-cam1 {
 	compatible = "i2c-gpio";
-	sda-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
-	scl-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
+	sda-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
+	scl-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
 	i2c-gpio,delay-us = <2>;
 	#address-cells = <1>;
 	#size-cells = <0>;
 
-	sc233hgs_1: sc233hgs@30 {
-		compatible = "smartsens,sc233hgs";
-		reg = <0x30>;
+	mira220_1: mira220@54 {
+		compatible = "ams,mira220", "camevision,mira220";
+		reg = <0x54>;
 		clocks = <&cru CLK_CAM1_OUT>;
 		clock-names = "xvclk";
 		assigned-clocks = <&cru CLK_CAM1_OUT>;
@@ -570,21 +572,21 @@ i2c_cam1: i2c-gpio-cam1 {
 		pinctrl-names = "default";
 		pinctrl-0 = <&cam_clk1_pins &cam1_pwdn_pins>;
 		/* "CAM1_PWDN" GPIO4_A2, pad 1Y23. XSHUTDN high = run. */
-		/* FSYNC GPIO4_A0 / EFSYNC GPIO6_C3 — see /cam-fsync, disabled. */
 		reset-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_LOW>;
 		avdd-supply = <&vcc2v8_cam>;
 		dovdd-supply = <&vcc1v8_cam>;
 		dvdd-supply = <&vcc1v2_cam>;
 		rockchip,camera-module-index = <1>;
 		rockchip,camera-module-facing = "front";
-		rockchip,camera-module-name = "camevision-sc233hgs";
+		rockchip,camera-module-name = "camevision-mira220";
 		rockchip,camera-module-lens-name = "default";
 		status = "okay";
 
 		port {
-			sc233hgs1_out: endpoint {
+			mira2201_out: endpoint {
 				remote-endpoint = <&csi_dphy1_input>;
-				data-lanes = <1 2 3 4>;
+				data-lanes = <1 2>;
+				link-frequencies = /bits/ 64 <750000000>;
 			};
 		};
 	};
@@ -604,8 +606,8 @@ i2c_cam1: i2c-gpio-cam1 {
 
 			csi_dphy0_input: endpoint@1 {
 				reg = <1>;
-				remote-endpoint = <&sc233hgs0_out>;
-				data-lanes = <1 2 3 4>;
+				remote-endpoint = <&mira2200_out>;
+				data-lanes = <1 2>;
 			};
 		};
 
@@ -636,8 +638,8 @@ i2c_cam1: i2c-gpio-cam1 {
 
 			csi_dphy1_input: endpoint@1 {
 				reg = <1>;
-				remote-endpoint = <&sc233hgs1_out>;
-				data-lanes = <1 2 3 4>;
+				remote-endpoint = <&mira2201_out>;
+				data-lanes = <1 2>;
 			};
 		};
 
@@ -655,10 +657,10 @@ i2c_cam1: i2c-gpio-cam1 {
 };
 
 /*
- * Cam 0: sc233hgs_0 -> csi2_dphy0 -> mipi0_csi2 -> rkcif_mipi_lvds
- *                      -> rkisp_vir0 -> rkvpss_vir0
- * Cam 1: sc233hgs_1 -> csi2_dphy1 -> mipi1_csi2 -> rkcif_mipi_lvds1
- *                      -> rkisp_vir1 -> rkvpss_vir1
+ * Cam 0: mira220_0 -> csi2_dphy0 -> mipi0_csi2 -> rkcif_mipi_lvds
+ *                    -> rkisp_vir0 -> rkvpss_vir0
+ * Cam 1: mira220_1 -> csi2_dphy1 -> mipi1_csi2 -> rkcif_mipi_lvds1
+ *                    -> rkisp_vir1 -> rkvpss_vir1
  */
 &mipi0_csi2 {
 	status = "okay";
@@ -880,8 +882,8 @@ i2c_cam1: i2c-gpio-cam1 {
 	no-sdio;
 	no-mmc;
 	cd-gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_LOW>;
-	vmmc-supply = <&vcc1v8_sd>;
-	vqmmc-supply = <&vcc_1v8>;
+	vmmc-supply = <&vcc3v3_sd>;
+	vqmmc-supply = <&vcc3v3_sys>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&sdmmc0_clk_pins &sdmmc0_cmd_pins &sdmmc0_bus4_pins &sd_cd_pins>;
 };
