@@ -105,11 +105,14 @@ nav a:hover, nav a.active { color: var(--came); text-decoration: none; }
 
 .sku-card .sku-shop {
   display: inline-block;
-  margin-top: 12px;
+  margin-top: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #eef6f7;
   font-size: 13px;
   font-weight: 700;
 }
-.sku-grid { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.sku-card .sku-shop:hover { text-decoration: none; background: #dceef1; }
 
 .hero { padding: 48px 0 32px; background: var(--bg); }
 .kicker { color: var(--came); font-size: 13px; }
@@ -200,7 +203,7 @@ strong { color: #1a1a1a; }
 
 .sku-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
 }
 .sku-card {
