@@ -32,7 +32,7 @@ OEM / ODM variants (single, triple, 5-fold and 9-camera PCBs, plus headset, cap,
 | | CameVision EGO · CV-EGO01-OS |
 |---|---|
 | Cameras | 2 × 2.3 MP global shutter, hardware-synchronised stereo |
-| IMU | 2 × IMU, one at each camera |
+| IMU | 2 × LSM6DSVQTR (16-bit; ST typical 60 µg/√Hz · 2.8 mdps/√Hz; ±2…16 g / ±125…4000 dps) |
 | Compute | On-board vision SoC with integrated NPU |
 | Memory | 1 GB RAM |
 | Storage | 16 GB eMMC + microSD slot |
@@ -149,11 +149,11 @@ Every Camemake camera module can be tailored — sensor, lens, housing, interfac
 | [Get started](https://camemake.github.io/CameVision-Ego/start.html) | USB, package, ADB |
 | [Offline tool](https://camemake.github.io/CameVision-Ego/tool.html) | Installer UI (local :8765) |
 | [Flash](https://camemake.github.io/CameVision-Ego/flash.html) | Maskrom, partition map, overlay |
-| [Hardware](https://camemake.github.io/CameVision-Ego/hardware.html) | Camera map, GPIO, fitted parts |
+| [Hardware](https://camemake.github.io/CameVision-Ego/hardware.html) | Camera map, GPIO, fitted parts, IMU precision |
 | [Mechanical](https://camemake.github.io/CameVision-Ego/mechanical.html) | Thermal path, housing, assembly |
 | [Optics](https://camemake.github.io/CameVision-Ego/optics.html) | Modules, FOV, baseline |
 | [Software](https://camemake.github.io/CameVision-Ego/software.html) | Drivers, boot chain, live-page routes |
-| [Datasheet](https://camemake.github.io/CameVision-Ego/datasheet.html) | SKU table |
+| [Datasheet](https://camemake.github.io/CameVision-Ego/datasheet.html) | SKU table · IMU precision |
 | [`FLASH.md`](FLASH.md) | Maskrom from the command line |
 | [`EGO.md`](EGO.md) | Full board notes |
 | [`WIFI.md`](WIFI.md) | VS6621 / BSS84 / STA |

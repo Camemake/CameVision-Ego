@@ -111,7 +111,7 @@
         <tr><td>Cameras</td><td>×2, 4-lane MIPI each, 27 MHz XVCLK, I2C 0x30 per bus</td></tr>
         <tr><td>Sync</td><td>Shared FSYNC + EFSYNC · continuous trigger · 12.5 fps</td></tr>
         <tr><td>Baseline</td><td>75.0 mm · CAM0 left · CAM1 right</td></tr>
-        <tr><td>IMU</td><td>LSM6DSVQTR ×2 · SPI0 / SPI1 · 480 Hz HUD default</td></tr>
+        <tr><td>IMU</td><td>LSM6DSVQTR ×2 · SPI0 / SPI1 · 16-bit · 480 Hz HUD default · ST typical 60 µg/√Hz · 2.8 mdps/√Hz</td></tr>
         <tr><td>USB</td><td>USB-C · USB2 + USB3 DRD · ADB peripheral</td></tr>
         <tr><td>Wireless</td><td>VS6621S80 · Wi-Fi 6 + BLE · SDMMC1 + UART2</td></tr>
         <tr><td>Storage slot</td><td>microSD on SDMMC0, 1.8 V VDD</td></tr>
@@ -120,6 +120,28 @@
         <tr><td>Charge</td><td>BQ24072 · 250 mA fast charge · 1.5 A input limit</td></tr>
         <tr><td>Console</td><td>UART0 · 1.5 Mbaud</td></tr>
         <tr><td>Power</td><td>USB-C and PH battery pads</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>IMU precision</h2>
+      <p>Fitted part is <strong>LSM6DSVQTR</strong> ×2 (ST LSM6DSV tape-and-reel). ST Table 3 typical at 1.8 V, 25 °C — not guaranteed, not a board measurement. Source: <a href="https://www.st.com/resource/en/datasheet/lsm6dsv.pdf">LSM6DSV datasheet</a>. Wiring and ODR: <a href="hardware.html">Hardware</a>.</p>
+      <table>
+        <tr><th></th><th>Accel</th><th>Gyro</th></tr>
+        <tr><td>Resolution</td><td>16-bit</td><td>16-bit</td></tr>
+        <tr><td>Full-scale</td><td>±2 / 4 / 8 / 16 g</td><td>±125 / 250 / 500 / 1000 / 2000 / 4000 dps</td></tr>
+        <tr><td>Sensitivity</td><td>0.061 / 0.122 / 0.244 / 0.488 mg/LSB</td><td>4.375 / 8.75 / 17.50 / 35 / 70 / 140 mdps/LSB</td></tr>
+        <tr><td>Sensitivity tolerance</td><td>—</td><td>±0.3 % (FS ≤ ±2000 dps)</td></tr>
+        <tr><td>Sensitivity vs temperature</td><td>±0.01 %/°C</td><td>±0.007 %/°C</td></tr>
+        <tr><td>Zero-level offset (after cal)</td><td>±12 mg</td><td>±1 dps</td></tr>
+        <tr><td>Offset vs temperature</td><td>±0.07 mg/°C</td><td>±0.006 dps/°C</td></tr>
+        <tr><td>Noise density (high-performance)</td><td>60 µg/√Hz</td><td>2.8 mdps/√Hz</td></tr>
+        <tr><td>Noise density (normal)</td><td>100 µg/√Hz</td><td>—</td></tr>
+        <tr><td>RMS noise (low-power)</td><td>2.3 / 1.8 / 1.2 mg (LPM1 / 2 / 3)</td><td>60 mdps RMS</td></tr>
+        <tr><td>ODR accuracy (HA, gyro on)</td><td>±1 %</td><td>±1 %</td></tr>
+        <tr><td>Operating temperature</td><td>−40 … +85 °C</td><td>−40 … +85 °C</td></tr>
       </table>
     </div>
   </section>
@@ -229,7 +251,7 @@
         <tr><th>Page</th><th></th></tr>
         <tr><td><a href="start.html">Get started</a></td><td>USB · package · ADB</td></tr>
         <tr><td><a href="tool.html">Offline tool</a></td><td>Installer</td></tr>
-        <tr><td><a href="hardware.html">Hardware</a></td><td>Pinmux</td></tr>
+        <tr><td><a href="hardware.html">Hardware</a></td><td>Pinmux · IMU precision</td></tr>
         <tr><td><a href="mechanical.html">Mechanical</a></td><td>Housing and thermal</td></tr>
         <tr><td><a href="optics.html">Optics</a></td><td>2G4P, FOV, frames</td></tr>
         <tr><td><a href="software.html">Software</a></td><td>Drivers, DTB, routes</td></tr>

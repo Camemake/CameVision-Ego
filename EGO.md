@@ -57,6 +57,12 @@ outputs.
 ### IMUs (two)
 - IMU0 U9: SPI0 (`SPI0_CLK/CS0/MISO/MOSI`), `IMU0_INT1/INT2`, next to Cam 0
 - IMU1 U12: SPI1 (`SPI1_CLK/CS0/MISO/MOSI`), `IMU1_INT1/INT2`, next to Cam 1
+- Fitted part **LSM6DSVQTR** (ST LSM6DSV tape-and-reel). 16-bit. HUD default 480 Hz.
+- ST typical @ 1.8 V, 25 °C (not guaranteed, not board-measured):
+  accel 0.061…0.488 mg/LSB, zero-g ±12 mg, 60 µg/√Hz HP;
+  gyro 4.375…140 mdps/LSB, zero-rate ±1 dps, 2.8 mdps/√Hz HP.
+- Datasheet: https://www.st.com/resource/en/datasheet/lsm6dsv.pdf
+- Public table: [docs/hardware.html](https://camemake.github.io/CameVision-Ego/hardware.html) · [docs/datasheet.html](https://camemake.github.io/CameVision-Ego/datasheet.html)
 
 ### Storage / wireless
 - eMMC on the dedicated EMMC/FSPI bus (live `mmc0`)

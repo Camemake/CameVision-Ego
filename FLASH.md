@@ -185,5 +185,5 @@ USB `dr_mode` stays **peripheral**. The gadget is ADB. There is no webcam profil
 - Offline tool UI: [tool.html](https://camemake.github.io/CameVision-Ego/tool.html)
 - Flash page: [flash.html](https://camemake.github.io/CameVision-Ego/flash.html)
 - Software map: [software.html](https://camemake.github.io/CameVision-Ego/software.html)
-- Pinmux: [hardware.html](https://camemake.github.io/CameVision-Ego/hardware.html)
+- Pinmux / IMU precision: [hardware.html](https://camemake.github.io/CameVision-Ego/hardware.html)
 - V0.2 notes: [`restore/release-0.2-20260902/RELEASE.md`](restore/release-0.2-20260902/RELEASE.md)

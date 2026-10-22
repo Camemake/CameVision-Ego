@@ -118,6 +118,29 @@
 
   <section>
     <div class="wrap">
+      <h2>IMU precision</h2>
+      <p>Order code on the board is <strong>LSM6DSVQTR</strong> (tape-and-reel of ST <strong>LSM6DSV</strong>). Figures below are ST Table 3 typical values at <strong>Vdd = 1.8 V, 25 °C</strong>. Typical values are not guaranteed. Zero-level offsets are after calibration. These are silicon numbers from the <a href="https://www.st.com/resource/en/datasheet/lsm6dsv.pdf">ST LSM6DSV datasheet</a>, not a CameVision board characterization.</p>
+      <table>
+        <tr><th></th><th>Accel</th><th>Gyro</th></tr>
+        <tr><td>Resolution</td><td>16-bit</td><td>16-bit</td></tr>
+        <tr><td>Full-scale</td><td>±2 / 4 / 8 / 16 g</td><td>±125 / 250 / 500 / 1000 / 2000 / 4000 dps</td></tr>
+        <tr><td>Sensitivity</td><td>0.061 / 0.122 / 0.244 / 0.488 mg/LSB</td><td>4.375 / 8.75 / 17.50 / 35 / 70 / 140 mdps/LSB</td></tr>
+        <tr><td>Sensitivity tolerance</td><td>—</td><td>±0.3 % (FS up to ±2000 dps)</td></tr>
+        <tr><td>Sensitivity vs temperature</td><td>±0.01 %/°C (−40…+85 °C)</td><td>±0.007 %/°C (−40…+85 °C)</td></tr>
+        <tr><td>Zero-level offset (after cal)</td><td>±12 mg</td><td>±1 dps</td></tr>
+        <tr><td>Offset vs temperature</td><td>±0.07 mg/°C</td><td>±0.006 dps/°C</td></tr>
+        <tr><td>Noise density (high-performance)</td><td>60 µg/√Hz</td><td>2.8 mdps/√Hz</td></tr>
+        <tr><td>Noise density (normal)</td><td>100 µg/√Hz</td><td>—</td></tr>
+        <tr><td>RMS noise (low-power)</td><td>2.3 / 1.8 / 1.2 mg (LPM1 / LPM2 / LPM3)</td><td>60 mdps RMS</td></tr>
+        <tr><td>ODR accuracy (HA, gyro on)</td><td>±1 %</td><td>±1 %</td></tr>
+        <tr><td>Operating temperature</td><td>−40 … +85 °C</td><td>−40 … +85 °C</td></tr>
+      </table>
+      <p>Noise densities are independent of ODR. Gyro rate noise is independent of FS up to ±2000 dps. Accel noise figures apply with <code>XL_DualC_EN = 0</code>. HUD default is 480 Hz oneshot sysfs; IIO scale on the live board is the LSB size for the selected full-scale.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
       <h2>Wi-Fi, SD, USB, power, LED, boot</h2>
       <table>
         <tr><th>Net</th><th>Pad / GPIO</th><th>Function</th></tr>
