@@ -19,7 +19,6 @@
       <nav>
         <a href="index.html">Product</a>
         <a href="start.html">Get started</a>
-        <a href="tool.html">Offline tool</a>
         <a href="flash.html">Flash</a>
         <a href="hardware.html">Hardware</a>
         <a href="mechanical.html">Mechanical</a>
@@ -43,7 +42,7 @@
       <h2>Where it runs</h2>
       <table>
         <tr><th>Place</th><th>What sits there</th></tr>
-        <tr><td>This PC</td><td>Offline tool, USB driver, flash, overlay push, ADB forwards, diagnostics, session writer</td></tr>
+        <tr><td>This PC</td><td>USB driver, flash, overlay push, ADB forwards, diagnostics, session writer</td></tr>
         <tr><td>Board <code>/userdata</code></td><td>Stereo page, FSYNC/EFSYNC, IMU HUD, calibration UI, Wi-Fi STA, IQ JSON, native matcher, boot scripts</td></tr>
         <tr><td>Board kernel</td><td>Device tree, CSI, I2C/SPI, SDIO Wi-Fi, ADB gadget: <code>device-tree/rv1126b-camevision-ego.dts</code></td></tr>
       </table>
@@ -286,8 +285,8 @@ python tools/cv_ego_overlay_deploy.py</pre>
 
   <section>
     <div class="wrap">
-      <h2>Live page routes · 8081</h2>
-      <p>Forwarded by the host as <code>http://127.0.0.1:8081/</code>.</p>
+      <h2>Live page routes</h2>
+      <p>On the board. Open from the host with <code>python tools/cv_ego_page.py</code>.</p>
       <table>
         <tr><th>Path</th><th>Body</th></tr>
         <tr><td><code>/</code></td><td>Live HTML: <code>/ov0</code> and <code>/ov1</code> MJPEG</td></tr>
@@ -304,7 +303,7 @@ python tools/cv_ego_overlay_deploy.py</pre>
         <tr><td><code>/align</code></td><td>Stereo align</td></tr>
         <tr><td><code>/record/start</code> · <code>/record/stat</code></td><td>Session record</td></tr>
       </table>
-      <p>IMU JSON on its own socket: <code>http://127.0.0.1:8083/</code>.</p>
+      <p>IMU JSON is forwarded with the stereo page (<code>cv_ego_page.py</code>).</p>
     </div>
   </section>
 
@@ -313,7 +312,6 @@ python tools/cv_ego_overlay_deploy.py</pre>
       <h2>On this PC</h2>
       <table>
         <tr><th>Block</th><th>File</th><th>Role</th></tr>
-        <tr><td>Offline tool</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_studio.py"><code>tools/cv_ego_studio.py</code></a></td><td>Local site :8765, jobs, this page’s file links</td></tr>
         <tr><td>First-run host</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_host_setup.py"><code>tools/cv_ego_host_setup.py</code></a></td><td>Bundled Python, USB driver / udev</td></tr>
         <tr><td>USB driver</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_driver.py"><code>tools/cv_ego_driver.py</code></a></td><td>Rockusb + ADB (Windows), udev 2207 (Linux)</td></tr>
         <tr><td>Flash</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_flash.py"><code>tools/cv_ego_flash.py</code></a></td><td>Maskrom write of loader…rootfs, then overlay</td></tr>

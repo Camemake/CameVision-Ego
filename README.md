@@ -31,7 +31,7 @@ OEM / ODM variants (single, triple, 5-fold and 9-camera PCBs, plus headset, cap,
 
 | | CameVision EGO · CV-EGO01-OS |
 |---|---|
-| Cameras | 2 × 2.3 MP global shutter, hardware-synchronised stereo |
+| Cameras | 2 × global shutter (SC233HGS · OG02C10 · MIRA220 · AR0235 colour/mono · OX05B1S · Kaimou GS2.3) |
 | IMU | 2 × LSM6DSVQTR (16-bit; ST typical 60 µg/√Hz · 2.8 mdps/√Hz; ±2…16 g / ±125…4000 dps) |
 | Compute | On-board vision SoC with integrated NPU |
 | Memory | 1 GB RAM |
@@ -50,47 +50,30 @@ Hardware revision in this tree: **CameVision Ego V1.I1**.
 
 Flash starts from **Maskrom**. Same path on an empty board and on a board that already has images. USB stays ADB.
 
-Windows: double-click `CameVision-Ego.exe`.
-
-Linux: open `CameVision-Ego` (or the desktop entry).
-
-From a clone:
-
 ```
-python tools/cv_ego_studio.py
-```
-
-The tool opens at `http://127.0.0.1:8765/tool.html`.
-
-1. **USB / Maskrom** — Install USB driver. Hold BOOT, tap RESET, keep BOOT held.
-2. **Package** — Select CameVision Ego (or GitHub update / a zip). Click Install. Writes loader, env, idblock, U-Boot, boot, userdata, oem, rootfs, then the overlay.
-3. **ADB** — Click Open. Live page: `http://127.0.0.1:8081/`.
-
-Command line:
-
-```
-python tools/cv_ego_flash.py --prebuilt
+python tools/cv_ego_flash.py --prebuilt --package camevision-ego
+python tools/cv_ego_flash.py --prebuilt --package camevision-ego-am
 python tools/cv_ego_page.py
 ```
 
-Full Maskrom map, image names and overlay list: [`FLASH.md`](FLASH.md) · [flash.html](https://camemake.github.io/CameVision-Ego/flash.html)
+1. **USB / Maskrom** — Install USB driver. Hold BOOT, tap RESET, keep BOOT held.
+2. **Package** — Write loader, env, idblock, U-Boot, boot, userdata, oem, rootfs, then the overlay.
+3. **ADB** — `cv_ego_page.py` forwards the on-board stereo page and IMU HUD, then opens a browser.
 
-```
-python tools/cv_ego_pack_offline.py
-```
+Shop sensors: SC233HGS, OG02C10, MIRA220, AR0235 (colour or mono), OX05B1S, Kaimou GS2.3. Maskrom kits in this tree are SC233HGS and AM / MIRA220.
+
+Full map: [`FLASH.md`](FLASH.md) · [flash.html](https://camemake.github.io/CameVision-Ego/flash.html)
 
 ## Repository layout
 
 ```
-docs/                           GitHub Pages + offline tool website
-  tool.html                     Offline installer UI (USB / Package / ADB)
+docs/                           GitHub Pages
   flash.html                    Maskrom partition map
   hardware.html                 Fitted parts and pinmux
   mechanical.html               Housing, thermal, assembly
   optics.html                   Modules, FOV, baseline
   software.html                 Drivers, boot chain, live routes
 tools/                          Host deploy and on-board sources
-  cv_ego_studio.py              Offline tool at :8765
   cv_ego_flash.py               Maskrom write, then overlay
   cv_ego_overlay_deploy.py      ADB copy into /userdata
   ego_stereo.py                 Live stereo, depth, calibration HTTP
@@ -147,7 +130,6 @@ Every Camemake camera module can be tailored — sensor, lens, housing, interfac
 |---|---|
 | [Product page](https://camemake.github.io/CameVision-Ego/) | Public GitHub Pages site for this product |
 | [Get started](https://camemake.github.io/CameVision-Ego/start.html) | USB, package, ADB |
-| [Offline tool](https://camemake.github.io/CameVision-Ego/tool.html) | Installer UI (local :8765) |
 | [Flash](https://camemake.github.io/CameVision-Ego/flash.html) | Maskrom, partition map, overlay |
 | [Hardware](https://camemake.github.io/CameVision-Ego/hardware.html) | Camera map, GPIO, fitted parts, IMU precision |
 | [Mechanical](https://camemake.github.io/CameVision-Ego/mechanical.html) | Thermal path, housing, assembly |

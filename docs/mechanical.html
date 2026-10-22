@@ -19,7 +19,6 @@
       <nav>
         <a href="index.html">Product</a>
         <a href="start.html">Get started</a>
-        <a href="tool.html">Offline tool</a>
         <a href="flash.html">Flash</a>
         <a href="hardware.html">Hardware</a>
         <a class="active" href="mechanical.html">Mechanical</a>
@@ -185,7 +184,7 @@
           <div class="step-num">4</div>
           <h2>Prove the path</h2>
           <ol>
-            <li>Power from USB-C. Wait until stereo and ISP are up (live page on <code>:8081</code>).</li>
+            <li>Power from USB-C. Wait until stereo and ISP are up, then open the page with <code>python tools/cv_ego_page.py</code>.</li>
             <li>On-die sensor after depth is up: <strong>35–45 °C</strong> (35000–45000). NPU off at the low end; NPU on near 45 °C.</li>
             <li>Above 45 °C: pad off the lid, or fins with no air.</li>
           </ol>
@@ -215,7 +214,7 @@
       <p>On a board with ADB, the die sensor is the thermal zone:</p>
       <pre>adb shell cat /sys/class/thermal/thermal_zone0/temp</pre>
       <p>Millidegrees C. <code>40000</code> is 40 °C. Operating <strong>35000–45000</strong>. Critical trip <strong>115000</strong> (115 °C). Zone follows <code>cpu-thermal</code>.</p>
-      <p><a href="hardware.html">Hardware pinmux</a> · <a href="start.html">Get started</a> · <a href="tool.html">Offline tool</a></p>
+      <p><a href="hardware.html">Hardware pinmux</a> · <a href="start.html">Get started</a> · <a href="flash.html">Flash</a></p>
     </div>
   </section>
 

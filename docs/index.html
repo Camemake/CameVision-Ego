@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CameVision EGO · CV-EGO01-OS · Camemake</title>
-  <meta name="description" content="CameVision EGO: dual global-shutter stereo. CV-EGO01-OS-SC, CV-EGO01-OS-OV, CV-EGO01-OS-AM. RV1126B NPU.">
+  <meta name="description" content="CameVision EGO: dual global-shutter stereo. SC233HGS, OG02C10, MIRA220, AR0235, OX05B1S, Kaimou GS2.3. RV1126B NPU.">
   <link rel="stylesheet" href="assets/style.css">
   <link rel="icon" href="assets/camemake-logo.png">
 </head>
@@ -19,7 +19,6 @@
       <nav>
         <a class="active" href="index.html">Product</a>
         <a href="start.html">Get started</a>
-        <a href="tool.html">Offline tool</a>
         <a href="flash.html">Flash</a>
         <a href="hardware.html">Hardware</a>
         <a href="mechanical.html">Mechanical</a>
@@ -33,13 +32,13 @@
 
   <div class="hero">
     <div class="wrap">
-      <div class="kicker">CV-EGO01-OS-SC · CV-EGO01-OS-OV · CV-EGO01-OS-AM · V1.I1</div>
+      <div class="kicker">CV-EGO01-OS · V1.I1</div>
       <h1>CameVision Ego</h1>
       <p class="lead">Dual global-shutter stereo on one board. Two cameras, one IMU per eye, on-board NPU, USB-C, Wi-Fi 6, BLE, eMMC and battery pads.</p>
       <div class="cta">
         <a class="btn btn-primary" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">Buy CameVision EGO</a>
         <a class="btn" href="start.html">Get started</a>
-        <a class="btn" href="tool.html">Offline tool</a>
+        <a class="btn" href="datasheet.html">Datasheet</a>
       </div>
     </div>
   </div>
@@ -48,8 +47,8 @@
     <div class="wrap">
       <h2>This board</h2>
       <div class="grid">
-        <div class="card"><strong>SKU</strong>CV-EGO01-OS-SC · CV-EGO01-OS-OV · CV-EGO01-OS-AM · hardware V1.I1</div>
-        <div class="card"><strong>Cameras</strong>SC233HGS · OG02C10 · AM220. Dual global shutter, 4-lane MIPI per eye. <a href="datasheet.html">Datasheet</a></div>
+        <div class="card"><strong>SKU</strong>CV-EGO01-OS-SC · OS-OV · OS-AM · OS-AR · OS-OX · OS-GS · hardware V1.I1</div>
+        <div class="card"><strong>Cameras</strong>SC233HGS · OG02C10 · MIRA220 · AR0235 (colour / mono) · OX05B1S · Kaimou GS2.3. Dual global shutter, 4-lane MIPI per eye. <a href="datasheet.html">Datasheet</a></div>
         <div class="card"><strong>Sync</strong>Shared FSYNC + EFSYNC on the same tick, 27 MHz XVCLK, 75.0 mm baseline</div>
         <div class="card"><strong>IMU</strong>LSM6DSVQTR ×2, 16-bit. ST typical 60 µg/√Hz · 2.8 mdps/√Hz. One SPI bus beside each camera. <a href="hardware.html">Precision</a></div>
         <div class="card"><strong>Compute</strong>RV1126B · NPU · 1 GB DDR4 · 16 GB eMMC</div>
@@ -61,15 +60,15 @@
   <section>
     <div class="wrap">
       <h2>Global shutter on this platform</h2>
-      <p>EGO is a stereo MIPI board. Both eyes share one SoC, one pair of CSI PHYs, and one hardware tick. SKUs on this PCB: SC233HGS, OG02C10, AM220. Other global-shutter imagers from the Camemake catalogue fit the same two-camera footprint: SmartSens, OmniVision, onsemi and Sony Pregius. Colour, mono and NIR.</p>
+      <p>EGO is a stereo MIPI board. Both eyes share one SoC, one pair of CSI PHYs, and one hardware tick. Shop sensors on this PCB: SC233HGS, OG02C10, MIRA220, AR0235 (colour and mono), OX05B1S and Kaimou GS2.3. Other global-shutter imagers from the Camemake catalogue fit the same two-camera footprint: SmartSens, OmniVision, onsemi, Kaimou and Sony Pregius. Colour, mono and NIR.</p>
       <p>Every option on this platform is a global-shutter MIPI module. Address on each bus is 0x30. CAM0 is I2C3; CAM1 is bit-banged I2C (SCL/SDA swapped on the PCB).</p>
       <table>
         <tr><th>Class</th><th>Optical / pixels</th><th>Typical sensors</th><th>On EGO</th></tr>
         <tr><td>VGA / 0.3–0.4 MP</td><td>1/6″–1/4″ · 640×480</td><td>SC035HGS, IMX287</td><td>Compact colour or mono</td></tr>
         <tr><td>~1 MP</td><td>1/4″–1/3″ · 1280×800 class</td><td>SC135HGS, OV9281 / OV9282, OG01A1B, AR0144</td><td>Mono machine vision, RGB-IR</td></tr>
         <tr><td>~1.3–1.6 MP</td><td>1/3″–1/2.9″</td><td>SC132GS, AR0134 / AR0135, IMX296, IMX273</td><td>Industrial mono or colour</td></tr>
-        <tr><td>2–2.3 MP</td><td>1/2.7 in – 1/2.3 in</td><td>SC233HGS (OS-SC), OG02C10 (OS-OV), AM220 (OS-AM), SC235HGS, SC231HGS, OV2311, AR0234, IMX392</td><td>EGO SKUs and catalogue</td></tr>
-        <tr><td>4–5 MP</td><td>1/1.8″–1/1.7″</td><td>SC430HGS, SC535HGS, OG05B1B, IMX265, IMX250</td><td>Higher-grade colour or mono</td></tr>
+        <tr><td>2–2.3 MP</td><td>1/2.8 in – 1/2.3 in</td><td>SC233HGS (OS-SC), OG02C10 (OS-OV), MIRA220 (OS-AM), AR0235 colour/mono (OS-AR), Kaimou GS2.3 (OS-GS)</td><td>EGO shop sensors</td></tr>
+        <tr><td>5 MP</td><td>1/2.53 in</td><td>OX05B1S (OS-OX)</td><td>EGO shop sensor</td></tr>
       </table>
     </div>
   </section>
@@ -88,14 +87,14 @@
         <tr>
           <td>OmniVision</td>
           <td>OG / OV / OX</td>
-          <td>OV9281, OV9282, OV2311, OG01A1B, OG02B10, OG02C10, OG05B1B, OX03C10</td>
-          <td>CV-EGO01-OS-OV is OG02C10. Mono, colour and RGB-IR. OX is the automotive GS line.</td>
+          <td>OG02C10, OX05B1S, OV9281, OV9282, OV2311, OG01A1B, OG02B10, OG05B1B, OX03C10</td>
+          <td>CV-EGO01-OS-OV is OG02C10. CV-EGO01-OS-OX is OX05B1S (Nyxel / PureCel Plus-S, 2592×1944).</td>
         </tr>
         <tr>
           <td>onsemi</td>
           <td>AR / PYTHON</td>
-          <td>AR0134, AR0135, AR0144, AR0234, NOIP1SN1300A</td>
-          <td>Industrial mono and colour. PYTHON 1300 sits in the 1.3 MP band.</td>
+          <td>AR0235, AR0134, AR0135, AR0144, AR0234, NOIP1SN1300A</td>
+          <td>CV-EGO01-OS-AR is AR0235, colour or mono. Hyperlux SG, 1920×1200, 2.8 µm.</td>
         </tr>
         <tr>
           <td>Sony</td>
@@ -106,8 +105,14 @@
         <tr>
           <td>Camemake</td>
           <td>AM</td>
-          <td>AM220</td>
+          <td>MIRA220 (AM220)</td>
           <td>CV-EGO01-OS-AM. 1600 × 1400, 2.80 um, BSI global.</td>
+        </tr>
+        <tr>
+          <td>Kaimou</td>
+          <td>GS</td>
+          <td>GS2.3</td>
+          <td>CV-EGO01-OS-GS. 1920 × 1200, 3.0 µm, 1/2.6 in, mono or RGB, 120 fps.</td>
         </tr>
       </table>
       <p>Colour Bayer, mono and NIR are variants of the same footprint. Catalogue: <a href="https://www.camemake.eu">camemake.eu</a>.</p>
@@ -117,7 +122,7 @@
   <section>
     <div class="wrap">
       <h2>On the camera</h2>
-      <p>Live page <code>http://127.0.0.1:8081/</code> · calibration <code>/cal</code> · IMU HUD <code>http://127.0.0.1:8083/</code>.</p>
+      <p>On the board: stereo page, calibration <code>/cal</code>, IMU HUD. Open from the host with <code>python tools/cv_ego_page.py</code>.</p>
       <p><a href="datasheet.html">Datasheet</a> · <a href="start.html">Get started</a> · <a href="hardware.html">Pinmux</a> · <a href="mechanical.html">Mechanical</a> · <a href="optics.html">Optics</a> · <a href="software.html">Software</a></p>
     </div>
   </section>

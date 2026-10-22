@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Get started · CameVision EGO · Camemake</title>
-  <meta name="description" content="Start CameVision EGO with the offline installer.">
+  <meta name="description" content="Start CameVision EGO: clone, Maskrom flash, ADB.">
   <link rel="stylesheet" href="assets/style.css">
   <link rel="icon" href="assets/camemake-logo.png">
 </head>
@@ -19,7 +19,6 @@
       <nav>
         <a href="index.html">Product</a>
         <a class="active" href="start.html">Get started</a>
-        <a href="tool.html">Offline tool</a>
         <a href="flash.html">Flash</a>
         <a href="hardware.html">Hardware</a>
         <a href="mechanical.html">Mechanical</a>
@@ -32,18 +31,25 @@
 
   <div class="hero">
     <div class="wrap">
-      <div class="kicker">Offline installer</div>
+      <div class="kicker">Clone · Maskrom · ADB</div>
       <h1>Get started</h1>
-      <p class="lead">Unzip the folder or clone the repository. Open the Camemake installer. Same path on Windows and Linux, on an empty board or a board that already has images. Flash starts from Maskrom.</p>
+      <p class="lead">Clone the repository. Flash from Maskrom. USB stays ADB. Same path on an empty board or a board that already has images.</p>
     </div>
   </div>
 
   <section>
     <div class="wrap">
-      <h2>Open the tool</h2>
-      <p>Windows: double-click <strong>CameVision-Ego</strong>.</p>
-      <p>Linux: open <strong>CameVision-Ego</strong> (or the desktop entry).</p>
-      <p>The Camemake window installs the packs that ship in this folder: Python, ADB, the flash tool, and USB access. The offline tool then opens at <code>http://127.0.0.1:8765/tool.html</code>.</p>
+      <h2>Shop sensors</h2>
+      <p>Same PCB, V1.I1. Pick the sensor on the <a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">webshop</a>:</p>
+      <table>
+        <tr><th>SKU</th><th>Sensor</th></tr>
+        <tr><td>CV-EGO01-OS-SC</td><td>SC233HGS</td></tr>
+        <tr><td>CV-EGO01-OS-OV</td><td>OG02C10</td></tr>
+        <tr><td>CV-EGO01-OS-AM</td><td>MIRA220</td></tr>
+        <tr><td>CV-EGO01-OS-AR</td><td>AR0235 colour or mono</td></tr>
+        <tr><td>CV-EGO01-OS-OX</td><td>OX05B1S</td></tr>
+        <tr><td>CV-EGO01-OS-GS</td><td>Kaimou GS2.3</td></tr>
+      </table>
     </div>
   </section>
 
@@ -54,41 +60,25 @@
         <h2>Maskrom</h2>
         <ol>
           <li>Connect USB-C and power the board.</li>
-          <li>Click <strong>Install USB driver</strong>.</li>
+          <li>Install the USB driver (Windows: <code>host/DriverAssitant_v5.14</code>. Linux: <code>host/linux/99-camevision-rockusb.rules</code>).</li>
           <li>Hold <strong>BOOT</strong>, tap <strong>RESET</strong>, keep BOOT held.</li>
         </ol>
       </article>
       <article class="step">
         <div class="step-num">Package</div>
         <h2>Install</h2>
-        <ol>
-          <li>Select <strong>SC233HGS</strong> or <strong>AM / MIRA220</strong>, or load a GitHub update / a zip file.</li>
-          <li>Click <strong>Install</strong>.</li>
-          <li>Release BOOT when the board starts.</li>
-        </ol>
-        <p>The package writes loader, env, idblock, U-Boot, boot, userdata, oem, rootfs, and the overlay.</p>
-        <p><strong>GitHub update</strong> pulls the latest images from <code>Camemake/CameVision-Ego</code>. <strong>Package file</strong> loads a zip from disk. Both land in the same package list, then Install writes them.</p>
+        <p>SC233HGS or AM / MIRA220 Maskrom kits in this tree:</p>
+        <pre>python tools/cv_ego_flash.py --prebuilt --package camevision-ego
+python tools/cv_ego_flash.py --prebuilt --package camevision-ego-am</pre>
+        <p>The package writes loader, env, idblock, U-Boot, boot, userdata, oem, rootfs, and the overlay. Release BOOT when the board starts. Partition map: <a href="flash.html">Flash</a>.</p>
       </article>
       <article class="step">
         <div class="step-num">ADB</div>
         <h2>Open</h2>
-        <ol>
-          <li>Click <strong>Open</strong> for <code>http://127.0.0.1:8081/</code>.</li>
-          <li>Click <strong>Extended diagnostics</strong> for a full board dump in the log: identity, memory, NPU, storage, Wi-Fi, I2C, IMU, video nodes, services, RTC, power, dmesg.</li>
-        </ol>
+        <pre>python tools/cv_ego_page.py
+python tools/cv_ego_diag.py</pre>
+        <p><code>cv_ego_page.py</code> forwards the on-board stereo page and IMU HUD to the host, then opens a browser. <code>cv_ego_diag.py</code> dumps identity, I2C, IMU, video nodes and dmesg.</p>
       </article>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <h2>From this folder / a git clone</h2>
-      <p><code>CameVision-Ego</code> · <code>tools/cv_ego_setup.py</code> · <code>tools/cv_ego_studio.py</code></p>
-      <pre>python tools/cv_ego_studio.py
-python tools/cv_ego_flash.py --prebuilt --package camevision-ego
-python tools/cv_ego_flash.py --prebuilt --package camevision-ego-am
-python tools/cv_ego_page.py</pre>
-      <p>Partition map, image names and overlay list: <a href="flash.html">Flash</a> · <a href="https://github.com/Camemake/CameVision-Ego/blob/main/FLASH.md">FLASH.md</a></p>
     </div>
   </section>
 

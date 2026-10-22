@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Flash from Maskrom · CameVision EGO · Camemake</title>
-  <meta name="description" content="Maskrom flash for CameVision EGO: USB, package, ADB. Same path as the offline tool.">
+  <meta name="description" content="Maskrom flash for CameVision EGO: USB, package, ADB.">
   <link rel="stylesheet" href="assets/style.css">
   <link rel="icon" href="assets/camemake-logo.png">
 </head>
@@ -19,7 +19,6 @@
       <nav>
         <a href="index.html">Product</a>
         <a href="start.html">Get started</a>
-        <a href="tool.html">Offline tool</a>
         <a class="active" href="flash.html">Flash</a>
         <a href="hardware.html">Hardware</a>
         <a href="mechanical.html">Mechanical</a>
@@ -34,7 +33,7 @@
     <div class="wrap">
       <div class="kicker">Maskrom · empty board or already flashed</div>
       <h1>Flash</h1>
-      <p class="lead">Hold BOOT, tap RESET, write every partition, then the overlay. USB stays ADB. Same sequence as the offline tool.</p>
+      <p class="lead">Hold BOOT, tap RESET, write every partition, then the overlay. USB stays ADB.</p>
     </div>
   </div>
 
@@ -58,13 +57,13 @@
 python tools/cv_ego_flash.py --prebuilt --package camevision-ego-am</pre>
         <p>SC233HGS rebuild (Wi-Fi + RV-3028 DTB):</p>
         <pre>python tools/cv_ego_flash.py --rebuild --package camevision-ego</pre>
-        <p>Offline tool: select <strong>CameVision Ego · SC233HGS</strong> or <strong>CameVision Ego AM · MIRA220</strong>, click <strong>Install</strong>. Release BOOT when the board starts.</p>
+        <p>Release BOOT when the board starts. Shop sensors: SC233HGS, OG02C10, MIRA220, AR0235 (colour / mono), OX05B1S, Kaimou GS2.3. The two Maskrom kits in this tree are SC233HGS and AM / MIRA220.</p>
       </article>
       <article class="step">
         <div class="step-num">ADB</div>
         <h2>Open</h2>
         <pre>python tools/cv_ego_page.py</pre>
-        <p>Live stereo: <code>http://127.0.0.1:8081/</code> · IMU HUD: <code>http://127.0.0.1:8083/</code></p>
+        <p>Forwards the on-board stereo page and IMU HUD, then opens a browser.</p>
         <pre>python tools/cv_ego_autostart.py --install
 python tools/cv_ego_diag.py</pre>
       </article>
@@ -102,7 +101,7 @@ python tools/cv_ego_overlay_deploy.py</pre>
   <section>
     <div class="wrap">
       <h2>Where the images live</h2>
-      <p>Two Maskrom kits stay separate. <strong>SC233HGS</strong> is <code>restore/release-0.2-20260902/</code> (<code>SENSOR=SC233HGS</code>, boot <code>camevision_boot_ego.img</code>). <strong>AM / MIRA220</strong> is <code>restore/release-2.0-am-mira220-20261009/</code> (<code>SENSOR=MIRA220</code>, boot <code>camevision_boot_ego_am.img</code>). Clone with Git LFS so the large images download. Frozen SC233HGS tree: <code>device-tree/rv1126b-camevision-ego-sc233hgs.dts</code>. AM DTS: <code>device-tree/rv1126b-camevision-ego.dts</code>. The offline tool <strong>GitHub update</strong> and <strong>Package file</strong> buttons land in <code>restore/updates/current/</code>.</p>
+      <p>Two Maskrom kits stay separate. <strong>SC233HGS</strong> is <code>restore/release-0.2-20260902/</code> (<code>SENSOR=SC233HGS</code>, boot <code>camevision_boot_ego.img</code>). <strong>AM / MIRA220</strong> is <code>restore/release-2.0-am-mira220-20261009/</code> (<code>SENSOR=MIRA220</code>, boot <code>camevision_boot_ego_am.img</code>). Clone with Git LFS so the large images download. Frozen SC233HGS tree: <code>device-tree/rv1126b-camevision-ego-sc233hgs.dts</code>. AM DTS: <code>device-tree/rv1126b-camevision-ego.dts</code>.</p>
       <p>Boot FIT source: <a href="https://github.com/Camemake/CameVision-Ego/blob/main/device-tree/rv1126b-camevision-ego.dts"><code>device-tree/rv1126b-camevision-ego.dts</code></a>. Overlay source: <a href="https://github.com/Camemake/CameVision-Ego/tree/main/restore/release-0.2-20260902/overlay"><code>restore/release-0.2-20260902/overlay/</code></a> and the copies under <code>tools/</code>.</p>
     </div>
   </section>
@@ -123,18 +122,7 @@ python tools/cv_ego_overlay_deploy_am.py</pre>
         <tr><td><code>/etc/init.d/S99ego-stereo</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/S99ego-stereo"><code>tools/S99ego-stereo</code></a></td></tr>
         <tr><td><code>/etc/init.d/S11hwclock</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/S11hwclock"><code>tools/S11hwclock</code></a></td></tr>
       </table>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <h2>Do not</h2>
-      <ul>
-        <li>Flash Aura or any other product's boot / oem / rootfs.</li>
-        <li>Switch USB to a UVC webcam gadget.</li>
-        <li>Skip Maskrom on an empty board.</li>
-      </ul>
-      <p>Full notes: <a href="https://github.com/Camemake/CameVision-Ego/blob/main/FLASH.md"><code>FLASH.md</code></a> · Wi-Fi Q1: <a href="https://github.com/Camemake/CameVision-Ego/blob/main/WIFI.md"><code>WIFI.md</code></a></p>
+      <p>Notes: <a href="https://github.com/Camemake/CameVision-Ego/blob/main/FLASH.md"><code>FLASH.md</code></a> · Wi-Fi Q1: <a href="https://github.com/Camemake/CameVision-Ego/blob/main/WIFI.md"><code>WIFI.md</code></a></p>
     </div>
   </section>
 

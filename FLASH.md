@@ -1,6 +1,6 @@
 # Flash CameVision EGO from Maskrom
 
-This is the same path as the [offline tool](https://camemake.github.io/CameVision-Ego/tool.html). Empty board or a board that already has images. USB stays the Camemake ADB gadget. Do not switch the board to a UVC webcam.
+Empty board or a board that already has images. USB stays the Camemake ADB gadget.
 
 Product page: https://camemake.github.io/CameVision-Ego/  
 Shop: https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414
@@ -15,24 +15,15 @@ Shop: https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutte
 
 Hardware note: Wi-Fi needs **BSS84LT1G** in Q1. See [`WIFI.md`](WIFI.md). Stereo and ADB work without that rework.
 
-## Three buttons, one sequence
+## Sequence
 
-The offline tool at `http://127.0.0.1:8765/tool.html` is USB → Package → ADB.
-
-| Step | Offline tool | Command line |
-|---|---|---|
-| USB | Install USB driver. Hold **BOOT**, tap **RESET**, keep BOOT held. | Same buttons on the board. Device is Maskrom (`2207:110c`) or Loader. |
-| Package | Select **SC233HGS** or **AM / MIRA220**. Click **Install**. | `python tools/cv_ego_flash.py --prebuilt --package camevision-ego` or `--package camevision-ego-am` |
-| ADB | Click **Open**. | `python tools/cv_ego_page.py` |
+| Step | What to do |
+|---|---|
+| USB | Install USB driver. Hold **BOOT**, tap **RESET**, keep BOOT held. Device is Maskrom (`2207:110c`) or Loader. |
+| Package | `python tools/cv_ego_flash.py --prebuilt --package camevision-ego` or `--package camevision-ego-am` |
+| ADB | `python tools/cv_ego_page.py` |
 
 Release BOOT when the write finishes and the board starts.
-
-```
-python tools/cv_ego_studio.py
-```
-
-Windows offline folder: double-click `CameVision-Ego.exe`.  
-Linux offline folder: open `CameVision-Ego`.
 
 ## Enter Maskrom
 
@@ -149,7 +140,7 @@ Board already running Recovery 5 / V0.2, no Maskrom: overlay only is enough.
 python tools/cv_ego_page.py
 ```
 
-Forwards `8081` (stereo) and `8083` (IMU HUD). Browser: http://127.0.0.1:8081/
+Forwards the on-board stereo page and IMU HUD, then opens a browser.
 
 Keep it up after every plug:
 
@@ -182,7 +173,6 @@ USB `dr_mode` stays **peripheral**. The gadget is ADB. There is no webcam profil
 
 ## More
 
-- Offline tool UI: [tool.html](https://camemake.github.io/CameVision-Ego/tool.html)
 - Flash page: [flash.html](https://camemake.github.io/CameVision-Ego/flash.html)
 - Software map: [software.html](https://camemake.github.io/CameVision-Ego/software.html)
 - Pinmux / IMU precision: [hardware.html](https://camemake.github.io/CameVision-Ego/hardware.html)
