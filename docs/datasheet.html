@@ -34,7 +34,7 @@
     <div class="wrap">
       <div class="kicker">CV-EGO01-OS · V1.I1 · digital datasheet</div>
       <h1>CameVision Ego</h1>
-      <p class="lead">Dual global-shutter stereo on one board. Shop sensors on the same PCB, 2G4P module, RV1126B NPU.</p>
+      <p class="lead">Dual global-shutter stereo on one board. Shop sensors: SC233HGS, OG02C10, MIRA220, AR0235 colour, AR0235 mono, OX05B1S, Kaimou GS2.3. Same PCB, 2G4P module, RV1126B NPU.</p>
     </div>
   </div>
 
@@ -80,12 +80,24 @@
         </article>
         <article class="sku-card">
           <div class="sku">CV-EGO01-OS-AR</div>
-          <h3>AR0235</h3>
+          <h3>AR0235 colour</h3>
           <dl>
             <dt>Pixels</dt><dd>1920 × 1200</dd>
             <dt>Pitch</dt><dd>2.80 um</dd>
             <dt>Format</dt><dd>1/2.8 in · 5.376 × 3.360 mm</dd>
-            <dt>Shutter</dt><dd>Colour or mono, global</dd>
+            <dt>Shutter</dt><dd>RGB Bayer, global</dd>
+            <dt>Rate</dt><dd>120 fps</dd>
+            <dt>f</dt><dd>639 px</dd>
+          </dl>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-AR</div>
+          <h3>AR0235 mono</h3>
+          <dl>
+            <dt>Pixels</dt><dd>1920 × 1200</dd>
+            <dt>Pitch</dt><dd>2.80 um</dd>
+            <dt>Format</dt><dd>1/2.8 in · 5.376 × 3.360 mm</dd>
+            <dt>Shutter</dt><dd>Mono, global</dd>
             <dt>Rate</dt><dd>120 fps</dd>
             <dt>f</dt><dd>639 px</dd>
           </dl>
@@ -97,8 +109,8 @@
             <dt>Pixels</dt><dd>2592 × 1944</dd>
             <dt>Pitch</dt><dd>2.20 um</dd>
             <dt>Format</dt><dd>1/2.53 in · 5.702 × 4.277 mm</dd>
-            <dt>Shutter</dt><dd>Global · Nyxel / PureCel Plus-S</dd>
-            <dt>Rate</dt><dd>5 MP</dd>
+            <dt>Shutter</dt><dd>Nyxel / PureCel Plus-S, global</dd>
+            <dt>Array</dt><dd>5 MP</dd>
             <dt>f</dt><dd>814 px</dd>
           </dl>
         </article>
@@ -125,7 +137,7 @@
         <tr><th>Item</th><th>Value</th></tr>
         <tr><td>Product</td><td>CameVision EGO</td></tr>
         <tr><td>Family</td><td>CV-EGO01-OS</td></tr>
-        <tr><td>SKUs</td><td>CV-EGO01-OS-SC · OS-OV · OS-AM · OS-AR · OS-OX · OS-GS</td></tr>
+        <tr><td>SKUs</td><td>CV-EGO01-OS-SC · OS-OV · OS-AM · OS-AR (colour / mono) · OS-OX · OS-GS</td></tr>
         <tr><td>Hardware</td><td>CameVision Ego V1.I1</td></tr>
         <tr><td>Optics</td><td>AM V1.3 · 2G4P + 1 IR, M12</td></tr>
         <tr><td>Model string</td><td><code>CameVision Ego</code> · <code>camemake,camevision-ego</code></td></tr>
@@ -143,7 +155,7 @@
         <tr><td>Memory</td><td>K4A8G165WG DDR4, 16-bit, 1 GB</td></tr>
         <tr><td>eMMC</td><td>BWCTAK611G16G, 16 GB</td></tr>
         <tr><td>Kernel</td><td>6.1.141-rt52</td></tr>
-        <tr><td>Cameras</td><td>×2, 4-lane MIPI each, 27 MHz XVCLK, I2C 0x30 per bus</td></tr>
+        <tr><td>Cameras</td><td>×2, 4-lane MIPI each, 27 MHz XVCLK, I2C 0x30. Shop: SC233HGS · OG02C10 · MIRA220 · AR0235 colour · AR0235 mono · OX05B1S · Kaimou GS2.3</td></tr>
         <tr><td>Sync</td><td>Shared FSYNC + EFSYNC · continuous trigger · 12.5 fps</td></tr>
         <tr><td>Baseline</td><td>75.0 mm · CAM0 left · CAM1 right</td></tr>
         <tr><td>IMU</td><td>LSM6DSVQTR ×2 · SPI0 / SPI1 · 16-bit · 480 Hz HUD default · ST typical 60 µg/√Hz · 2.8 mdps/√Hz</td></tr>
@@ -190,7 +202,7 @@
         <tr><td>EFL</td><td>1.79 mm</td></tr>
         <tr><td>F-number</td><td>2.0</td></tr>
         <tr><td>TV distortion</td><td>&lt; −22.3 %</td></tr>
-        <tr><td>CRA</td><td>15.94° (SC / AM) · 15.95° (OV)</td></tr>
+        <tr><td>CRA</td><td>15.94° (SC / AM / GS) · 15.95° (OV) · 0° or 28° (AR) · OX per module</td></tr>
         <tr><td>Relative illumination</td><td>&gt; 40 %</td></tr>
         <tr><td>Optical TTL</td><td>15.00 ± 0.3 mm</td></tr>
         <tr><td>Mechanical TTL</td><td>13.92 ± 0.3 mm</td></tr>
@@ -201,14 +213,15 @@
         <tr><td>Seal / storage</td><td>IP69 · −40 to +85 °C</td></tr>
       </table>
       <table>
-        <tr><th></th><th>OS-SC</th><th>OS-OV</th><th>OS-AM</th><th>OS-AR</th><th>OS-OX</th><th>OS-GS</th></tr>
-        <tr><td>Sensor</td><td>SC233HGS</td><td>OG02C10</td><td>MIRA220</td><td>AR0235</td><td>OX05B1S</td><td>Kaimou GS2.3</td></tr>
-        <tr><td>Pixels</td><td>1920 × 1200</td><td>1600 × 1200</td><td>1600 × 1400</td><td>1920 × 1200</td><td>2592 × 1944</td><td>1920 × 1200</td></tr>
-        <tr><td>Pitch</td><td>3.00 um</td><td>3.45 um</td><td>2.80 um</td><td>2.80 um</td><td>2.20 um</td><td>3.00 um</td></tr>
-        <tr><td>Format</td><td>1/2.6 in</td><td>1/2.5 in</td><td>1/2.7 in</td><td>1/2.8 in</td><td>1/2.53 in</td><td>1/2.6 in</td></tr>
-        <tr><td>Shutter</td><td>Colour Bayer</td><td>Colour</td><td>BSI</td><td>Colour or mono</td><td>Nyxel GS</td><td>Mono or RGB</td></tr>
-        <tr><td>f</td><td>597 px</td><td>519 px</td><td>639 px</td><td>639 px</td><td>814 px</td><td>597 px</td></tr>
-        <tr><td>Video nodes</td><td colspan="6"><code>/dev/video24</code> CAM0 · <code>/dev/video32</code> CAM1</td></tr>
+        <tr><th>SKU</th><th>Sensor</th><th>Pixels</th><th>Pitch</th><th>Format</th><th>Active array</th><th>Shutter</th><th>f</th></tr>
+        <tr><td>OS-SC</td><td>SC233HGS</td><td>1920 × 1200</td><td>3.00 um</td><td>1/2.6 in</td><td>5.760 × 3.600 mm</td><td>Colour Bayer, global</td><td>597 px</td></tr>
+        <tr><td>OS-OV</td><td>OG02C10</td><td>1600 × 1200</td><td>3.45 um</td><td>1/2.5 in</td><td>5.520 × 4.140 mm</td><td>Colour, global</td><td>519 px</td></tr>
+        <tr><td>OS-AM</td><td>MIRA220</td><td>1600 × 1400</td><td>2.80 um</td><td>1/2.7 in</td><td>4.488 × 3.922 mm</td><td>BSI global</td><td>639 px</td></tr>
+        <tr><td>OS-AR</td><td>AR0235 colour</td><td>1920 × 1200</td><td>2.80 um</td><td>1/2.8 in</td><td>5.376 × 3.360 mm</td><td>RGB Bayer, global</td><td>639 px</td></tr>
+        <tr><td>OS-AR</td><td>AR0235 mono</td><td>1920 × 1200</td><td>2.80 um</td><td>1/2.8 in</td><td>5.376 × 3.360 mm</td><td>Mono, global</td><td>639 px</td></tr>
+        <tr><td>OS-OX</td><td>OX05B1S</td><td>2592 × 1944</td><td>2.20 um</td><td>1/2.53 in</td><td>5.702 × 4.277 mm</td><td>Nyxel / PureCel Plus-S, global</td><td>814 px</td></tr>
+        <tr><td>OS-GS</td><td>Kaimou GS2.3</td><td>1920 × 1200</td><td>3.00 um</td><td>1/2.6 in</td><td>5.78 × 3.62 mm</td><td>Mono or RGB, global</td><td>597 px</td></tr>
+        <tr><td colspan="8">Video nodes <code>/dev/video24</code> CAM0 · <code>/dev/video32</code> CAM1. Same 2G4P module on every SKU; field follows the die.</td></tr>
       </table>
     </div>
   </section>
