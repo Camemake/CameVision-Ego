@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>硬件 · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision Ego V1.I1 管脚：相机、IMU、Wi-Fi、存储、电源。">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="icon" href="../assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="../assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake 立体视觉 · NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">产品</a>
+        <a href="start.html">入门</a>
+        <a href="flash.html">烧录</a>
+        <a class="active" href="hardware.html">硬件</a>
+        <a href="mechanical.html">结构</a>
+        <a href="optics.html">光学</a>
+        <a href="software.html">软件</a>
+        <a href="datasheet.html">规格书</a>
+      </nav>
+      <div class="lang"><a href="../hardware.html">EN</a><a class="on" href="hardware.html">中文</a></div>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买 EGO</a>
+    </div>
+  </header>
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">CameVision Ego V1.I1</div>
+      <h1>硬件</h1>
+      <p class="lead">RV1126B 管脚，CameVision Ego V1.I1。源：<code>device-tree/rv1126b-camevision-ego.dts</code>。</p>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      <h2>实装零件</h2>
+      <table>
+        <tr><th>模块</th><th>原理图标号</th><th>板上实际</th></tr>
+        <tr><td>SoC</td><td>RV1126B</td><td>RV1126B</td></tr>
+        <tr><td>DDR4 U3</td><td>K4A4G165WG（512 MB）</td><td>K4A8G165WG 16 位 1 GB</td></tr>
+        <tr><td>eMMC U2A</td><td>BWCTAK611G16G</td><td>BWCTAK611G16G 16 GB</td></tr>
+        <tr><td>相机 U7 / U10</td><td>SC233HGS / OG02C10 / MIRA220 / AR0235 / OX05B1S / GS2.3</td><td>×2，各 I2C 0x30。型号 OS-SC / OS-OV / OS-AM / OS-AR / OS-OX / OS-GS</td></tr>
+        <tr><td>IMU U9 / U12</td><td>LSM6DSV320XTR</td><td>LSM6DSVQTR ×2</td></tr>
+        <tr><td>电源管理</td><td>RK801-2</td><td>I2C0 0x27</td></tr>
+        <tr><td>RTC</td><td>RV-3028-C7</td><td>I2C2 0x52</td></tr>
+        <tr><td>Wi-Fi / 蓝牙</td><td>VS6621S80 U14</td><td>SDMMC1 + UART2</td></tr>
+        <tr><td>充电</td><td>BQ24072RGTR U13</td><td>250 mA 快充</td></tr>
+        <tr><td>microSD</td><td>U6 475710001</td><td>SDMMC0，1.8 V VDD</td></tr>
+      </table>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>相机</h2>
+      <table>
+        <tr><th>网络</th><th>焊盘 / GPIO</th><th>功能</th></tr>
+        <tr><td>CAM0 MIPI</td><td>CSI RX0，4 通道 + CLK</td><td>U7 → <code>/dev/video24</code></td></tr>
+        <tr><td>I2C3_SCL/SDA_CAM</td><td>I2C3M1 GPIO4_A4 / A5 @0x30</td><td>CAM0 控制，400 kHz</td></tr>
+        <tr><td>CAM0 XVCLK</td><td>CLK_CAM0_OUT 27 MHz</td><td>传感器时钟</td></tr>
+        <tr><td>CAM0_PWDN</td><td>GPIO4_A3 焊盘 1V21</td><td>XSHUTDN，高有效</td></tr>
+        <tr><td>MIPI_RX0_SYNC</td><td>AG32 GPIO4_A1</td><td>FSYNC → U7.D3</td></tr>
+        <tr><td>MIPI_RX0_TRIGGER</td><td>U31 GPIO6_C2</td><td>EFSYNC → U7.B5</td></tr>
+        <tr><td>CAM1 MIPI</td><td>CSI RX1，4 通道 + CLK</td><td>U10 → <code>/dev/video32</code></td></tr>
+        <tr><td>I2C4_SCL/SDA_CAM</td><td>GPIO4_A6 SCL · GPIO4_A7 SDA @0x30</td><td>CAM1 软件模拟（焊盘相对 SoC I2C4_M2 对调）</td></tr>
+        <tr><td>CAM1 XVCLK</td><td>CLK_CAM1_OUT 27 MHz</td><td>传感器时钟</td></tr>
+        <tr><td>CAM1_PWDN</td><td>GPIO4_A2 焊盘 1Y23</td><td>XSHUTDN</td></tr>
+        <tr><td>MIPI_RX1_SYNC</td><td>AG31 GPIO4_A0</td><td>FSYNC → U10.D3</td></tr>
+        <tr><td>MIPI_RX1_TRIGGER</td><td>V31 GPIO6_C3</td><td>EFSYNC → U10.B5</td></tr>
+        <tr><td>PWR_EN_2.8V</td><td>GPIO0_B0 焊盘 1AB4</td><td>U15 AVDD 2.8 V</td></tr>
+        <tr><td>PWR_EN_1.5V</td><td>GPIO0_B1 焊盘 1AA4</td><td>U16 1.5 V</td></tr>
+        <tr><td>PWR_EN_1.2V</td><td>GPIO0_B2 焊盘 1AC2</td><td>U18 DVDD 1.2 V</td></tr>
+      </table>
+      <p>连续触发。FSYNC 与 EFSYNC 共用同一节拍。I2C4 关闭。GMAC 关闭。SC233HGS 芯片 ID <code>0xcb61</code>。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>IMU、I2C、SPI</h2>
+      <table>
+        <tr><th>网络</th><th>焊盘 / GPIO</th><th>功能</th></tr>
+        <tr><td>SPI0 CLK/CS0/MISO/MOSI</td><td>SPI0_M2 GPIO5_A3 / A4 / A5 / A6</td><td>IMU0 U9（CAM0）</td></tr>
+        <tr><td>IMU0_INT1 / INT2</td><td>GPIO5_B1 · GPIO5_D4</td><td>IMU0 中断</td></tr>
+        <tr><td>SPI1 CLK/CS0/MISO/MOSI</td><td>SPI1_M0</td><td>IMU1 U12（CAM1）</td></tr>
+        <tr><td>IMU1_INT1 / INT2</td><td>GPIO6_B5 · GPIO6_C1</td><td>IMU1 中断</td></tr>
+        <tr><td>I2C0_SCL/SDA_PMIC</td><td>I2C0M0 0x27</td><td>RK801-2</td></tr>
+        <tr><td>PMIC INT / PWRCTRL</td><td>GPIO0_C0 · GPIO0_C1</td><td>电源管理</td></tr>
+        <tr><td>I2C2</td><td>I2C2M0 0x52</td><td>RV-3028</td></tr>
+        <tr><td>RTC INT / EVI</td><td>GPIO0_C5 · GPIO0_C4</td><td>RTC</td></tr>
+        <tr><td>I2C1 / I2C5</td><td>—</td><td>本 PCB 未启用</td></tr>
+      </table>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>IMU 采样率</h2>
+      <p>实装零件为 <strong>LSM6DSVQTR</strong> ×2，IIO <code>st,lsm6dsv</code>。SPI 模式 3，<code>spi-max-frequency</code> 1 MHz，控制器 <code>max-freq</code> 10 MHz。DTB：<code>st,odr-triggered</code>，DRDY 在 INT1。HUD 写入 <code>sampling_frequency</code>（oneshot sysfs）。</p>
+      <table>
+        <tr><th></th><th>加速度计</th><th>陀螺仪</th></tr>
+        <tr><td>本包（HUD）</td><td>480 Hz</td><td>480 Hz</td></tr>
+        <tr><td>IIO 节点</td><td>CAM0 <code>iio:device2</code> · CAM1 <code>iio:device4</code></td><td>CAM0 <code>iio:device1</code> · CAM1 <code>iio:device3</code></td></tr>
+        <tr><td>ODR 列表（Hz）</td><td>1.875 · 7.5 · 15 · 30 · 60 · 120 · 240 · 480 · 960 · 1920 · 3840 · 7680</td><td>7.5 · 15 · 30 · 60 · 120 · 240 · 480 · 960 · 1920 · 3840 · 7680</td></tr>
+        <tr><td>满量程（典型）</td><td>±2 / 4 / 8 / 16 g</td><td>±125 / 250 / 500 / 1000 / 2000 / 4000 dps</td></tr>
+      </table>
+      <p><code>/sys/bus/iio/devices/iio:deviceN/sampling_frequency</code> · <code>sampling_frequency_available</code>。<a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_imu_hud.py"><code>tools/ego_imu_hud.py</code></a> 默认 ODR 为 <code>"480"</code>。:8083 上的 JSON：<code>odr_hz</code>、<code>read_hz</code>。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>IMU 精度</h2>
+      <p>板上料号为 <strong>LSM6DSVQTR</strong>（ST <strong>LSM6DSV</strong> 编带）。以下为 ST 表 3 典型值，条件 <strong>Vdd = 1.8 V、25 °C</strong>。典型值不是保证值。零位偏置为标定后数值。这些是 <a href="https://www.st.com/resource/en/datasheet/lsm6dsv.pdf">ST LSM6DSV 数据手册</a> 的硅片数据，不是 CameVision 整板实测。</p>
+      <table>
+        <tr><th></th><th>加速度计</th><th>陀螺仪</th></tr>
+        <tr><td>分辨率</td><td>16 位</td><td>16 位</td></tr>
+        <tr><td>满量程</td><td>±2 / 4 / 8 / 16 g</td><td>±125 / 250 / 500 / 1000 / 2000 / 4000 dps</td></tr>
+        <tr><td>灵敏度</td><td>0.061 / 0.122 / 0.244 / 0.488 mg/LSB</td><td>4.375 / 8.75 / 17.50 / 35 / 70 / 140 mdps/LSB</td></tr>
+        <tr><td>灵敏度容差</td><td>—</td><td>±0.3 %（满量程 ≤ ±2000 dps）</td></tr>
+        <tr><td>灵敏度随温度</td><td>±0.01 %/°C（−40…+85 °C）</td><td>±0.007 %/°C（−40…+85 °C）</td></tr>
+        <tr><td>零位偏置（标定后）</td><td>±12 mg</td><td>±1 dps</td></tr>
+        <tr><td>偏置随温度</td><td>±0.07 mg/°C</td><td>±0.006 dps/°C</td></tr>
+        <tr><td>噪声密度（高性能）</td><td>60 µg/√Hz</td><td>2.8 mdps/√Hz</td></tr>
+        <tr><td>噪声密度（普通）</td><td>100 µg/√Hz</td><td>—</td></tr>
+        <tr><td>RMS 噪声（低功耗）</td><td>2.3 / 1.8 / 1.2 mg（LPM1 / LPM2 / LPM3）</td><td>60 mdps RMS</td></tr>
+        <tr><td>ODR 精度（高精度，陀螺开启）</td><td>±1 %</td><td>±1 %</td></tr>
+        <tr><td>工作温度</td><td>−40 … +85 °C</td><td>−40 … +85 °C</td></tr>
+      </table>
+      <p>噪声密度与 ODR 无关。陀螺速率噪声在满量程 ≤ ±2000 dps 时与量程无关。加速度噪声适用于 <code>XL_DualC_EN = 0</code>。HUD 默认 480 Hz oneshot sysfs；现场板上 IIO 标度是所选满量程的 LSB 大小。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>Wi-Fi、SD、USB、电源、LED、启动</h2>
+      <table>
+        <tr><th>网络</th><th>焊盘 / GPIO</th><th>功能</th></tr>
+        <tr><td>eMMC</td><td>EMMC / FSPI</td><td>U2A，现场 <code>mmc0</code></td></tr>
+        <tr><td>SDMMC0 CLK/CMD/D0–D3</td><td>GPIO2_A0–A5</td><td>microSD（不是 LED 焊盘）</td></tr>
+        <tr><td>SDMMC0_DET</td><td>GPIO3_B3 焊盘 1B14</td><td>插卡检测，低有效，上拉</td></tr>
+        <tr><td>SDMMC0_PWREN</td><td>GPIO3_B4 焊盘 1A14</td><td>SD 电源使能（不是 dtsi GPIO0_A10）</td></tr>
+        <tr><td>SDMMC1 CLK/CMD/D0–D3</td><td>SDIO</td><td>VS6621 Wi-Fi</td></tr>
+        <tr><td>WIFI_RST / CHIP_EN</td><td>GPIO3_B2</td><td>pwrseq，低 = 电源开（BSS84 Q1）</td></tr>
+        <tr><td>WIFI_SOC_PWCTL</td><td>GPIO3_B6</td><td>HOST_WAKE_WL</td></tr>
+        <tr><td>WIFI_INT</td><td>GPIO3_B7 焊盘 A16</td><td>WL_WAKE_HOST</td></tr>
+        <tr><td>UART2 TX/RX/CTS</td><td>UART2M0</td><td>蓝牙</td></tr>
+        <tr><td>UART2 RTS</td><td>GPIO3_A6</td><td>蓝牙 RTS 作 GPIO</td></tr>
+        <tr><td>USB-C J3</td><td>USB2 + USB3 DRD</td><td>ADB 配件，<code>dr_mode</code> 外设</td></tr>
+        <tr><td>BAT_CHG</td><td>GPIO0_A7 焊盘 1AC4</td><td>BQ24072 充电状态，低有效</td></tr>
+        <tr><td>STATUS_LED_R</td><td>GPIO0_A6 焊盘 1AA6</td><td>RGB 共阳极，低电平点亮</td></tr>
+        <tr><td>STATUS_LED_G</td><td>GPIO0_A5 焊盘 AL10</td><td>RGB 共阳极，低电平点亮</td></tr>
+        <tr><td>STATUS_LED_B</td><td>GPIO0_A4 焊盘 1AB6</td><td>RGB 共阳极，低电平点亮</td></tr>
+        <tr><td>UART0</td><td>UART0M2</td><td>调试串口 1.5 Mbaud</td></tr>
+        <tr><td>SARADC0_IN7</td><td>ADC</td><td>Maskrom / eMMC 启动</td></tr>
+      </table>
+      <p>插卡检测是 GPIO3_B3。GPIO0_A5 是绿色 LED。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>本 PCB 未使用的原理图页</h2>
+      <table>
+        <tr><th>模块</th><th>设备树状态</th></tr>
+        <tr><td>GMAC</td><td>关闭：释放 GPIO6_C2 / C3 给相机 EFSYNC</td></tr>
+        <tr><td>I2C1 · I2C5</td><td>未启用</td></tr>
+        <tr><td>DSI / 显示</td><td>未使用</td></tr>
+        <tr><td>EPHY / 以太网</td><td>图纸有，未贴装</td></tr>
+        <tr><td>音频 / I2S</td><td>图纸有，未贴装</td></tr>
+      </table>
+    </div>
+  </section>
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div>
+        <a href="https://www.camemake.eu/robotic-solutions">机器人方案</a> ·
+        <a href="mailto:sales@camemake.com">sales@camemake.com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

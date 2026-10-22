@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>结构 · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision Ego 结构装配、壳体与 RV1126B 散热路径。">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="icon" href="../assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="../assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake 立体视觉 · NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">产品</a>
+        <a href="start.html">入门</a>
+        <a href="flash.html">烧录</a>
+        <a href="hardware.html">硬件</a>
+        <a class="active" href="mechanical.html">结构</a>
+        <a href="optics.html">光学</a>
+        <a href="software.html">软件</a>
+        <a href="datasheet.html">规格书</a>
+      </nav>
+      <div class="lang"><a href="../mechanical.html">EN</a><a class="on" href="mechanical.html">中文</a></div>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买 EGO</a>
+    </div>
+  </header>
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">CameVision Ego V1.I1 · AM V1.3</div>
+      <h1>结构与热设计</h1>
+      <p class="lead">壳体、75.0 mm 基线、RV1126B 散热路径。</p>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      <h2>两面</h2>
+      <div class="board-grid">
+        <figure class="board-fig">
+          <img src="../assets/ego-pcb-cameras.png" alt="CameVision Ego 相机面：双模组与中央 RV1126B">
+          <figcaption>
+            <strong>相机面。</strong>左右各一颗模组。中央方块：<strong>RV1126B</strong>。左相机与 SoC 之间是 microSD。SoC 右侧较小方块：存储 / 射频。
+          </figcaption>
+        </figure>
+        <figure class="board-fig">
+          <img src="../assets/ego-pcb-connectors.png" alt="CameVision Ego 连接器面：USB-C、PH、RST、BOOT、UART、散热过孔区">
+          <figcaption>
+            <strong>连接器面。</strong>USB-C、PH、RST、BOOT、UART RX/TX。中央过孔区：RV1126B 下方背面散热落点。右侧方块：Wi-Fi / 天线。
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>热量在哪里</h2>
+      <p class="callout">散热路径：<strong>RV1126B</strong>，相机面中央。双 ISP、立体与 NPU。相机、eMMC 与 VS6621 不走这条路径。</p>
+      <table>
+        <tr><th>区域</th><th>PCB 上</th><th>壳体里</th></tr>
+        <tr>
+          <td>SoC 顶盖</td>
+          <td>相机面大方块，两眼之间</td>
+          <td>主冷却点。软导热垫或导热泥贴到金属壁、均热板或小散热器。</td>
+        </tr>
+        <tr>
+          <td>SoC 过孔区</td>
+          <td>连接器面中央，BGA 下方</td>
+          <td>次冷却点。绝缘间隙垫把该铜区导入同一金属体积。</td>
+        </tr>
+        <tr>
+          <td>电源管理 / 电源</td>
+          <td>连接器面中央偏左的深色块</td>
+          <td>空气或轻垫。USB-C 与 PH 保持畅通。</td>
+        </tr>
+        <tr>
+          <td>相机</td>
+          <td>两端黑色镜筒</td>
+          <td>光学避让区。支撑 PCB，切勿夹紧或扭转模组。</td>
+        </tr>
+        <tr>
+          <td>Wi-Fi / 天线</td>
+          <td>右侧方块与金色射频焊盘</td>
+          <td>天线前方用塑料或空气。这里放金属会毁掉距离，也带不走 SoC 热量。</td>
+        </tr>
+      </table>
+      <p>芯片工作温度 <strong>35–45 °C</strong>。内核保护 <strong>115 °C</strong>（<code>cpu-thermal</code> / <code>soc-crit</code>）。被动散热按静止 25 °C 空气下该区间上沿设计。NPU 关闭时在下沿。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>散热是壳体的一部分</h2>
+      <p>夹持相机的金属，同时把 RV1126B 的热带走。</p>
+      <div class="grid">
+        <div class="card">
+          <strong>1. 贴住顶盖</strong>
+          在 RV1126B 顶盖上放 1–2 mm 硅胶间隙垫（电绝缘，导热 ≥ 3 W/m·K），压缩 10–30 %，贴到平整铝或钢壁。该壁可以是壳体后盖，或粘在后盖上的小均热板。
+        </div>
+        <div class="card">
+          <strong>2. 用过孔区</strong>
+          连接器面过孔区再贴第二块垫，导入同一金属。
+        </div>
+        <div class="card">
+          <strong>3. 一个刚性体积</strong>
+          立体基线就是这块 PCB。壳体托住板子，而不是夹相机镜筒。在绿色外形下做凸台或凹槽；相机在开孔中悬浮。
+        </div>
+        <div class="card">
+          <strong>4. 留下维护面</strong>
+          USB-C、BOOT、RST 与 PH 保持可及，或用短线引出。Maskrom：按住 BOOT，点按 RST。
+        </div>
+      </div>
+      <h3>质量与空气表面积</h3>
+      <p><strong>被动。</strong>顶盖垫贴到能看见室温空气的铝件。不要风扇。</p>
+      <p>双 ISP 与立体约 <strong>2.0 W</strong>，NPU 关闭。NPU 开启约 <strong>3.0 W</strong>。室温 <strong>25 °C</strong>。设计芯片温度：关闭 <strong>42 °C</strong>，开启 <strong>45 °C</strong>。垫约 <strong>1.5 °C/W</strong>。静止铝件在自由空气中约 <strong>12 W/m²·K</strong>（含辐射）。</p>
+      <p><code>A = P<sub>sink</sub> / (h · (T<sub>die</sub> − 25 − P<sub>sink</sub> · 1.5))</code>。约 0.4 W 留在板上，所以散热器看到关闭 1.6 W、开启 2.6 W。</p>
+      <table>
+        <tr><th></th><th>NPU 关闭 · 2.0 W</th><th>NPU 开启 · 3.0 W</th></tr>
+        <tr><td>芯片，静止 25 °C 空气</td><td>35–42 °C</td><td>40–45 °C</td></tr>
+        <tr><td>金属空气表面积</td><td><strong>100 cm²</strong></td><td><strong>160 cm²</strong></td></tr>
+        <tr><td>铝件</td><td><strong>60 g</strong></td><td><strong>100 g</strong></td></tr>
+        <tr><td>实用零件</td><td>50 × 50 mm，12 mm 齿</td><td>60 × 60 mm，15–18 mm 齿，或一面 80 × 50 mm 壳体壁</td></tr>
+      </table>
+      <p>齿的两面都算。50 × 50 × 12 mm 挤出件约 100 cm²。把块体贴到 RV1126B 方块。齿面向开放空气，或坐在薄铝壳体壁上。</p>
+      <p>室温 30 °C 时，停在 45 °C 区间上沿，或再加几毫米齿高。</p>
+      <div class="grid">
+        <div class="card">
+          <strong>NPU 关闭</strong>
+          50 × 50 × 12 mm，约 60 g。双 ISP 与深度在静止空气中保持 35–45 °C 区间的中低段。
+        </div>
+        <div class="card">
+          <strong>NPU 开启</strong>
+          60 × 60 × 16 mm，约 100 g。同一区间，接近 45 °C。板中央同样大小的金属盖即可，前提是外面能通气。
+        </div>
+      </div>
+      <h3>垫与金属</h3>
+      <table>
+        <tr><th></th><th>用</th><th>避免</th></tr>
+        <tr><td>界面</td><td>SoC 顶盖与过孔区用软绝缘间隙垫或导热泥</td><td>过孔区裸金属、液态金属、会锁死 BGA 的硬导热环氧</td></tr>
+        <tr><td>压力</td><td>顶盖均匀轻压</td><td>点载荷、穿过 SoC 的螺丝、或把板压弯的弹簧</td></tr>
+        <tr><td>金属</td><td>板中央的铝凹槽或铝板</td><td>右侧射频方块上或镜头前方的金属</td></tr>
+        <tr><td>空气</td><td>纯塑料壳时，在 SoC 旁留短烟囱</td><td>泡沫、胶带或贴在 RV1126B 上的标牌</td></tr>
+      </table>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>装配顺序</h2>
+      <div class="steps">
+        <article class="step">
+          <div class="step-num">1</div>
+          <h2>电路板</h2>
+          <ol>
+            <li>拿绿色外形，不要拿相机镜筒，也不要按 SoC 顶盖。</li>
+            <li>两颗模组摆正。基线就是这块 PCB。</li>
+            <li>连接器面保持干净。过孔区上的助焊剂或油脂会挡住导热垫。</li>
+          </ol>
+        </article>
+        <article class="step">
+          <div class="step-num">2</div>
+          <h2>导热件</h2>
+          <ol>
+            <li>顶盖垫只贴 RV1126B 方块。</li>
+            <li>背面垫只裁到过孔区。避开 USB-C、PH、RST、BOOT 与 UART 焊盘。</li>
+            <li>若能防止装板时滑动，先把垫贴到金属上。</li>
+          </ol>
+        </article>
+        <article class="step">
+          <div class="step-num">3</div>
+          <h2>壳体</h2>
+          <ol>
+            <li>把板放到凸台上。相机最后进入开孔，不要侧向受力。</li>
+            <li>合盖，让 SoC 垫压缩。确认 BOOT 与 RST 仍能按下。</li>
+            <li>引出 USB-C 与 PH，不要把板从导热垫上拉开。</li>
+          </ol>
+        </article>
+        <article class="step">
+          <div class="step-num">4</div>
+          <h2>验证路径</h2>
+          <ol>
+            <li>USB-C 供电。等立体与 ISP 起来后，用 <code>python tools/cv_ego_page.py</code> 打开页面（英文界面）。</li>
+            <li>深度起来后片上传感器：<strong>35–45 °C</strong>（35000–45000）。NPU 关闭在下沿；NPU 开启接近 45 °C。</li>
+            <li>超过 45 °C：顶盖垫没贴上，或齿没有空气。</li>
+          </ol>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>避让区</h2>
+      <table>
+        <tr><th>部位</th><th>原因</th></tr>
+        <tr><td>相机镜筒</td><td>光轴与立体基线。这里夹紧会偏移深度，也可能压裂模组。</td></tr>
+        <tr><td>microSD</td><td>取卡。SoC 垫不要压到卡槽。</td></tr>
+        <tr><td>BOOT / RST / RX / TX</td><td>Maskrom 与调试串口。</td></tr>
+        <tr><td>PH</td><td>电池线。在壳体内做应力释放，不要拉在连接器上。</td></tr>
+        <tr><td>右侧射频方块</td><td>Wi-Fi / 蓝牙。这里的金属或石墨片是天线屏蔽，不是散热器。</td></tr>
+        <tr><td>板弯曲</td><td>外形就是立体杆。一颗拧歪 PCB 的螺丝就是标定失败。</td></tr>
+      </table>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>读取 SoC 温度</h2>
+      <p>已有 ADB 的板上，芯片传感器就是热区：</p>
+      <pre>adb shell cat /sys/class/thermal/thermal_zone0/temp</pre>
+      <p>毫摄氏度。<code>40000</code> 是 40 °C。工作区间 <strong>35000–45000</strong>。临界保护 <strong>115000</strong>（115 °C）。该区跟随 <code>cpu-thermal</code>。</p>
+      <p><a href="hardware.html">硬件管脚</a> · <a href="start.html">入门</a> · <a href="flash.html">烧录</a></p>
+    </div>
+  </section>
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div>
+        <a href="https://www.camemake.eu/robotic-solutions">机器人方案</a> ·
+        <a href="mailto:sales@camemake.com">sales@camemake.com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

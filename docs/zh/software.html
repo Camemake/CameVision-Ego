@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>软件 · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision EGO 软件：现场立体、同步、IMU、IQ、主机工具。">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="icon" href="../assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="../assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake 立体视觉 · NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">产品</a>
+        <a href="start.html">入门</a>
+        <a href="flash.html">烧录</a>
+        <a href="hardware.html">硬件</a>
+        <a href="mechanical.html">结构</a>
+        <a href="optics.html">光学</a>
+        <a class="active" href="software.html">软件</a>
+        <a href="datasheet.html">规格书</a>
+      </nav>
+      <div class="lang"><a href="../software.html">EN</a><a class="on" href="software.html">中文</a></div>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买 EGO</a>
+    </div>
+  </header>
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">本软件包</div>
+      <h1>软件</h1>
+      <p class="lead">驱动、设备树、用户态、烧录。立体匹配、深度与标定都在相机上运行。</p>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      <h2>运行位置</h2>
+      <table>
+        <tr><th>位置</th><th>内容</th></tr>
+        <tr><td>本机</td><td>USB 驱动、烧录、overlay 推送、ADB 转发、诊断、会话写入</td></tr>
+        <tr><td>板上 <code>/userdata</code></td><td>立体页、FSYNC/EFSYNC、IMU 抬头显示、标定界面、Wi-Fi STA、IQ JSON、本地匹配器、启动脚本</td></tr>
+        <tr><td>板内核</td><td>设备树、CSI、I2C/SPI、SDIO Wi-Fi、ADB 配件：<code>device-tree/rv1126b-camevision-ego.dts</code></td></tr>
+      </table>
+      <p>源码：<code>tools/</code>。Overlay：<code>restore/release-0.2-20260902/overlay/</code> → <code>/userdata/</code>。链接：<code>/src/…</code>。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>驱动</h2>
+      <p>Boot FIT 中的内核为 <code>6.1.141-rt52</code>。树内节点来自 DTB。树外模块在 overlay 中，由启动脚本 <code>insmod</code>。</p>
+      <table>
+        <tr><th>模块</th><th>驱动 / 兼容串</th><th>位置</th><th>现场节点</th></tr>
+        <tr><td>MIPI 传感器</td><td><code>smartsens,sc233hgs</code></td><td>Boot FIT（内核 + DTB）</td><td>I2C <code>3-0030</code>、<code>6-0030</code> · 芯片 ID <code>0xcb61</code></td></tr>
+        <tr><td>MIPI CSI-2 D-PHY</td><td><code>csi2_dphy0</code> · <code>csi2_dphy1</code></td><td>DTB，各 4 通道</td><td>CSI RX0 / RX1 下的 PHY</td></tr>
+        <tr><td>MIPI CSI-2 主机</td><td><code>mipi0_csi2</code> · <code>mipi1_csi2</code></td><td>DTB</td><td>桥接到 CIF</td></tr>
+        <tr><td>CIF</td><td><code>rkcif</code> · <code>rkcif_mipi_lvds</code> · <code>rkcif_mipi_lvds1</code></td><td>DTB + Rockchip CIF</td><td>进入 ISP 的 RAW 通路</td></tr>
+        <tr><td>ISP / VPSS</td><td><code>rkisp</code> · <code>rkisp_vir0/1</code> · <code>rkvpss_vir0/1</code> · <code>rkdvbm</code></td><td>DTB + Rockchip ISP</td><td><code>/dev/video24</code> CAM0 · <code>/dev/video32</code> CAM1</td></tr>
+        <tr><td>3A / IQ</td><td><code>rkaiq_3A_server</code></td><td><code>/oem/usr/bin/</code> + overlay 中的 IQ JSON</td><td>两路 ISP 的曝光 / AWB</td></tr>
+        <tr><td>IMU</td><td><code>st,lsm6dsv</code>（IIO）</td><td>Boot FIT · SPI0 / SPI1</td><td><code>/sys/bus/iio/devices/iio:device1…4</code>（陀螺 / 加速度 ×2）。精度见 <a href="hardware.html">硬件</a></td></tr>
+        <tr><td>Wi-Fi / BLE</td><td>SDIO <code>1FFE:6621</code> · <code>skw_sdio_lite</code> · <code>swt6621s_wifi</code> · <code>skwbt</code></td><td>Overlay <code>swt6621-rt52/</code> + 固件 <code>swt6621_fw/</code></td><td><code>mmc2</code> · <code>wlan0</code> · <code>hci0</code></td></tr>
+        <tr><td>Wi-Fi 协议栈</td><td><code>cfg80211</code> · <code>mac80211</code> · AES / CCM</td><td>由 <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/camevision-wifi.sh"><code>camevision-wifi.sh</code></a> 加载</td><td>nl80211 + <code>wpa_camevision.conf</code></td></tr>
+        <tr><td>USB 配件</td><td>DWC3 <code>dr_mode=peripheral</code> · configfs gadget</td><td>DTB + rootfs</td><td>ADB <code>2207:0006</code> · UDC <code>21500000.usb</code></td></tr>
+        <tr><td>eMMC / SD / SDIO 主机</td><td><code>emmc</code> · <code>sdmmc0</code> · <code>sdmmc1</code></td><td>DTB</td><td><code>mmc0</code> eMMC · <code>mmc1</code> µSD · <code>mmc2</code> Wi-Fi</td></tr>
+        <tr><td>RTC / 电源管理</td><td><code>rv3028</code> I2C2 0x52 · <code>rk801</code> I2C0 0x27</td><td>DTB</td><td><code>/dev/rtc0</code> · PMIC 稳压器</td></tr>
+        <tr><td>NPU / GPU / MPP</td><td>rknpu · mali · mpp</td><td>内核 + overlay 中的 <code>kmpp-rt52.ko</code></td><td><code>/dev/rknpu</code> · <code>/dev/mali*</code> · <code>/dev/mpp_service</code></td></tr>
+      </table>
+      <p>DTB 中的相机通路：传感器 → D-PHY → CSI-2 → CIF → ISP → VPSS。Wi-Fi 模块按本 rt52 内核编译，从 <code>/userdata/swt6621-rt52</code> 加载。固件在 <code>/userdata/swt6621_fw</code>（Seekwave / SWT6621S NV）。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>设备树</h2>
+      <p>板级源：<a href="https://github.com/Camemake/CameVision-Ego/blob/main/device-tree/rv1126b-camevision-ego.dts"><code>device-tree/rv1126b-camevision-ego.dts</code></a>。包含 <code>rv1126b.dtsi</code>。型号字符串 <code>CameVision Ego</code>，兼容 <code>camemake,camevision-ego</code>。</p>
+      <p>Boot FIT 携带编译后的 DTB。改 DTS 后需重建并写入 boot 分区。</p>
+      <table>
+        <tr><th>节点</th><th>状态</th></tr>
+        <tr><td><code>i2c3/sc233hgs@30</code> · <code>i2c-gpio-cam1/sc233hgs@30</code></td><td>双相机，27 MHz XVCLK，4 通道</td></tr>
+        <tr><td><code>i2c4</code></td><td>关闭：CAM1 SCL/SDA 对调，改用软件模拟</td></tr>
+        <tr><td><code>csi2_dphy0/1</code> · <code>mipi0/1_csi2</code> · <code>rkcif*</code> · <code>rkisp*</code> · <code>rkvpss*</code></td><td>正常：双通路</td></tr>
+        <tr><td><code>spi0/imu@0</code> · <code>spi1/imu@0</code></td><td><code>st,lsm6dsv</code>，SPI 模式 3，1 MHz，<code>st,odr-triggered</code></td></tr>
+        <tr><td><code>sdmmc1</code> + <code>sdio-pwrseq</code> · <code>wireless-wlan</code> · UART2 蓝牙</td><td>VS6621</td></tr>
+        <tr><td><code>emmc</code> 8 位 HS200 · <code>sdmmc0</code> 4 位</td><td>正常</td></tr>
+        <tr><td><code>usb@21500000</code></td><td><code>dr_mode = peripheral</code>（ADB）</td></tr>
+        <tr><td><code>usb_host_ehci</code> · <code>ohci</code> · <code>gmac</code> · <code>dsi</code> · <code>i2c1</code> · <code>i2c5</code></td><td>关闭</td></tr>
+        <tr><td><code>uart0</code></td><td>调试串口 1.5 Mbaud</td></tr>
+      </table>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>烧录</h2>
+      <p>Maskrom。空板或已有镜像的板均可。</p>
+      <h3>分区表</h3>
+      <table>
+        <tr><th>LBA</th><th>镜像</th><th>本包位置</th></tr>
+        <tr><td>loader（db 一次）</td><td><code>rv1126b_spl_loader_k4a8g.bin</code></td><td><code>restore/known-good-20260819-camera-adb/</code> 或 <code>restore/updates/current/</code></td></tr>
+        <tr><td><code>0x0</code></td><td><code>env.img</code></td><td>同上</td></tr>
+        <tr><td><code>0x40</code></td><td><code>idblock.img</code></td><td>同上</td></tr>
+        <tr><td><code>0x440</code></td><td><code>uboot.img</code></td><td>同上</td></tr>
+        <tr><td><code>0x2440</code></td><td><code>camevision_boot_ego.img</code></td><td>内核 + DTB FIT</td></tr>
+        <tr><td><code>0x7C40</code></td><td><code>userdata.img</code></td><td>再写 overlay</td></tr>
+        <tr><td><code>0x207C40</code></td><td><code>oem_noko.img</code></td><td>IQ 二进制、rkaiq、oem 库</td></tr>
+        <tr><td><code>0x607C40</code></td><td><code>rootfs_bootstable.img</code></td><td>根文件系统</td></tr>
+      </table>
+      <h3>命令行</h3>
+      <pre>python tools/cv_ego_flash.py --prebuilt</pre>
+      <p><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_flash.py"><code>tools/cv_ego_flash.py</code></a> → <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_wifi_full_flash.py"><code>tools/cv_ego_wifi_full_flash.py</code></a>。先 <code>upgrade_tool db</code> 写一次 1 GB DDR loader，再 <code>wl</code> 各 LBA，<code>rd</code>，然后通过 ADB 写 overlay。</p>
+      <pre>host/upgrade_tool.exe db restore/known-good-20260819-camera-adb/rv1126b_spl_loader_k4a8g.bin
+host/upgrade_tool.exe wl 0x0    env.img
+host/upgrade_tool.exe wl 0x40   idblock.img
+host/upgrade_tool.exe wl 0x440  uboot.img
+host/upgrade_tool.exe wl 0x2440 camevision_boot_ego.img
+host/upgrade_tool.exe wl 0x7C40 userdata.img
+host/upgrade_tool.exe wl 0x207C40 oem_noko.img
+host/upgrade_tool.exe wl 0x607C40 rootfs_bootstable.img
+host/upgrade_tool.exe rd
+python tools/cv_ego_overlay_deploy.py</pre>
+      <h3>只重建 boot FIT</h3>
+      <p><code>python tools/cv_ego_flash.py --rebuild</code> 运行 DTB 补丁与 <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_pack_release02.py"><code>tools/cv_pack_release02.py</code></a>，再写同样分区。Boot 镜像：<code>camevision_boot_ego.img</code>（FIT，11 MiB / <code>0x5800</code> 扇区）。</p>
+      <h3>只更新用户态</h3>
+      <p>分区不动。文件在 <code>tools/</code>，然后 <code>python tools/cv_ego_overlay_deploy.py</code>。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>启动链</h2>
+      <ol>
+        <li><a href="https://github.com/Camemake/CameVision-Ego/blob/main/restore/release-0.2-20260902/overlay/S11hwclock"><code>S11hwclock</code></a>：RV-3028 → 系统时钟。</li>
+        <li><a href="https://github.com/Camemake/CameVision-Ego/blob/main/restore/release-0.2-20260902/overlay/S99ego-stereo"><code>S99ego-stereo</code></a>：等待后启动立体脚本。</li>
+        <li><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/camevision-stereo.sh"><code>tools/camevision-stereo.sh</code></a>：kmpp、Wi-Fi、rkaiq 3A、IMU 抬头显示，然后 <code>ego_stereo.py</code>。</li>
+        <li>电脑 <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_page.py"><code>tools/cv_ego_page.py</code></a>：<code>adb forward</code> 8081 与 8083，打开浏览器（英文界面）。</li>
+      </ol>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>板上</h2>
+      <table>
+        <tr><th>模块</th><th>文件</th><th>板上路径</th><th>作用</th></tr>
+        <tr><td>现场立体</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_stereo.py"><code>tools/ego_stereo.py</code></a></td><td><code>/userdata/ego_stereo.py</code> · 端口 8081</td><td>读 <code>/dev/video24</code>（CAM0）与 <code>/dev/video32</code>（CAM1）。JPEG 现场页、深度叠加、标定路由、录像控制。加载 <code>libego_stereo.so</code>。</td></tr>
+        <tr><td>匹配器</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/stereo_native.c"><code>tools/stereo_native.c</code></a></td><td><code>/userdata/libego_stereo.so</code></td><td>C 块匹配与 NV12 叠加。现场页加载的共享库。</td></tr>
+        <tr><td>FSYNC / EFSYNC</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_cam_sync.py"><code>tools/ego_cam_sync.py</code></a></td><td>现场页导入</td><td>GPIO4_A1/A0 + GPIO6_C2/C3，两眼同一节拍。传感器寄存器 0x3222 / 0x3282。默认 12.5 fps 连续触发。</td></tr>
+        <tr><td>IMU 抬头显示</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_imu_hud.py"><code>tools/ego_imu_hud.py</code></a></td><td><code>/userdata/ego_imu_hud.py</code> · 端口 8083</td><td>IMU0（SPI0，CAM0）与 IMU1（SPI1，CAM1）的 JSON。现场页把 <code>/imu</code> 代理到此端口。</td></tr>
+        <tr><td>标定界面</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_calib.html"><code>tools/ego_calib.html</code></a></td><td><code>/userdata/ego_calib.html</code> · <code>/cal</code></td><td>浏览器界面（英文）。经现场页写入 <code>/userdata/ego_calib.json</code>（<code>/cal/start</code>、<code>/cal/sample</code>、<code>/cal/stop</code>）。</td></tr>
+        <tr><td>对焦 / MTF</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_mtf.py"><code>tools/ego_mtf.py</code></a></td><td>现场页导入</td><td>1920×1200 Y 平面上的 ISO 12233 斜边 MTF50。<code>/focus/start</code>、<code>/focus/stop</code>。</td></tr>
+        <tr><td>录像（板）</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_record.py"><code>tools/ego_record.py</code></a></td><td>由现场页启动</td><td>把现场 NV12 的 HEVC 送到电脑 8091。<code>/record/start</code>、<code>/record/stat</code>。</td></tr>
+        <tr><td>Wi-Fi STA</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/camevision-wifi.sh"><code>tools/camevision-wifi.sh</code></a></td><td><code>/userdata/camevision-wifi.sh</code></td><td>VS6621 模块 + <a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/wpa_camevision.conf"><code>wpa_camevision.conf</code></a>。</td></tr>
+        <tr><td>IQ</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/restore/release-0.2-20260902/overlay/iqfiles/sc233hgs_camevision-sc233hgs_default.json"><code>overlay/iqfiles/…default.json</code></a></td><td><code>/userdata/iqfiles/</code> → <code>/oem/usr/share/iqfiles/</code></td><td>SC233HGS 3A / ISP 调参，供 <code>rkaiq_3A_server</code> 使用。</td></tr>
+        <tr><td>设备树</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/device-tree/rv1126b-camevision-ego.dts"><code>device-tree/rv1126b-camevision-ego.dts</code></a></td><td>FIT / boot 镜像</td><td>相机、IMU、Wi-Fi、SD、LED、USB 配件。硬件页是该文件的管脚表。</td></tr>
+      </table>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>现场页路由</h2>
+      <p>在板上。主机用 <code>python tools/cv_ego_page.py</code> 打开。界面为英文。</p>
+      <table>
+        <tr><th>路径</th><th>内容</th></tr>
+        <tr><td><code>/</code></td><td>现场 HTML：<code>/ov0</code> 与 <code>/ov1</code> MJPEG</td></tr>
+        <tr><td><code>/ov0</code> · <code>/ov1</code></td><td>带深度叠加的 MJPEG</td></tr>
+        <tr><td><code>/raw0</code> · <code>/raw1</code></td><td>无叠加的 MJPEG</td></tr>
+        <tr><td><code>/depth</code></td><td>深度视图</td></tr>
+        <tr><td><code>/snap0</code> · <code>/snap1</code> · <code>/snapx</code></td><td>单张 JPEG</td></tr>
+        <tr><td><code>/stat</code></td><td>JSON 状态</td></tr>
+        <tr><td><code>/imu</code></td><td>来自 :8083 的 JSON</td></tr>
+        <tr><td><code>/trig</code></td><td>FSYNC / EFSYNC 状态</td></tr>
+        <tr><td><code>/cal</code></td><td>标定界面（英文）</td></tr>
+        <tr><td><code>/cal/stat</code> · <code>/cal/start</code> · <code>/cal/sample</code> · <code>/cal/stop</code> · <code>/cal/reset</code></td><td>标定会话</td></tr>
+        <tr><td><code>/focus/start</code> · <code>/focus/stop</code></td><td>MTF</td></tr>
+        <tr><td><code>/align</code></td><td>立体对齐</td></tr>
+        <tr><td><code>/record/start</code> · <code>/record/stat</code></td><td>会话录像</td></tr>
+      </table>
+      <p>IMU JSON 与立体页一同转发（<code>cv_ego_page.py</code>）。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>本机</h2>
+      <table>
+        <tr><th>模块</th><th>文件</th><th>作用</th></tr>
+        <tr><td>首次主机</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_host_setup.py"><code>tools/cv_ego_host_setup.py</code></a></td><td>捆绑 Python、USB 驱动 / udev</td></tr>
+        <tr><td>USB 驱动</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_driver.py"><code>tools/cv_ego_driver.py</code></a></td><td>Rockusb + ADB（Windows），udev 2207（Linux）</td></tr>
+        <tr><td>烧录</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_flash.py"><code>tools/cv_ego_flash.py</code></a></td><td>Maskrom 写入 loader…rootfs，再写 overlay</td></tr>
+        <tr><td>Overlay 推送</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_overlay_deploy.py"><code>tools/cv_ego_overlay_deploy.py</code></a></td><td>经 ADB 把 overlay 拷到 <code>/userdata</code></td></tr>
+        <tr><td>打开现场页</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_page.py"><code>tools/cv_ego_page.py</code></a></td><td>转发 8081 / 8083</td></tr>
+        <tr><td>自动启动</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_autostart.py"><code>tools/cv_ego_autostart.py</code></a></td><td>主机监视：部署 + 转发 + 页面</td></tr>
+        <tr><td>诊断</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_diag.py"><code>tools/cv_ego_diag.py</code></a></td><td>ADB 转储：身份、I2C、IMU、视频、dmesg</td></tr>
+        <tr><td>更新</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_update.py"><code>tools/cv_ego_update.py</code></a></td><td>GitHub 或 zip → <code>restore/updates/current</code></td></tr>
+        <tr><td>录像（主机）</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_record_host.py"><code>tools/cv_ego_record_host.py</code></a></td><td>监听 8091，写入会话文件夹</td></tr>
+        <tr><td>路径</td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/cv_ego_paths.py"><code>tools/cv_ego_paths.py</code></a></td><td>ADB、upgrade_tool、镜像、overlay 根目录</td></tr>
+      </table>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>替换一块</h2>
+      <p>文件放在 <code>tools/</code>，然后：</p>
+      <pre>python tools/cv_ego_overlay_deploy.py</pre>
+      <p>现场进程：<code>python3 /userdata/ego_stereo.py</code>。</p>
+    </div>
+  </section>
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div><a href="https://github.com/Camemake/CameVision-Ego">github.com/Camemake/CameVision-Ego</a></div>
+    </div>
+  </footer>
+</body>
+</html>

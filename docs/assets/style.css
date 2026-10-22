@@ -14,7 +14,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 16px/1.55 "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font: 16px/1.55 "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
 }
 
 a { color: var(--came); text-decoration: none; }
@@ -29,11 +29,13 @@ a:hover { text-decoration: underline; }
 }
 
 .brand {
-  height: 72px;
+  min-height: 72px;
+  height: auto;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 22px;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: 10px 22px;
   background: #fff;
   border-bottom: 1px solid var(--line);
 }
@@ -67,6 +69,47 @@ nav a:hover, nav a.active { color: var(--came); text-decoration: none; }
   flex-shrink: 0;
 }
 .buy:hover { background: #d63d79; text-decoration: none; }
+
+.lang {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f6f2;
+}
+.lang a {
+  color: var(--muted);
+  padding: 8px 14px;
+  text-decoration: none;
+}
+.lang a.on, .lang a:hover {
+  color: #fff;
+  background: var(--came);
+  text-decoration: none;
+}
+
+.note {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-left: 4px solid var(--came);
+  background: #fff;
+  border-radius: 0 8px 8px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.sku-card .sku-shop {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.sku-grid { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
 
 .hero { padding: 48px 0 32px; background: var(--bg); }
 .kicker { color: var(--came); font-size: 13px; }

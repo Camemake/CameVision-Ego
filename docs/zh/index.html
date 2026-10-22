@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CameVision EGO · CV-EGO01-OS · Camemake</title>
+  <meta name="description" content="CameVision EGO 双全局快门立体相机。SC233HGS、OG02C10、MIRA220、AR0235、OX05B1S、开眸 GS2.3。">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="icon" href="../assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="../assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake 立体视觉 · NPU</span>
+      </div>
+      <nav>
+        <a class="active" href="index.html">产品</a>
+        <a href="start.html">入门</a>
+        <a href="flash.html">烧录</a>
+        <a href="hardware.html">硬件</a>
+        <a href="mechanical.html">结构</a>
+        <a href="optics.html">光学</a>
+        <a href="software.html">软件</a>
+        <a href="datasheet.html">规格书</a>
+      </nav>
+      <div class="lang"><a href="../index.html">EN</a><a class="on" href="index.html">中文</a></div>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买 EGO</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">CV-EGO01-OS · V1.I1</div>
+      <h1>CameVision Ego</h1>
+      <p class="lead">一块板上的双全局快门立体相机。每只眼睛一颗相机、一颗 IMU，板载 NPU、USB-C、Wi-Fi 6、BLE、eMMC 与电池焊盘。</p>
+      <p class="lang" style="display:inline-flex;margin:12px 0 0"><a href="../index.html">English</a><a class="on" href="index.html">中文</a></p>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买 CameVision EGO</a>
+        <a class="btn" href="start.html">入门</a>
+        <a class="btn" href="datasheet.html">规格书</a>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>这块板</h2>
+      <div class="grid">
+        <div class="card"><strong>型号</strong>CV-EGO01-OS-SC · OS-OV · OS-AM · OS-AR · OS-OX · OS-GS · 硬件 V1.I1</div>
+        <div class="card"><strong>相机</strong>SC233HGS · OG02C10 · MIRA220 · AR0235 彩色 · AR0235 黑白 · OX05B1S · 开眸 GS2.3。双全局快门，每眼 4 通道 MIPI。<a href="datasheet.html">规格书</a></div>
+        <div class="card"><strong>同步</strong>同一拍上共用 FSYNC + EFSYNC，27 MHz XVCLK，基线 75.0 mm</div>
+        <div class="card"><strong>IMU</strong>LSM6DSVQTR ×2，16 位。ST 典型值 60 µg/√Hz · 2.8 mdps/√Hz。每颗相机旁一条 SPI。<a href="hardware.html">精度</a></div>
+        <div class="card"><strong>计算</strong>RV1126B · NPU · 1 GB DDR4 · 16 GB eMMC</div>
+        <div class="card"><strong>接口</strong>USB-C ADB · Wi-Fi 6 + BLE（VS6621） · microSD · RV-3028 RTC · BQ24072 充电</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>本平台的全局快门</h2>
+      <p>EGO 是一块立体 MIPI 主板。两只眼睛共用一颗 SoC、一对 CSI PHY、同一硬件节拍。商城传感器：SC233HGS、OG02C10、MIRA220、AR0235（彩色与黑白）、OX05B1S、开眸 GS2.3。Camemake 目录中的其他全局快门芯片也可装在同一双相机封装上：思特威、豪威、安森美、开眸、索尼 Pregius。彩色、黑白与近红外均可。</p>
+      <p>本平台每一款都是全局快门 MIPI 模组。每条总线地址为 0x30。CAM0 走 I2C3；CAM1 为软件模拟 I2C（电路板上 SCL/SDA 对调）。</p>
+      <table>
+        <tr><th>档位</th><th>光学 / 像素</th><th>典型传感器</th><th>EGO 上</th></tr>
+        <tr><td>VGA / 0.3–0.4 MP</td><td>1/6 英寸–1/4 英寸 · 640×480</td><td>SC035HGS、IMX287</td><td>紧凑彩色或黑白</td></tr>
+        <tr><td>约 1 MP</td><td>1/4 英寸–1/3 英寸 · 1280×800 级</td><td>SC135HGS、OV9281 / OV9282、OG01A1B、AR0144</td><td>黑白机器视觉、RGB-IR</td></tr>
+        <tr><td>约 1.3–1.6 MP</td><td>1/3 英寸–1/2.9 英寸</td><td>SC132GS、AR0134 / AR0135、IMX296、IMX273</td><td>工业黑白或彩色</td></tr>
+        <tr><td>2–2.3 MP</td><td>1/2.8 英寸 – 1/2.3 英寸</td><td>SC233HGS（OS-SC）、OG02C10（OS-OV）、MIRA220（OS-AM）、AR0235 彩色/黑白（OS-AR）、开眸 GS2.3（OS-GS）</td><td>商城选项</td></tr>
+        <tr><td>5 MP</td><td>1/2.53 英寸</td><td>OX05B1S（OS-OX）</td><td>商城选项</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>传感器家族</h2>
+      <table>
+        <tr><th>厂商</th><th>系列</th><th>Camemake 目录示例</th><th>说明</th></tr>
+        <tr>
+          <td>思特威</td>
+          <td>HGS / GS / AT</td>
+          <td>SC035HGS、SC135HGS、SC221HGS、SC231HGS、SC233HGS、SC235HGS、SC430HGS、SC535HGS</td>
+          <td>CV-EGO01-OS-SC 为 SC233HGS 彩色。HGS 是高速全局快门线。</td>
+        </tr>
+        <tr>
+          <td>豪威</td>
+          <td>OG / OV / OX</td>
+          <td>OG02C10、OX05B1S、OV9281、OV9282、OV2311、OG01A1B、OG02B10、OG05B1B、OX03C10</td>
+          <td>CV-EGO01-OS-OV 为 OG02C10。CV-EGO01-OS-OX 为 OX05B1S（Nyxel / PureCel Plus-S，2592×1944）。</td>
+        </tr>
+        <tr>
+          <td>安森美</td>
+          <td>AR / PYTHON</td>
+          <td>AR0235、AR0134、AR0135、AR0144、AR0234、NOIP1SN1300A</td>
+          <td>CV-EGO01-OS-AR 为 AR0235，彩色或黑白。Hyperlux SG，1920×1200，2.8 µm。</td>
+        </tr>
+        <tr>
+          <td>索尼</td>
+          <td>Pregius</td>
+          <td>IMX287、IMX296、IMX273、IMX392、IMX265、IMX250、IMX252</td>
+          <td>更高档彩色或黑白。Pregius 是索尼全局快门机器视觉线。</td>
+        </tr>
+        <tr>
+          <td>Camemake</td>
+          <td>AM</td>
+          <td>MIRA220（AM220）</td>
+          <td>CV-EGO01-OS-AM。1600 × 1400，2.80 µm，BSI 全局快门。</td>
+        </tr>
+        <tr>
+          <td>开眸</td>
+          <td>GS</td>
+          <td>GS2.3</td>
+          <td>CV-EGO01-OS-GS。1920 × 1200，3.0 µm，1/2.6 英寸，黑白或 RGB，120 fps。</td>
+        </tr>
+      </table>
+      <p>彩色 Bayer、黑白与近红外是同一封装的变体。目录：<a href="https://www.camemake.eu">camemake.eu</a>。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>板上软件</h2>
+      <p>立体页、标定 <code>/cal</code>、IMU 抬头显示都在板上运行。主机用 <code>python tools/cv_ego_page.py</code> 打开。演示工具为英文界面。</p>
+      <p><a href="datasheet.html">规格书</a> · <a href="start.html">入门</a> · <a href="hardware.html">管脚</a> · <a href="mechanical.html">结构</a> · <a href="optics.html">光学</a> · <a href="software.html">软件</a></p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div>
+        <a href="https://www.camemake.eu/robotic-solutions">机器人方案</a> ·
+        <a href="mailto:sales@camemake.com">sales@camemake.com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>烧录 · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision EGO Maskrom 烧录：USB、镜像包、ADB。">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="icon" href="../assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="../assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake 立体视觉 · NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">产品</a>
+        <a href="start.html">入门</a>
+        <a class="active" href="flash.html">烧录</a>
+        <a href="hardware.html">硬件</a>
+        <a href="mechanical.html">结构</a>
+        <a href="optics.html">光学</a>
+        <a href="software.html">软件</a>
+        <a href="datasheet.html">规格书</a>
+      </nav>
+      <div class="lang"><a href="../flash.html">EN</a><a class="on" href="flash.html">中文</a></div>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买 EGO</a>
+    </div>
+  </header>
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">Maskrom · 空板或已有镜像</div>
+      <h1>烧录</h1>
+      <p class="lead">按住 BOOT，点按 RESET，写入全部分区，再写 overlay。USB 保持 ADB。</p>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap steps">
+      <article class="step">
+        <div class="step-num">USB</div>
+        <h2>Maskrom</h2>
+        <ol>
+          <li>接上 USB-C 并给板子供电。</li>
+          <li>安装 USB 驱动（Windows：<code>host/DriverAssitant_v5.14</code>。Linux：<code>host/linux/99-camevision-rockusb.rules</code>）。</li>
+          <li>按住 <strong>BOOT</strong>，点按 <strong>RESET</strong>，继续按住 BOOT。</li>
+          <li>端口为 Maskrom <code>2207:110c</code> 或 Loader。复位后变为 ADB <code>2207:0006</code>。</li>
+        </ol>
+      </article>
+      <article class="step">
+        <div class="step-num">镜像</div>
+        <h2>写入</h2>
+        <p>写入 loader、env、idblock、U-Boot、所选型号的 boot FIT、userdata、oem、rootfs，再通过 ADB 写入对应 overlay。</p>
+        <pre>python tools/cv_ego_flash.py --prebuilt --package camevision-ego
+python tools/cv_ego_flash.py --prebuilt --package camevision-ego-am</pre>
+        <p>SC233HGS 重建（Wi-Fi + RV-3028 DTB）：</p>
+        <pre>python tools/cv_ego_flash.py --rebuild --package camevision-ego</pre>
+        <p>板子启动后松开 BOOT。商城传感器：SC233HGS、OG02C10、MIRA220、AR0235（彩色 / 黑白）、OX05B1S、开眸 GS2.3。本仓库 Maskrom 包目前为 SC233HGS 与 AM / MIRA220。</p>
+      </article>
+      <article class="step">
+        <div class="step-num">ADB</div>
+        <h2>打开</h2>
+        <pre>python tools/cv_ego_page.py</pre>
+        <p>转发板上立体页与 IMU 抬头显示，并打开浏览器。命令行与现场页为英文。</p>
+        <pre>python tools/cv_ego_autostart.py --install
+python tools/cv_ego_diag.py</pre>
+      </article>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>分区表</h2>
+      <p>先用 <code>upgrade_tool db</code> 写一次 1 GB DDR loader，再用 <code>wl</code> 写各 LBA。Overlay 不是分区。</p>
+      <table>
+        <tr><th>LBA</th><th>镜像</th><th>作用</th></tr>
+        <tr><td>loader（<code>db</code>）</td><td><code>rv1126b_spl_loader_k4a8g.bin</code></td><td>适配 1 GB DDR 的 SPL</td></tr>
+        <tr><td><code>0x0</code></td><td><code>env.img</code></td><td>U-Boot 环境</td></tr>
+        <tr><td><code>0x40</code></td><td><code>idblock.img</code></td><td>idblock</td></tr>
+        <tr><td><code>0x440</code></td><td><code>uboot.img</code></td><td>U-Boot</td></tr>
+        <tr><td><code>0x2440</code></td><td><code>camevision_boot_ego.img</code> 或 <code>camevision_boot_ego_am.img</code></td><td>内核 + DTB FIT，<code>6.1.141-rt52</code> — SC233HGS 或 AM / MIRA220</td></tr>
+        <tr><td><code>0x7C40</code></td><td><code>userdata.img</code></td><td>骨架，再写 overlay</td></tr>
+        <tr><td><code>0x207C40</code></td><td><code>oem_noko.img</code></td><td>rkaiq、IQ 二进制、oem 库</td></tr>
+        <tr><td><code>0x607C40</code></td><td><code>rootfs_bootstable.img</code></td><td>根文件系统</td></tr>
+      </table>
+      <pre>host/upgrade_tool.exe db rv1126b_spl_loader_k4a8g.bin
+host/upgrade_tool.exe wl 0x0       env.img
+host/upgrade_tool.exe wl 0x40      idblock.img
+host/upgrade_tool.exe wl 0x440     uboot.img
+host/upgrade_tool.exe wl 0x2440    camevision_boot_ego.img
+host/upgrade_tool.exe wl 0x7C40    userdata.img
+host/upgrade_tool.exe wl 0x207C40  oem_noko.img
+host/upgrade_tool.exe wl 0x607C40  rootfs_bootstable.img
+host/upgrade_tool.exe rd
+python tools/cv_ego_overlay_deploy.py</pre>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>镜像位置</h2>
+      <p>两套 Maskrom 包分开。<strong>SC233HGS</strong> 在 <code>restore/release-0.2-20260902/</code>（<code>SENSOR=SC233HGS</code>，boot <code>camevision_boot_ego.img</code>）。<strong>AM / MIRA220</strong> 在 <code>restore/release-2.0-am-mira220-20261009/</code>（<code>SENSOR=MIRA220</code>，boot <code>camevision_boot_ego_am.img</code>）。请用 Git LFS 克隆，以便下载大镜像。冻结的 SC233HGS 设备树：<code>device-tree/rv1126b-camevision-ego-sc233hgs.dts</code>。AM DTS：<code>device-tree/rv1126b-camevision-ego.dts</code>。</p>
+      <p>Boot FIT 源：<a href="https://github.com/Camemake/CameVision-Ego/blob/main/device-tree/rv1126b-camevision-ego.dts"><code>device-tree/rv1126b-camevision-ego.dts</code></a>。Overlay 源：<a href="https://github.com/Camemake/CameVision-Ego/tree/main/restore/release-0.2-20260902/overlay"><code>restore/release-0.2-20260902/overlay/</code></a> 以及 <code>tools/</code> 下的副本。</p>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <h2>Overlay</h2>
+      <p>ADB 起来之后，产品就是 overlay。板子已经烧过：跳过 Maskrom，对该传感器运行 deploy。</p>
+      <pre>python tools/cv_ego_overlay_deploy.py
+python tools/cv_ego_overlay_deploy_am.py</pre>
+      <table>
+        <tr><th>板上路径</th><th>源文件</th></tr>
+        <tr><td><code>/userdata/ego_stereo.py</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_stereo.py"><code>tools/ego_stereo.py</code></a></td></tr>
+        <tr><td><code>/userdata/libego_stereo.so</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/stereo_native.c"><code>tools/stereo_native.c</code></a></td></tr>
+        <tr><td><code>/userdata/ego_cam_sync.py</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_cam_sync.py"><code>tools/ego_cam_sync.py</code></a></td></tr>
+        <tr><td><code>/userdata/ego_imu_hud.py</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/ego_imu_hud.py"><code>tools/ego_imu_hud.py</code></a></td></tr>
+        <tr><td><code>/userdata/camevision-stereo.sh</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/camevision-stereo.sh"><code>tools/camevision-stereo.sh</code></a></td></tr>
+        <tr><td><code>/etc/init.d/S99ego-stereo</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/S99ego-stereo"><code>tools/S99ego-stereo</code></a></td></tr>
+        <tr><td><code>/etc/init.d/S11hwclock</code></td><td><a href="https://github.com/Camemake/CameVision-Ego/blob/main/tools/S11hwclock"><code>tools/S11hwclock</code></a></td></tr>
+      </table>
+      <p>说明：<a href="https://github.com/Camemake/CameVision-Ego/blob/main/FLASH.md"><code>FLASH.md</code></a> · Wi-Fi Q1：<a href="https://github.com/Camemake/CameVision-Ego/blob/main/WIFI.md"><code>WIFI.md</code></a></p>
+    </div>
+  </section>
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div><a href="https://github.com/Camemake/CameVision-Ego">github.com/Camemake/CameVision-Ego</a></div>
+    </div>
+  </footer>
+</body>
+</html>

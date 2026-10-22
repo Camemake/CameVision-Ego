@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>入门 · CameVision EGO · Camemake</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="icon" href="../assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="../assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake 立体视觉 · NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">产品</a>
+        <a class="active" href="start.html">入门</a>
+        <a href="flash.html">烧录</a>
+        <a href="hardware.html">硬件</a>
+        <a href="mechanical.html">结构</a>
+        <a href="optics.html">光学</a>
+        <a href="software.html">软件</a>
+        <a href="datasheet.html">规格书</a>
+      </nav>
+      <div class="lang"><a href="../start.html">EN</a><a class="on" href="start.html">中文</a></div>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买 EGO</a>
+    </div>
+  </header>
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">克隆 · Maskrom · ADB</div>
+      <h1>入门</h1>
+      <p class="lead">克隆仓库，从 Maskrom 烧录。USB 保持 ADB。空板或已有镜像的板，步骤相同。</p>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      <h2>商城传感器</h2>
+      <p>同一块 PCB，V1.I1。在 <a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">商城</a> 选择传感器：</p>
+      <table>
+        <tr><th>型号</th><th>传感器</th><th>商城</th></tr>
+        <tr><td>CV-EGO01-OS-SC</td><td>SC233HGS</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70176">购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-OV</td><td>OG02C10</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70177">购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-AM</td><td>MIRA220</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70178">购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-AR</td><td>AR0235 彩色 · AR0235 黑白</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70401">购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-OX</td><td>OX05B1S</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70402">购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-GS</td><td>开眸 GS2.3</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买</a></td></tr>
+      </table>
+    </div>
+  </section>
+  <section>
+    <div class="wrap steps">
+      <article class="step">
+        <div class="step-num">USB</div>
+        <h2>Maskrom</h2>
+        <ol>
+          <li>接上 USB-C 并给板子供电。</li>
+          <li>安装 USB 驱动（Windows：<code>host/DriverAssitant_v5.14</code>。Linux：<code>host/linux/99-camevision-rockusb.rules</code>）。</li>
+          <li>按住 <strong>BOOT</strong>，点按 <strong>RESET</strong>，继续按住 BOOT。</li>
+        </ol>
+      </article>
+      <article class="step">
+        <div class="step-num">镜像</div>
+        <h2>写入</h2>
+        <pre>python tools/cv_ego_flash.py --prebuilt --package camevision-ego
+python tools/cv_ego_flash.py --prebuilt --package camevision-ego-am</pre>
+        <p>本仓库现有 SC233HGS 与 AM / MIRA220 两套 Maskrom 包。分区表见 <a href="flash.html">烧录</a>。</p>
+      </article>
+      <article class="step">
+        <div class="step-num">ADB</div>
+        <h2>打开</h2>
+        <pre>python tools/cv_ego_page.py
+python tools/cv_ego_diag.py</pre>
+        <p>命令行与现场页为英文。</p>
+      </article>
+    </div>
+  </section>
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">商城</a></div>
+    </div>
+  </footer>
+</body>
+</html>

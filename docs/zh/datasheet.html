@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>规格书 · CameVision EGO · Camemake</title>
+  <meta name="description" content="CameVision EGO 规格书：SC233HGS、OG02C10、MIRA220、AR0235 彩色/黑白、OX05B1S、开眸 GS2.3。">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="icon" href="../assets/camemake-logo.png">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <a class="plate" href="index.html"><img src="../assets/camemake-logo.png" alt="Camemake"></a>
+      <div class="titles">
+        <b>CameVision Ego</b>
+        <span>Camemake 立体视觉 · NPU</span>
+      </div>
+      <nav>
+        <a href="index.html">产品</a>
+        <a href="start.html">入门</a>
+        <a href="flash.html">烧录</a>
+        <a href="hardware.html">硬件</a>
+        <a href="mechanical.html">结构</a>
+        <a href="optics.html">光学</a>
+        <a href="software.html">软件</a>
+        <a class="active" href="datasheet.html">规格书</a>
+      </nav>
+      <div class="lang"><a href="../datasheet.html">EN</a><a class="on" href="datasheet.html">中文</a></div>
+      <a class="buy" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买 EGO</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">CV-EGO01-OS · V1.I1 · 规格书</div>
+      <h1>CameVision Ego</h1>
+      <p class="lead">一块板上的双全局快门立体相机。商城传感器：SC233HGS、OG02C10、MIRA220、AR0235 彩色、AR0235 黑白、OX05B1S、开眸 GS2.3。同一块 PCB、2G4P 模组、RV1126B NPU。</p>
+      <p class="lang" style="display:inline-flex;margin:12px 0 0"><a href="../datasheet.html">English</a><a class="on" href="datasheet.html">中文</a></p>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>订购</h2>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+      <p>同一块 CameVision EGO 主板。每一行对应商城里的一种传感器选项，点击即可进入 Camemake 店铺下单。</p>
+      <table>
+        <tr><th>型号</th><th>传感器</th><th>像素</th><th>快门</th><th>商城</th></tr>
+        <tr><td>CV-EGO01-OS-SC</td><td>SC233HGS</td><td>1920 × 1200</td><td>彩色 Bayer，全局快门</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70176">在 camemake.eu 购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-OV</td><td>OG02C10</td><td>1600 × 1200</td><td>彩色，全局快门</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70177">在 camemake.eu 购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-AM</td><td>MIRA220</td><td>1600 × 1400</td><td>BSI 全局快门</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70178">在 camemake.eu 购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-AR</td><td>AR0235 彩色</td><td>1920 × 1200</td><td>RGB Bayer，全局快门</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70401">在 camemake.eu 购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-AR</td><td>AR0235 黑白</td><td>1920 × 1200</td><td>黑白，全局快门</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70401">在 camemake.eu 购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-OX</td><td>OX05B1S</td><td>2592 × 1944</td><td>Nyxel 全局快门，500 万像素</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70402">在 camemake.eu 购买</a></td></tr>
+        <tr><td>CV-EGO01-OS-GS</td><td>开眸 GS2.3</td><td>1920 × 1200</td><td>黑白或 RGB，全局快门</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">在 camemake.eu 购买</a></td></tr>
+      </table>
+      <div class="sku-grid">
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-SC</div>
+          <h3>SC233HGS</h3>
+          <dl>
+            <dt>像素</dt><dd>1920 × 1200</dd>
+            <dt>像元</dt><dd>3.00 µm</dd>
+            <dt>靶面</dt><dd>1/2.6 英寸 · 5.760 × 3.600 mm</dd>
+            <dt>快门</dt><dd>彩色 Bayer，全局快门</dd>
+            <dt>视场</dt><dd>对角 160° · 水平 144° · 垂直 100°</dd>
+            <dt>焦距</dt><dd>597 px</dd>
+          </dl>
+          <a class="sku-shop" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70176">购买此传感器</a>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-OV</div>
+          <h3>OG02C10</h3>
+          <dl>
+            <dt>像素</dt><dd>1600 × 1200</dd>
+            <dt>像元</dt><dd>3.45 µm</dd>
+            <dt>靶面</dt><dd>1/2.5 英寸 · 5.520 × 4.140 mm</dd>
+            <dt>快门</dt><dd>彩色，全局快门</dd>
+            <dt>视场</dt><dd>对角 160° · 水平 140° · 垂直 112°</dd>
+            <dt>焦距</dt><dd>519 px</dd>
+          </dl>
+          <a class="sku-shop" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70177">购买此传感器</a>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-AM</div>
+          <h3>MIRA220</h3>
+          <dl>
+            <dt>像素</dt><dd>1600 × 1400</dd>
+            <dt>像元</dt><dd>2.80 µm</dd>
+            <dt>靶面</dt><dd>1/2.7 英寸 · 4.488 × 3.922 mm</dd>
+            <dt>快门</dt><dd>BSI 全局快门</dd>
+            <dt>视场</dt><dd>对角 147.4° · 水平 118.6° · 垂直 106.4°</dd>
+            <dt>焦距</dt><dd>639 px</dd>
+          </dl>
+          <a class="sku-shop" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70178">购买此传感器</a>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-AR</div>
+          <h3>AR0235 彩色</h3>
+          <dl>
+            <dt>像素</dt><dd>1920 × 1200</dd>
+            <dt>像元</dt><dd>2.80 µm</dd>
+            <dt>靶面</dt><dd>1/2.8 英寸 · 5.376 × 3.360 mm</dd>
+            <dt>快门</dt><dd>RGB Bayer，全局快门</dd>
+            <dt>帧率</dt><dd>120 fps</dd>
+            <dt>焦距</dt><dd>639 px</dd>
+          </dl>
+          <a class="sku-shop" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70401">购买此传感器</a>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-AR</div>
+          <h3>AR0235 黑白</h3>
+          <dl>
+            <dt>像素</dt><dd>1920 × 1200</dd>
+            <dt>像元</dt><dd>2.80 µm</dd>
+            <dt>靶面</dt><dd>1/2.8 英寸 · 5.376 × 3.360 mm</dd>
+            <dt>快门</dt><dd>黑白，全局快门</dd>
+            <dt>帧率</dt><dd>120 fps</dd>
+            <dt>焦距</dt><dd>639 px</dd>
+          </dl>
+          <a class="sku-shop" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70401">购买此传感器</a>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-OX</div>
+          <h3>OX05B1S</h3>
+          <dl>
+            <dt>像素</dt><dd>2592 × 1944</dd>
+            <dt>像元</dt><dd>2.20 µm</dd>
+            <dt>靶面</dt><dd>1/2.53 英寸 · 5.702 × 4.277 mm</dd>
+            <dt>快门</dt><dd>Nyxel / PureCel Plus-S，全局快门</dd>
+            <dt>阵列</dt><dd>500 万像素</dd>
+            <dt>焦距</dt><dd>814 px</dd>
+          </dl>
+          <a class="sku-shop" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414?attribute_values=70402">购买此传感器</a>
+        </article>
+        <article class="sku-card">
+          <div class="sku">CV-EGO01-OS-GS</div>
+          <h3>开眸 GS2.3</h3>
+          <dl>
+            <dt>像素</dt><dd>1920 × 1200</dd>
+            <dt>像元</dt><dd>3.00 µm</dd>
+            <dt>靶面</dt><dd>1/2.6 英寸 · 5.78 × 3.62 mm</dd>
+            <dt>快门</dt><dd>黑白或 RGB，全局快门</dd>
+            <dt>帧率</dt><dd>120 fps</dd>
+            <dt>焦距</dt><dd>597 px</dd>
+          </dl>
+          <a class="sku-shop" href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">购买此传感器</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>识别信息</h2>
+      <table>
+        <tr><th>项目</th><th>内容</th></tr>
+        <tr><td>产品</td><td>CameVision EGO</td></tr>
+        <tr><td>系列</td><td>CV-EGO01-OS</td></tr>
+        <tr><td>型号</td><td>CV-EGO01-OS-SC · OS-OV · OS-AM · OS-AR（彩色 / 黑白） · OS-OX · OS-GS</td></tr>
+        <tr><td>硬件</td><td>CameVision Ego V1.I1</td></tr>
+        <tr><td>光学</td><td>AM V1.3 · 2G4P + 一片红外滤光 · M12</td></tr>
+        <tr><td>型号字符串</td><td><code>CameVision Ego</code> · <code>camemake,camevision-ego</code></td></tr>
+        <tr><td>USB 配件</td><td>Camemake / CameVision Ego / <code>CVEgo</code> · ADB <code>2207:0006</code></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>平台</h2>
+      <table>
+        <tr><th>模块</th><th>规格</th></tr>
+        <tr><td>处理器</td><td>RV1126B · 双 ISP · NPU · Mali GPU · MPP</td></tr>
+        <tr><td>内存</td><td>K4A8G165WG DDR4，16 位，1 GB</td></tr>
+        <tr><td>eMMC</td><td>BWCTAK611G16G，16 GB</td></tr>
+        <tr><td>内核</td><td>6.1.141-rt52</td></tr>
+        <tr><td>相机</td><td>×2，各 4 通道 MIPI，27 MHz XVCLK，I2C 0x30。商城：SC233HGS · OG02C10 · MIRA220 · AR0235 彩色 · AR0235 黑白 · OX05B1S · 开眸 GS2.3</td></tr>
+        <tr><td>同步</td><td>共用 FSYNC + EFSYNC · 连续触发 · 12.5 fps</td></tr>
+        <tr><td>基线</td><td>75.0 mm · CAM0 左 · CAM1 右</td></tr>
+        <tr><td>IMU</td><td>LSM6DSVQTR ×2 · SPI0 / SPI1 · 16 位 · HUD 默认 480 Hz · ST 典型值 60 µg/√Hz · 2.8 mdps/√Hz</td></tr>
+        <tr><td>USB</td><td>USB-C · USB2 + USB3 DRD · ADB 外设</td></tr>
+        <tr><td>无线</td><td>VS6621S80 · Wi-Fi 6 + BLE · SDMMC1 + UART2</td></tr>
+        <tr><td>存储卡</td><td>microSD，SDMMC0，1.8 V VDD</td></tr>
+        <tr><td>RTC</td><td>RV-3028-C7 · I2C2 0x52</td></tr>
+        <tr><td>电源管理</td><td>RK801-2 · I2C0 0x27</td></tr>
+        <tr><td>充电</td><td>BQ24072 · 250 mA 快充 · 1.5 A 输入限制</td></tr>
+        <tr><td>串口</td><td>UART0 · 1.5 Mbaud</td></tr>
+        <tr><td>供电</td><td>USB-C 与 PH 电池焊盘</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>IMU 精度</h2>
+      <p>板上零件为 <strong>LSM6DSVQTR</strong> ×2（ST LSM6DSV 编带料号）。以下为 ST 表 3 典型值，条件 1.8 V、25 °C — 不作为保证值，也不是 CameVision 整板实测。来源：<a href="https://www.st.com/resource/en/datasheet/lsm6dsv.pdf">LSM6DSV 数据手册</a>。布线与采样率见 <a href="hardware.html">硬件</a>。</p>
+      <table>
+        <tr><th></th><th>加速度计</th><th>陀螺仪</th></tr>
+        <tr><td>分辨率</td><td>16 位</td><td>16 位</td></tr>
+        <tr><td>满量程</td><td>±2 / 4 / 8 / 16 g</td><td>±125 / 250 / 500 / 1000 / 2000 / 4000 dps</td></tr>
+        <tr><td>灵敏度</td><td>0.061 / 0.122 / 0.244 / 0.488 mg/LSB</td><td>4.375 / 8.75 / 17.50 / 35 / 70 / 140 mdps/LSB</td></tr>
+        <tr><td>灵敏度容差</td><td>—</td><td>±0.3 %（满量程 ≤ ±2000 dps）</td></tr>
+        <tr><td>灵敏度随温度</td><td>±0.01 %/°C</td><td>±0.007 %/°C</td></tr>
+        <tr><td>零位偏置（标定后）</td><td>±12 mg</td><td>±1 dps</td></tr>
+        <tr><td>偏置随温度</td><td>±0.07 mg/°C</td><td>±0.006 dps/°C</td></tr>
+        <tr><td>噪声密度（高性能）</td><td>60 µg/√Hz</td><td>2.8 mdps/√Hz</td></tr>
+        <tr><td>噪声密度（普通）</td><td>100 µg/√Hz</td><td>—</td></tr>
+        <tr><td>RMS 噪声（低功耗）</td><td>2.3 / 1.8 / 1.2 mg（LPM1 / 2 / 3）</td><td>60 mdps RMS</td></tr>
+        <tr><td>ODR 精度（高精度，陀螺开启）</td><td>±1 %</td><td>±1 %</td></tr>
+        <tr><td>工作温度</td><td>−40 … +85 °C</td><td>−40 … +85 °C</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>光学</h2>
+      <table>
+        <tr><th>项目</th><th>数值</th></tr>
+        <tr><td>结构</td><td>2G4P + 一片红外滤光，M12</td></tr>
+        <tr><td>有效焦距</td><td>1.79 mm</td></tr>
+        <tr><td>光圈</td><td>2.0</td></tr>
+        <tr><td>TV 畸变</td><td>&lt; −22.3 %</td></tr>
+        <tr><td>主光线角</td><td>15.94°（SC / AM / GS） · 15.95°（OV） · 0° 或 28°（AR） · OX 随模组</td></tr>
+        <tr><td>相对照度</td><td>&gt; 40 %</td></tr>
+        <tr><td>光学总长</td><td>15.00 ± 0.3 mm</td></tr>
+        <tr><td>机械总长</td><td>13.92 ± 0.3 mm</td></tr>
+        <tr><td>后焦</td><td>3.40 mm</td></tr>
+        <tr><td>螺纹 / 镜筒</td><td>M12 × 12.00 mm · 外径 16.00 mm</td></tr>
+        <tr><td>红外截止</td><td>420–600 nm 平均透过 ≥ 90 % · 650 ± 10 nm 透过 50 %</td></tr>
+        <tr><td>最近物距</td><td>0.20 m</td></tr>
+        <tr><td>防护 / 存储</td><td>IP69 · −40 至 +85 °C</td></tr>
+      </table>
+      <table>
+        <tr><th>型号</th><th>传感器</th><th>像素</th><th>像元</th><th>靶面</th><th>有效阵列</th><th>快门</th><th>焦距</th></tr>
+        <tr><td>OS-SC</td><td>SC233HGS</td><td>1920 × 1200</td><td>3.00 µm</td><td>1/2.6 英寸</td><td>5.760 × 3.600 mm</td><td>彩色 Bayer，全局</td><td>597 px</td></tr>
+        <tr><td>OS-OV</td><td>OG02C10</td><td>1600 × 1200</td><td>3.45 µm</td><td>1/2.5 英寸</td><td>5.520 × 4.140 mm</td><td>彩色，全局</td><td>519 px</td></tr>
+        <tr><td>OS-AM</td><td>MIRA220</td><td>1600 × 1400</td><td>2.80 µm</td><td>1/2.7 英寸</td><td>4.488 × 3.922 mm</td><td>BSI 全局</td><td>639 px</td></tr>
+        <tr><td>OS-AR</td><td>AR0235 彩色</td><td>1920 × 1200</td><td>2.80 µm</td><td>1/2.8 英寸</td><td>5.376 × 3.360 mm</td><td>RGB Bayer，全局</td><td>639 px</td></tr>
+        <tr><td>OS-AR</td><td>AR0235 黑白</td><td>1920 × 1200</td><td>2.80 µm</td><td>1/2.8 英寸</td><td>5.376 × 3.360 mm</td><td>黑白，全局</td><td>639 px</td></tr>
+        <tr><td>OS-OX</td><td>OX05B1S</td><td>2592 × 1944</td><td>2.20 µm</td><td>1/2.53 英寸</td><td>5.702 × 4.277 mm</td><td>Nyxel / PureCel Plus-S，全局</td><td>814 px</td></tr>
+        <tr><td>OS-GS</td><td>开眸 GS2.3</td><td>1920 × 1200</td><td>3.00 µm</td><td>1/2.6 英寸</td><td>5.78 × 3.62 mm</td><td>黑白或 RGB，全局</td><td>597 px</td></tr>
+        <tr><td colspan="8">视频节点 <code>/dev/video24</code> CAM0 · <code>/dev/video32</code> CAM1。各型号共用 2G4P 模组，视场随芯片尺寸变化。</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>接口</h2>
+      <table>
+        <tr><th>网络</th><th>功能</th></tr>
+        <tr><td>CAM0</td><td>CSI RX0 · I2C3 0x30 · FSYNC GPIO4_A1 · EFSYNC GPIO6_C2 · IMU SPI0</td></tr>
+        <tr><td>CAM1</td><td>CSI RX1 · 软件模拟 I2C 0x30 · FSYNC GPIO4_A0 · EFSYNC GPIO6_C3 · IMU SPI1</td></tr>
+        <tr><td>USB-C J3</td><td>ADB 配件，<code>dr_mode</code> 外设</td></tr>
+        <tr><td>PH</td><td>电池</td></tr>
+        <tr><td>BOOT / RST</td><td>Maskrom：按住 BOOT，点按 RST</td></tr>
+        <tr><td>UART RX/TX</td><td>调试串口</td></tr>
+        <tr><td>microSD</td><td>SDMMC0 · 检测 GPIO3_B3 · 使能 GPIO3_B4</td></tr>
+        <tr><td>RGB LED</td><td>共阳极，低电平点亮，GPIO0_A6 / A5 / A4</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>热设计</h2>
+      <table>
+        <tr><th></th><th>NPU 关闭 · 2.0 W</th><th>NPU 开启 · 3.0 W</th></tr>
+        <tr><td>芯片，静止 25 °C 空气</td><td>35–42 °C</td><td>40–45 °C</td></tr>
+        <tr><td>空气散热面积</td><td>100 cm²</td><td>160 cm²</td></tr>
+        <tr><td>铝件</td><td>60 g</td><td>100 g</td></tr>
+        <tr><td>散热器</td><td>50 × 50 mm，12 mm 齿</td><td>60 × 60 mm，15–18 mm 齿</td></tr>
+        <tr><td>内核保护温度</td><td colspan="2">115 °C · <code>cpu-thermal</code> / <code>soc-crit</code></td></tr>
+        <tr><td>路径</td><td colspan="2">RV1126B 顶盖与连接器侧过孔区。软质绝缘导热垫。</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>软件</h2>
+      <p class="note">演示工具（烧录、现场页、标定）为英文界面。</p>
+      <table>
+        <tr><th>项目</th><th>内容</th></tr>
+        <tr><td>现场页</td><td><code>python tools/cv_ego_page.py</code></td></tr>
+        <tr><td>标定</td><td>立体页上的 <code>/cal</code></td></tr>
+        <tr><td>IMU 抬头显示</td><td>与立体页一同转发</td></tr>
+        <tr><td>3A</td><td><code>rkaiq_3A_server</code></td></tr>
+        <tr><td>IQ（SC）</td><td><code>camevision-sc233hgs</code></td></tr>
+        <tr><td>烧录</td><td>loader · env · idblock · U-Boot · boot FIT · userdata · oem · rootfs · overlay</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>电路板</h2>
+      <div class="board-grid">
+        <figure class="board-fig">
+          <img src="../assets/ego-pcb-cameras.png" alt="CameVision Ego 相机面">
+          <figcaption>相机面 · 双模组 · 中央 RV1126B</figcaption>
+        </figure>
+        <figure class="board-fig">
+          <img src="../assets/ego-pcb-connectors.png" alt="CameVision Ego 连接器面">
+          <figcaption>连接器面 · USB-C · PH · RST · BOOT · UART</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>页面</h2>
+      <table>
+        <tr><th>页面</th><th></th></tr>
+        <tr><td><a href="start.html">入门</a></td><td>USB · 镜像包 · ADB</td></tr>
+        <tr><td><a href="flash.html">烧录</a></td><td>Maskrom、分区表</td></tr>
+        <tr><td><a href="hardware.html">硬件</a></td><td>管脚 · IMU 精度</td></tr>
+        <tr><td><a href="mechanical.html">结构</a></td><td>壳体与散热</td></tr>
+        <tr><td><a href="optics.html">光学</a></td><td>2G4P、视场、画面</td></tr>
+        <tr><td><a href="software.html">软件</a></td><td>驱动、设备树、路由</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Camemake</h2>
+      <table>
+        <tr><th>项目</th><th>内容</th></tr>
+        <tr><td>商城</td><td><a href="https://www.camemake.eu/shop/cv-ego01-os-camevision-ego-dual-global-shutter-ai-stereo-camera-2414">CameVision EGO</a></td></tr>
+        <tr><td>源码</td><td><a href="https://github.com/Camemake/CameVision-Ego">github.com/Camemake/CameVision-Ego</a></td></tr>
+        <tr><td>网站</td><td><a href="https://www.camemake.eu">camemake.eu</a> · <a href="https://www.camemake.eu/robotic-solutions">机器人方案</a></td></tr>
+        <tr><td>销售</td><td><a href="mailto:sales@camemake.com">sales@camemake.com</a></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>© Camemake · CameVision EGO · CV-EGO01-OS</div>
+      <div><a href="mailto:sales@camemake.com">sales@camemake.com</a></div>
+    </div>
+  </footer>
+</body>
+</html>
