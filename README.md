@@ -113,7 +113,7 @@ CameVision EGO is the **dual-camera** board in the CameVision family. The same p
 | Cameras on the PCB | Role |
 |---|---|
 | 1 | Monocular / tool camera |
-| **2 (EGO)** | Hardware-synced stereo — this product |
+| **2 (EGO)** | Hardware-synced stereo |
 | 3 | Stereo plus a context camera |
 | 5 | Timed array (wearable / backpack) |
 | 9 | Near-surround workplace capture |
