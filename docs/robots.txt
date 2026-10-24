@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://camemake.github.io/CameVision-Ego/sitemap.xml

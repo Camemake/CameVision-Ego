@@ -150,6 +150,10 @@ Every Camemake camera module can be tailored — sensor, lens, housing, interfac
 - Product and orders: [camemake.eu](https://www.camemake.eu) · [sales@camemake.com](mailto:sales@camemake.com)
 - This repository is the open demo for **CameVision EGO** only. 
 
+## Citation
+
+If you use this software, cite Stefaan Joos and Camemake. Stefaan Joos is Camemake’s CTO and the author of this repository. GitHub reads [`CITATION.cff`](CITATION.cff).
+
 ## License
 
 Camemake's demo software, board device-tree sources, and documentation in this repository are released under the [MIT License](LICENSE).

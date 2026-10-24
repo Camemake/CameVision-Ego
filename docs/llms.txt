@@ -1,0 +1,37 @@
+# CameVision EGO
+
+> CameVision EGO (CV-EGO01-OS) is Camemake’s dual global-shutter AI stereo camera: two cameras, one IMU per camera, and an on-board RV1126B with NPU. This site documents the open demo software. The board is a commercial Camemake product.
+
+Camemake’s own demo software, board device-tree sources, and these pages are under the MIT License. Embedded Python, the Rockchip USB driver assistant, UnRAR, and the prebuilt Linux boot images keep their own licenses. PCB schematics are not in the repository.
+
+## Product
+- [Shop](https://www.camemake.eu/shop/camevision-ego-dual-global-shutter-ai-stereo-camera-2414): CameVision EGO, family CV-EGO01-OS
+- [Repository](https://github.com/Camemake/CameVision-Ego): source for this demo
+- [Citation](https://github.com/Camemake/CameVision-Ego/blob/main/CITATION.cff): cite Stefaan Joos and Camemake
+
+## Documentation
+- [Datasheet · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/datasheet.html): CameVision EGO digital datasheet: SC233HGS, OG02C10, MIRA220, AR0235, OX05B1S, Kaimou GS2.3.
+- [Flash from Maskrom · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/flash.html): Maskrom flash for CameVision EGO: USB, package, ADB.
+- [Hardware · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/hardware.html): CameVision Ego V1.I1 pinmux: cameras, IMU, Wi-Fi, storage, power.
+- [CameVision EGO · CV-EGO01-OS · Camemake](https://camemake.github.io/CameVision-Ego/): CameVision EGO: dual global-shutter stereo. SC233HGS, OG02C10, MIRA220, AR0235, OX05B1S, Kaimou GS2.3. RV1126B NPU.
+- [Mechanical · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/mechanical.html): CameVision Ego mechanical assembly, housing, and thermal path for the RV1126B.
+- [Optics · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/optics.html): CameVision Ego 2G4P optics for SC233HGS, MIRA220, OG02C10, AR0235, OX05B1S and Kaimou GS2.3.
+- [Software · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/software.html): CameVision EGO software blocks in this package: live stereo, sync, IMU, IQ, host tools.
+- [Get started · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/start.html): Start CameVision EGO: clone, Maskrom flash, ADB.
+
+## 中文
+- [规格书 · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/zh/datasheet.html): CameVision EGO 规格书：SC233HGS、OG02C10、MIRA220、AR0235 彩色/黑白、OX05B1S、开眸 GS2.3。
+- [烧录 · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/zh/flash.html): CameVision EGO Maskrom 烧录：USB、镜像包、ADB。
+- [硬件 · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/zh/hardware.html): CameVision Ego V1.I1 管脚：相机、IMU、Wi-Fi、存储、电源。
+- [CameVision EGO · CV-EGO01-OS · Camemake](https://camemake.github.io/CameVision-Ego/zh/): CameVision EGO 双全局快门立体相机。SC233HGS、OG02C10、MIRA220、AR0235、OX05B1S、开眸 GS2.3。
+- [结构 · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/zh/mechanical.html): CameVision Ego 结构装配、壳体与 RV1126B 散热路径。
+- [光学 · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/zh/optics.html): CameVision Ego 2G4P 光学：SC233HGS、MIRA220、OG02C10、AR0235、OX05B1S、开眸 GS2.3。
+- [软件 · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/zh/software.html): CameVision EGO 软件：现场立体、同步、IMU、IQ、主机工具。
+- [入门 · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/zh/start.html): CameVision EGO 入门：克隆仓库、Maskrom 烧录、ADB。
+
+## Sensors
+Six sensor options share this stereo board. Each option is its own shop SKU: SmartSens SC233HGS, OmniVision OG02C10, ams OSRAM MIRA220, onsemi AR0235 (colour or monochrome), OmniVision OX05B1S, and Kaimou GS2.3 (soon available).
+
+## Optional
+- [CameVision Ego Single Sensor](https://camemake.github.io/CameVision-Ego-Single-Sensor/): the one-camera, one-IMU board. It is not this stereo product.
+- [License](https://camemake.github.io/CameVision-Ego/LICENSE): MIT License

@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using the metadata below.
+type: software
+title: "CameVision EGO: dual global-shutter AI stereo camera demo software"
+abstract: "Open demo software for CameVision EGO (CV-EGO01-OS), a Camemake board with two hardware-synchronised global-shutter cameras, one IMU per camera, and an on-board RV1126B vision processor. Sensor options are SmartSens SC233HGS, OmniVision OG02C10, ams OSRAM MIRA220, onsemi AR0235, OmniVision OX05B1S, and Kaimou GS2.3."
+authors:
+  - given-names: Stefaan
+    family-names: Joos
+    email: stefaan@camemake.com
+    affiliation: Camemake
+    website: "https://www.camemake.eu/about-us"
+  - name: Camemake
+    website: "https://www.camemake.eu"
+    email: sales@camemake.com
+    city: Shenzhen
+    country: CN
+repository-code: "https://github.com/Camemake/CameVision-Ego"
+url: "https://camemake.github.io/CameVision-Ego/"
+license: MIT
+date-released: "2026-08-24"
+keywords:
+  - global shutter
+  - egocentric vision
+  - robotics
+  - SLAM
+  - visual-inertial odometry
+  - SmartSens SC233HGS
+  - OmniVision OG02C10
+  - ams OSRAM MIRA220
+  - onsemi AR0235
+  - OmniVision OX05B1S
+  - Kaimou GS2.3
+  - Rockchip RV1126B
