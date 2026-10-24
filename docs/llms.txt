@@ -30,7 +30,14 @@ Camemake’s own demo software, board device-tree sources, and these pages are u
 - [入门 · CameVision EGO · Camemake](https://camemake.github.io/CameVision-Ego/zh/start.html): CameVision EGO 入门：克隆仓库、Maskrom 烧录、ADB。
 
 ## Sensors
-Six sensor options share this stereo board. Each option is its own shop SKU: SmartSens SC233HGS, OmniVision OG02C10, ams OSRAM MIRA220, onsemi AR0235 (colour or monochrome), OmniVision OX05B1S, and Kaimou GS2.3 (soon available).
+Six sensor options share this stereo board. Each option is its own shop SKU. Kaimou GS2.3 is soon available.
+
+- [SmartSens SC233HGS](https://www.smartsenstech.com/en/gs_products)
+- [OmniVision OG02C10](https://www.ovt.com/products/og02c10/)
+- [ams OSRAM MIRA220](https://ams-osram.com/products/sensor-solutions/cmos-image-sensors/ams-mira220)
+- [onsemi AR0235](https://www.onsemi.com/products/sensors/image-sensors/ar0235): colour or monochrome
+- [OmniVision OX05B1S](https://www.ovt.com/products/ox05b/)
+- [Kaimou GS2.3](https://www.kaimou-semiconductor.com/en/specification): [kaimou-semiconductor.com](https://www.kaimou-semiconductor.com/)
 
 ## Optional
 - [CameVision Ego Single Sensor](https://camemake.github.io/CameVision-Ego-Single-Sensor/): the one-camera, one-IMU board. It is not this stereo product.
