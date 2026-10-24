@@ -150,4 +150,12 @@ Every Camemake camera module can be tailored — sensor, lens, housing, interfac
 - Product and orders: [camemake.eu](https://www.camemake.eu) · [sales@camemake.com](mailto:sales@camemake.com)
 - This repository is the open demo for **CameVision EGO** only. 
 
+## License
+
+Camemake's demo software, board device-tree sources, and documentation in this repository are released under the [MIT License](LICENSE).
+
+Third-party pieces keep their own terms. That includes the embedded Python under `host/python`, the Rockchip USB driver assistant, UnRAR, and the prebuilt Linux boot images under `restore/`. PCB schematics are not in this repository.
+
+The same file is on the product pages: [LICENSE](https://camemake.github.io/CameVision-Ego/LICENSE).
+
 © Camemake. CameVision EGO · CV-EGO01-OS.
